@@ -1,43 +1,38 @@
 import React, { useState } from "react";
-import { View, TextInput, StyleSheet } from "react-native";
+import { SearchBar } from "react-native-elements";
 
-const SearchBar = ({ onSearch }) => {
-  const [searchText, setSearchText] = useState("");
+const SearchBarComp = ({ onSearch }) => {
+  const [search, setSearch] = useState("");
 
-  const handleTextChange = (text) => {
-    setSearchText(text);
-    onSearch(text); // Trigger search as user types
+  const updateSearch = (search) => {
+    setSearch(search);
+    onSearch(search); // Trigger search function from parent
   };
 
   return (
-    <View style={styles.container}>
-      <TextInput
-        style={styles.searchInput}
-        placeholder="Search here..."
-        value={searchText}
-        onChangeText={handleTextChange}
-      />
-    </View>
+    <SearchBar
+      placeholder="Type Here..."
+      onChangeText={updateSearch}
+      value={search}
+      round={true}
+      containerStyle={{
+        backgroundColor: "transparent",
+        borderTopColor: "transparent",
+        borderBottomColor: "transparent",
+        paddingHorizontal: 0,
+        height: 45,
+        padding: 0,
+        margin: 0,
+      }}
+      inputContainerStyle={{
+        width: "100%",
+        height: 45,
+        backgroundColor: "#D3D3D3",
+        paddingHorizontal: 10,
+        justifyContent: "center",
+      }}
+    />
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    height: 45,
-    backgroundColor: "#D3D3D3",
-    borderRadius: "50%",
-    paddingHorizontal: 50,
-    justifyContent: "center",
-    marginVertical: 10,
-  },
-  searchInput: {
-    width: "100%",
-    height: "100%",
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#525252",
-  },
-});
-
-export default SearchBar;
+export default SearchBarComp;

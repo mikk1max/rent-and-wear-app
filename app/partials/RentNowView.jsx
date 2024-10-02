@@ -1,8 +1,9 @@
 import React from "react";
-import { StyleSheet, View, StatusBar, Image } from "react-native";
+import { StyleSheet, View, StatusBar, Dimensions, Image } from "react-native";
 import { useState } from "react";
 import SearchBar from "../components/SearchBar";
 import { Platform } from "react-native";
+import Swiper from "../components/Swiper";
 
 const RentNowView = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -14,12 +15,7 @@ const RentNowView = () => {
   return (
     <View style={styles.container}>
       <SearchBar onSearch={handleSearch} />
-      <Image
-        style={styles.baner}
-        source={{
-          uri: "https://assets-static.invideo.io/images/large/Creative_Clothing_Advertisement_Ideas_To_Boost_Sales_revised_3_1_cefa9cda88.png",
-        }}
-      />
+      <Swiper />
     </View>
   );
 };
@@ -34,7 +30,7 @@ const styles = StyleSheet.create({
   baner: {
     width: "100%",
     height: 125,
-    marginTop: 10,
+    marginTop: 300,
     borderRadius: 15,
   },
 });
