@@ -46,9 +46,10 @@ const styles = StyleSheet.create({
     height: 180,
     marginVertical: 20,
 
-    // to round the whole block of swiper
+    // round the whole block of swiper
     borderRadius: 15,
     overflow: "hidden",
+    // backgroundColor: "transparent",
   },
   slide: {
     flex: 1,
