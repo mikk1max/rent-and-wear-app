@@ -11,8 +11,7 @@ import {
 import SearchBar from "../components/SearchBar";
 import Swiper from "../components/Swiper";
 import IconButton from "../components/IconButton";
-import { useFonts, WorkSans_900Black } from "@expo-google-fonts/work-sans";
-import { Poppins_500Medium } from "@expo-google-fonts/poppins";
+import { useCustomFonts } from "../utils/fonts";
 
 // Get the screen dimensions
 const { width } = Dimensions.get("window");
@@ -32,14 +31,9 @@ const RentNowView = () => {
 
   const icons = ["shirt", "user-tie", "mitten", "hat-wizard", "glasses"];
 
-  const [fontsLoaded] = useFonts({
-    WorkSans_900Black,
-    Poppins_500Medium,
-  });
+  const fontsLoaded = useCustomFonts();
 
-  if (!fontsLoaded) {
-    return null; // Render nothing until fonts are loaded
-  }
+  if (!fontsLoaded) return null;
 
   return (
     <View style={styles.container}>
@@ -75,11 +69,11 @@ const RentNowView = () => {
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
-    backgroundColor: "transparent",
+    flex: 1,
+    backgroundColor: "white",
     paddingHorizontal: 25,
     justifyContent: "flex-start",
-    marginTop: Platform.OS === "android" ? StatusBar.currentHeight : 44,
+    marginTop: Platform.OS === "android" ? StatusBar.currentHeight : 65,
   },
   categoryContainer: {
     alignItems: "flex-start",
@@ -96,14 +90,12 @@ const styles = StyleSheet.create({
   titleCategory: {
     // flex: 1,
     fontFamily: "WorkSans_900Black",
-    fontWeight: "bold",
     fontSize: 16,
     color: "#323f4b",
     backgroundColor: "transparent",
   },
   allCategoriesTextBtn: {
     fontFamily: "Poppins_500Medium",
-    fontWeight: 500,
     fontSize: 12,
     color: "#5e596e",
   },

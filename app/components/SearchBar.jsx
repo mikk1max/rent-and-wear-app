@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { SearchBar } from "react-native-elements";
 import { StyleSheet } from "react-native";
+import { useCustomFonts } from "../utils/fonts";
 
 const SearchBarComp = ({ onSearch }) => {
   const [search, setSearch] = useState("");
@@ -9,6 +10,10 @@ const SearchBarComp = ({ onSearch }) => {
     setSearch(search);
     onSearch(search); // Trigger search function from parent
   };
+
+  const fontsLoaded = useCustomFonts();
+
+  if (!fontsLoaded) return null;
 
   return (
     <SearchBar
@@ -43,9 +48,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   input: {
-    fontFamily: "Work Sans",
+    fontFamily: "Poppins_500Medium",
     fontSize: 16,
-    color: "#323f4b", // Set text color if needed
+    color: "#323f4b",
   },
 });
 
