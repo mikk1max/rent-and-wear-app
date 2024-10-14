@@ -44,7 +44,9 @@ const SwiperComponent = () => {
 const styles = StyleSheet.create({
   swiperContainer: {
     height: 180,
-    marginVertical: 20,
+    // marginVertical: 20,
+    marginTop: 10,
+    marginBottom: 20,
 
     // round the whole block of swiper
     borderRadius: 15,

@@ -74,6 +74,7 @@ const styles = StyleSheet.create({
     flex: 1,
     // backgroundColor: "transparent",
     marginBottom: 30,
+    backgroundColor: "transparent"
   },
   tabBarStyle: {
     width: "85%",
@@ -81,6 +82,7 @@ const styles = StyleSheet.create({
     borderRadius: 150,
     overflow: "hidden",
     // backgroundColor: "transparent",
+    // backgroundColor: "blue",
   },
 });
 
