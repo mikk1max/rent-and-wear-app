@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     borderTopColor: "transparent",
     borderBottomColor: "transparent",
     paddingHorizontal: 0,
-    height: 45,
+    // height: 45,
     padding: 0,
     margin: 0,
     marginBottom: 10,

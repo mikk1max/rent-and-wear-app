@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, Platform } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
@@ -50,6 +50,10 @@ const NavigationBar = () => {
             tabBarShowLabel: false,
             tabBarActiveBackgroundColor: "#161616",
             tabBarStyle: styles.tabBarStyle,
+            tabBarItemStyle: [
+              styles.tabBarItemStyle,
+              route.name === "UserProfile" && styles.userProfileTabStyle,
+            ],
           })}
         >
           <Tab.Screen name="RentNow" component={RentNowView} />
@@ -72,17 +76,29 @@ const NavigationBar = () => {
 const styles = StyleSheet.create({
   navbarContainer: {
     flex: 1,
-    // backgroundColor: "transparent",
-    marginBottom: 30,
-    backgroundColor: "transparent"
+    marginBottom: Platform.OS == "android" ? 20 : 30,
+    backgroundColor: "transparent",
   },
   tabBarStyle: {
-    width: "85%",
+    width: "86%",
     alignSelf: "center",
     borderRadius: 150,
     overflow: "hidden",
-    // backgroundColor: "transparent",
-    // backgroundColor: "blue",
+    borderWidth: 1,
+    borderTopColor: "black",
+    borderTopWidth: 1,
+    borderColor: "black",
+    boxShadow: "none",
+    shadowColor: "transparent",
+  },
+  tabBarItemStyle: {
+    borderRightWidth: 1,
+    borderColor: "transparent",
+  },
+  userProfileTabStyle: {
+    borderRightWidth: 1,
+    borderLeftWidth: 1,
+    borderColor: "black",
   },
 });
 
