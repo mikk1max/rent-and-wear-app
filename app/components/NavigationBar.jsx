@@ -7,6 +7,7 @@ import RentNowView from "../partials/RentNowView";
 import RentOutView from "../partials/RentOutView";
 import UserProfileView from "../partials/UserProfileView";
 import { useCustomFonts } from "../utils/fonts";
+import { globalStyles } from "../utils/style";
 
 const Tab = createBottomTabNavigator();
 
@@ -14,7 +15,7 @@ const renderIcon = (route, focused) => {
   const iconStyle = {
     fontFamily: "WorkSans_900Black",
     fontSize: 18,
-    color: focused ? "#f4fbf8" : "#323f4b",
+    color: focused ? globalStyles.textOnAccentColor : globalStyles.accentColor,
   };
 
   switch (route.name) {
@@ -23,7 +24,7 @@ const renderIcon = (route, focused) => {
         <FontAwesome6
           name="user"
           size={24}
-          color={focused ? "#f4fbf8" : "black"}
+          color={focused ? globalStyles.textOnAccentColor : globalStyles.accentColor}
         />
       );
     case "RentOut":
@@ -48,7 +49,7 @@ const NavigationBar = () => {
             tabBarIcon: ({ focused }) => renderIcon(route, focused),
             headerShown: false,
             tabBarShowLabel: false,
-            tabBarActiveBackgroundColor: "#161616",
+            tabBarActiveBackgroundColor: globalStyles.accentColor,
             tabBarStyle: styles.tabBarStyle,
             tabBarItemStyle: [
               styles.tabBarItemStyle,
@@ -77,7 +78,6 @@ const styles = StyleSheet.create({
   navbarContainer: {
     flex: 1,
     marginBottom: Platform.OS == "android" ? 20 : 30,
-    backgroundColor: "transparent",
   },
   tabBarStyle: {
     width: "86%",
@@ -85,9 +85,9 @@ const styles = StyleSheet.create({
     borderRadius: 150,
     overflow: "hidden",
     borderWidth: 1,
-    borderTopColor: "black",
+    borderTopColor: globalStyles.accentColor,
     borderTopWidth: 1,
-    borderColor: "black",
+    borderColor: globalStyles.accentColor,
     boxShadow: "none",
     shadowColor: "transparent",
   },
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
   userProfileTabStyle: {
     borderRightWidth: 1,
     borderLeftWidth: 1,
-    borderColor: "black",
+    borderColor: globalStyles.accentColor,
   },
 });
 

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { SearchBar } from "react-native-elements";
 import { StyleSheet } from "react-native";
 import { useCustomFonts } from "../utils/fonts";
+import { globalStyles } from "../utils/style";
 
 const SearchBarComp = ({ onSearch }) => {
   const [search, setSearch] = useState("");
@@ -24,8 +25,8 @@ const SearchBarComp = ({ onSearch }) => {
       containerStyle={styles.container}
       inputContainerStyle={styles.inputContainer}
       inputStyle={styles.input}
-      searchIcon={{ size: 25, color: "#161616" }}
-      clearIcon={{ size: 25, color: "#161616" }}
+      searchIcon={{ size: 25, color: globalStyles.accentColor }}
+      clearIcon={{ size: 25, color: globalStyles.accentColor }}
     />
   );
 };
@@ -44,14 +45,14 @@ const styles = StyleSheet.create({
   inputContainer: {
     width: "100%",
     height: 45,
-    backgroundColor: "#D3D3D3",
+    backgroundColor: globalStyles.secondaryColor,
     paddingHorizontal: 10,
     justifyContent: "center",
   },
   input: {
     fontFamily: "Poppins_500Medium",
     fontSize: 16,
-    color: "#323f4b",
+    color: globalStyles.textOnSecondaryColor,
   },
 });
 

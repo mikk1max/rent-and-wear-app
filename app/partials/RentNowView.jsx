@@ -14,6 +14,7 @@ import Swiper from "../components/Swiper";
 import IconButton from "../components/IconButton";
 import { useCustomFonts } from "../utils/fonts";
 import ProductCard from "../components/ProductCard";
+import { globalStyles } from "../utils/style";
 
 // Get the screen dimensions
 const { width } = Dimensions.get("window");
@@ -44,30 +45,35 @@ const RentNowView = () => {
       link: "link to holey underpants",
       name: "Holey underpants",
       price: 5.25,
+      isOwner: true,
     },
     {
       id: 2,
       link: "link to black shoes",
       name: "Black shoes",
       price: 1256987.99,
+      isOwner: false,
     },
     {
       id: 3,
       link: "link to red hat",
       name: "Red hat",
       price: 0.1,
+      isOwner: false,
     },
     {
       id: 4,
       link: "link to blue jeans",
       name: "Blue jeans",
       price: 40.0,
+      isOwner: true,
     },
     {
       id: 5,
-      link: "link to lopata",
-      name: "Lopata",
+      link: "link to sweter",
+      name: "Sweter",
       price: 8.99,
+      isOwner: false,
     },
   ];
   const filteredProducts = products.filter((product) =>
@@ -75,7 +81,7 @@ const RentNowView = () => {
   );
 
   return (
-    <View style={{ flex: 1, backgroundColor: "white" }}>
+    <View style={{ flex: 1, backgroundColor: globalStyles.backgroundColor }}>
       <View style={styles.container}>
         <SearchBar onSearch={handleSearch} />
         <View
@@ -84,7 +90,6 @@ const RentNowView = () => {
             borderRadius: 15,
             marginBottom: 20,
             overflow: "hidden",
-            // backgroundColor: "red",
           }}
         >
           <ScrollView showsVerticalScrollIndicator={false}>
@@ -92,13 +97,9 @@ const RentNowView = () => {
 
             {/* /Categories buttons starts/ */}
             <View style={styles.categoryContainer}>
-              <Text style={styles.titleCategory} color={"red"}>
-                Category
-              </Text>
+              <Text style={styles.titleCategory}>Category</Text>
               <TouchableOpacity>
-                <Text style={styles.allCategoriesTextBtn} color={"red"}>
-                  See all
-                </Text>
+                <Text style={styles.allCategoriesTextBtn}>See all</Text>
               </TouchableOpacity>
             </View>
             <View style={styles.buttonContainer}>
@@ -121,6 +122,8 @@ const RentNowView = () => {
                 flexWrap: "wrap",
                 flexDirection: "row",
                 justifyContent: "space-between",
+                gap: 15,
+                marginTop: 15,
               }}
             >
               {filteredProducts.map((product) => (
@@ -130,6 +133,7 @@ const RentNowView = () => {
                   productPrice={product.price}
                   productLink={product.link}
                   containerWidth={width - 60}
+                  isOwner={product.isOwner}
                 />
               ))}
             </View>
@@ -143,13 +147,13 @@ const RentNowView = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: globalStyles.backgroundColor,
     paddingHorizontal: 25,
     justifyContent: "flex-start",
-    marginTop: Platform.OS === "android" ? StatusBar.currentHeight : 60,
+    marginTop: Platform.OS === "android" ? StatusBar.currentHeight + 10 : 60,
   },
   categoryContainer: {
-    alignItems: "flex-start",
+    alignItems: "center",
     // marginTop: 20, // Space above the title
     flexDirection: "row",
     justifyContent: "space-between",
@@ -164,13 +168,13 @@ const styles = StyleSheet.create({
     // flex: 1,
     fontFamily: "WorkSans_900Black",
     fontSize: 16,
-    color: "#323f4b",
+    color: globalStyles.textOnSecondaryColor,
     backgroundColor: "transparent",
   },
   allCategoriesTextBtn: {
     fontFamily: "Poppins_500Medium",
     fontSize: 12,
-    color: "#5e596e",
+    color: globalStyles.textOnSecondaryColor,
   },
 });
 
