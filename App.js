@@ -4,6 +4,8 @@ import RentNowView from "./app/partials/RentNowView";
 import NavigationBar from "./app/components/NavigationBar";
 import { globalStyles } from "./app/utils/style";
 import SettingsView from "./app/partials/SettingsView";
+import Sends from "./app/partials/Sends";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export default function App() {
   return (
@@ -15,7 +17,10 @@ export default function App() {
     >
       {/* <RentNowView /> */}
       {/* <NavigationBar /> */}
-      <SettingsView />
+      {/* <SettingsView /> */}
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <Sends />
+      </GestureHandlerRootView>
     </View>
   );
 }
