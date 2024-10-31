@@ -6,11 +6,13 @@ import {
   Platform,
   StatusBar,
   Text,
+  Image,
 } from "react-native";
 import { globalStyles } from "../utils/style";
 import AdSendCard from "../components/AdSendCard";
 import { ScrollView } from "react-native-gesture-handler";
 import { TouchableOpacity } from "react-native";
+import { FontAwesome6 } from "@expo/vector-icons";
 
 const { width } = Dimensions.get("window");
 
@@ -135,26 +137,47 @@ const SendsView = () => {
         </ScrollView>
       </View>
       <ScrollView
-        contentContainerStyle={styles.productsContainer}
+        contentContainerStyle={[
+          styles.productsContainer,
+          { flexGrow: filteredProducts.length === 0 ? 1 : 0 },
+        ]}
         showsVerticalScrollIndicator={false}
       >
-        {filteredProducts.map((product) => (
-          <AdSendCard
-            key={product.id}
-            productName={product.name}
-            productPrice={calculatePrice(
-              product.dateFrom,
-              product.dateTo,
-              product.price
-            )}
-            productLink={product.link}
-            productStatus={product.status}
-            containerWidth={width - 60}
-            progressValue={
-              statuses.indexOf(product.status) / (statuses.length - 1)
-            }
-          />
-        ))}
+        {filteredProducts.length > 0 &&
+          filteredProducts.map((product) => (
+            <AdSendCard
+              key={product.id}
+              productName={product.name}
+              productPrice={calculatePrice(
+                product.dateFrom,
+                product.dateTo,
+                product.price
+              )}
+              productLink={product.link}
+              productStatus={product.status}
+              containerWidth={width - 60}
+              progressValue={
+                statuses.indexOf(product.status) / (statuses.length - 1)
+              }
+            />
+          ))}
+        {filteredProducts.length === 0 && (
+          <View style={styles.noItemsContainer}>
+            <Text style={styles.noItemsMessage}>
+              No advertisements found! Please check your filters.
+            </Text>
+            <View style={styles.centeredButtonContainer}>
+              {/* <Image
+                style={styles.NoItemsBoxImg}
+                source={require("../../assets/images/NoItemsBox.png")}
+              /> */}
+              <TouchableOpacity style={styles.rentNowBox}>
+                <FontAwesome6 name="box-open" size={64} color="black" />
+                <Text style={styles.rentNowBtn}>No items found</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
       </ScrollView>
     </View>
   );
@@ -170,7 +193,9 @@ const styles = StyleSheet.create({
   },
   statusContainer: {
     marginBottom: 10,
-    maxWidth: width - 60,
+    maxWidth: width - 50,
+    // borderRadius: 15,
+    // overflow: "hidden",
   },
   productsContainer: {
     // flexDirection: "column",
@@ -196,6 +221,41 @@ const styles = StyleSheet.create({
   },
   inactiveStatusText: {
     color: "white",
+  },
+
+  noItemsContainer: {},
+  noItemsMessage: {
+    marginTop: 10,
+    borderRadius: 15,
+    overflow: "hidden",
+    backgroundColor: globalStyles.secondaryColor,
+    padding: 10,
+    color: globalStyles.textOnSecondaryColor,
+    fontFamily: "Poppins_500Medium",
+    fontSize: 16,
+  },
+  centeredButtonContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  rentNowBox: {
+    // backgroundColor: globalStyles.secondaryColor,
+    padding: 20,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  NoItemsBoxImg: {
+    width: 150,
+    height: 150,
+  },
+  rentNowBtn: {
+    padding: 10,
+    color: globalStyles.accentColor,
+    borderRadius: 15,
+    overflow: "hidden",
+    fontFamily: "Poppins_500Medium",
+    fontSize: 20,
   },
 });
 
