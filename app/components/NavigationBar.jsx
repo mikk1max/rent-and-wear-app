@@ -5,9 +5,9 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import RentNowView from "../partials/RentNowView";
 import RentOutView from "../partials/RentOutView";
-import UserProfileView from "../partials/UserProfileView";
 import { useCustomFonts } from "../utils/fonts";
 import { globalStyles } from "../utils/style";
+import UserProfileStack from "./UserProfileStack";
 
 const Tab = createBottomTabNavigator();
 
@@ -24,7 +24,9 @@ const renderIcon = (route, focused) => {
         <FontAwesome6
           name="user"
           size={24}
-          color={focused ? globalStyles.textOnAccentColor : globalStyles.accentColor}
+          color={
+            focused ? globalStyles.textOnAccentColor : globalStyles.accentColor
+          }
         />
       );
     case "RentOut":
@@ -60,7 +62,7 @@ const NavigationBar = () => {
           <Tab.Screen name="RentNow" component={RentNowView} />
           <Tab.Screen
             name="UserProfile"
-            component={UserProfileView}
+            component={UserProfileStack}
             style={styles.tabStyle}
           />
           <Tab.Screen

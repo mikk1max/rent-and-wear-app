@@ -14,6 +14,7 @@ import { ActivityIndicator } from "react-native";
 import { Image } from "react-native-elements";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { globalStyles } from "../utils/style";
+import { useNavigation } from "@react-navigation/native";
 
 // Get the screen dimensions
 const { width } = Dimensions.get("window");
@@ -23,6 +24,7 @@ const dataCardWidth = width - 50 - 100 - 15;
 
 const UserProfileView = () => {
   const fontsLoaded = useCustomFonts();
+  const navigation = useNavigation();
 
   if (!fontsLoaded) return null;
 
@@ -94,7 +96,7 @@ const UserProfileView = () => {
             <TouchableOpacity
               style={styles.button}
               activeOpacity={0.8}
-              onPress={() => console.log("Link to Settings-page")}
+              onPress={() => navigation.navigate("SettingsView")}
             >
               <FontAwesome6
                 name="gears"
@@ -119,7 +121,7 @@ const UserProfileView = () => {
               <TouchableOpacity
                 style={[styles.button, styles.buttonRent]}
                 activeOpacity={0.8}
-                onPress={() => console.log("Link to Sends-page")}
+                onPress={() => navigation.navigate("Sends")}
               >
                 <FontAwesome6
                   name="circle-up"

@@ -19,6 +19,50 @@ import { globalStyles } from "../utils/style";
 // Get the screen dimensions
 const { width } = Dimensions.get("window");
 
+const products = [
+  {
+    id: 1,
+    link: "link to holey underpants",
+    name: "Holey underpants",
+    price: 5.25,
+    isOwner: true,
+  },
+  {
+    id: 2,
+    link: "link to black shoes",
+    name: "Black shoes",
+    price: 1256987.99,
+    isOwner: false,
+  },
+  {
+    id: 3,
+    link: "link to red hat",
+    name: "Red hat",
+    price: 0.1,
+    isOwner: false,
+  },
+  {
+    id: 4,
+    link: "link to blue jeans",
+    name: "Blue jeans",
+    price: 40.0,
+    isOwner: true,
+  },
+  {
+    id: 5,
+    link: "link to sweter",
+    name: "Sweter",
+    price: 8.99,
+    isOwner: false,
+  },
+];
+
+export const getFilteredProducts = (searchQuery) => {
+  return products.filter((product) =>
+    product.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+};
+
 const RentNowView = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeIcon, setActiveIcon] = useState(null); // State to track active button
@@ -39,46 +83,8 @@ const RentNowView = () => {
   if (!fontsLoaded) return null;
 
   // Product Cards
-  const products = [
-    {
-      id: 1,
-      link: "link to holey underpants",
-      name: "Holey underpants",
-      price: 5.25,
-      isOwner: true,
-    },
-    {
-      id: 2,
-      link: "link to black shoes",
-      name: "Black shoes",
-      price: 1256987.99,
-      isOwner: false,
-    },
-    {
-      id: 3,
-      link: "link to red hat",
-      name: "Red hat",
-      price: 0.1,
-      isOwner: false,
-    },
-    {
-      id: 4,
-      link: "link to blue jeans",
-      name: "Blue jeans",
-      price: 40.0,
-      isOwner: true,
-    },
-    {
-      id: 5,
-      link: "link to sweter",
-      name: "Sweter",
-      price: 8.99,
-      isOwner: false,
-    },
-  ];
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+
+  const filteredProducts = getFilteredProducts(searchQuery);
 
   return (
     <View style={{ flex: 1, backgroundColor: globalStyles.backgroundColor }}>
