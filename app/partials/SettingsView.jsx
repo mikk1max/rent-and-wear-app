@@ -448,8 +448,7 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     height: 2,
     backgroundColor: globalStyles.accentColor,
-  }
-
+  },
 });
 
 export default SettingsView;

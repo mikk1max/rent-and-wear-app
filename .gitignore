@@ -128,3 +128,12 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+
+# Personal .gitignore additions
+# basic trash
+.vscode
+.expo
+
+# secrets
+firebaseConfig.js
