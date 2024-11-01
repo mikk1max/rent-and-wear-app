@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins_400Regular",
     fontSize: 13,
     color: globalStyles.secondaryTextColor,
-    marginTop: 5,
+    // marginTop: 5,
   },
   cardButton: {
     backgroundColor: globalStyles.primaryColor,

@@ -136,49 +136,55 @@ const SendsView = () => {
           ))}
         </ScrollView>
       </View>
-      <ScrollView
-        contentContainerStyle={[
-          styles.productsContainer,
-          { flexGrow: filteredProducts.length === 0 ? 1 : 0 },
-        ]}
-        showsVerticalScrollIndicator={false}
-      >
-        {filteredProducts.length > 0 &&
-          filteredProducts.map((product) => (
-            <AdSendCard
-              key={product.id}
-              productName={product.name}
-              productPrice={calculatePrice(
-                product.dateFrom,
-                product.dateTo,
-                product.price
-              )}
-              productLink={product.link}
-              productStatus={product.status}
-              containerWidth={width - 60}
-              progressValue={
-                statuses.indexOf(product.status) / (statuses.length - 1)
-              }
-            />
-          ))}
-        {filteredProducts.length === 0 && (
-          <View style={styles.noItemsContainer}>
-            <Text style={styles.noItemsMessage}>
-              No advertisements found! Please check your filters.
-            </Text>
-            <View style={styles.centeredButtonContainer}>
-              {/* <Image
-                style={styles.NoItemsBoxImg}
-                source={require("../../assets/images/NoItemsBox.png")}
-              /> */}
-              <TouchableOpacity style={styles.rentNowBox}>
-                <FontAwesome6 name="box-open" size={64} color="black" />
-                <Text style={styles.rentNowBtn}>No items found</Text>
-              </TouchableOpacity>
+
+      <View style={styles.mainList}>
+        <ScrollView
+          contentContainerStyle={[
+            styles.productsContainer,
+            { flexGrow: filteredProducts.length === 0 ? 1 : 0 },
+          ]}
+          showsVerticalScrollIndicator={false}
+        >
+          {filteredProducts.length > 0 &&
+            filteredProducts.map((product) => (
+              <AdSendCard
+                key={product.id}
+                productName={product.name}
+                productPrice={calculatePrice(
+                  product.dateFrom,
+                  product.dateTo,
+                  product.price
+                )}
+                productLink={product.link}
+                productStatus={product.status}
+                containerWidth={width - 50}
+                progressValue={
+                  statuses.indexOf(product.status) / (statuses.length - 1)
+                }
+              />
+            ))}
+          {filteredProducts.length === 0 && (
+            <View style={styles.noItemsContainer}>
+              <Text style={styles.noItemsMessage}>
+                No advertisements found! Please check your filters.
+              </Text>
+              <View style={styles.centeredButtonContainer}>
+                {/* <Image
+                  style={styles.noItemsBoxImg}
+                  source={require("../../assets/images/NoItemsBox.png")}
+                /> */}
+                <TouchableOpacity
+                  style={styles.noItemsBox}
+                  onPress={() => console.log("Rent now button pressed")}
+                >
+                  <FontAwesome6 name="box-open" size={64} color="black" />
+                  <Text style={styles.noItemsBtn}>No items found</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
-        )}
-      </ScrollView>
+          )}
+        </ScrollView>
+      </View>
     </View>
   );
 };
@@ -188,8 +194,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: globalStyles.backgroundColor,
     paddingHorizontal: 25,
-    marginTop: Platform.OS === "android" ? StatusBar.currentHeight + 10 : 60,
-    marginBottom: Platform.OS === "android" ? 25 : 30,
+    // marginTop: Platform.OS === "android" ? StatusBar.currentHeight + 10 : 60,
+    paddingTop: 20,
+    // paddingBottom: Platform.OS === "android" ? 25 : 30,
+  },
+  mainList: {
+    // paddingBottom: Platform.OS === "android" ? 25 : 30,
+    flex: 1,
+    marginBottom: 20,
+    borderRadius: 15,
+    overflow: "hidden",
   },
   statusContainer: {
     marginBottom: 10,
@@ -239,17 +253,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  rentNowBox: {
+  noItemsBox: {
     // backgroundColor: globalStyles.secondaryColor,
     padding: 20,
     alignItems: "center",
     justifyContent: "center",
   },
-  NoItemsBoxImg: {
-    width: 150,
-    height: 150,
-  },
-  rentNowBtn: {
+  // noItemsBoxImg: {
+  //   width: 150,
+  //   height: 150,
+  // },
+  noItemsBtn: {
     padding: 10,
     color: globalStyles.accentColor,
     borderRadius: 15,

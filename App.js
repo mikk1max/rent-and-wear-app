@@ -16,11 +16,11 @@ export default function App() {
       }}
     >
       {/* <RentNowView /> */}
-      {/* <NavigationBar /> */}
+      <NavigationBar />
       {/* <SettingsView /> */}
-      <GestureHandlerRootView style={{ flex: 1 }}>
+      {/* <GestureHandlerRootView style={{ flex: 1 }}>
         <Sends />
-      </GestureHandlerRootView>
+      </GestureHandlerRootView> */}
     </View>
   );
 }
