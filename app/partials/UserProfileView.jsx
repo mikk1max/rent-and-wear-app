@@ -24,10 +24,10 @@ const dataCardWidth = width - 50 - 100 - 15;
 
 const UserProfileView = () => {
   const fontsLoaded = useCustomFonts();
-  const navigation = useNavigation();
-
   if (!fontsLoaded) return null;
 
+  const navigation = useNavigation();
+  
   const settingsLink = "settings";
   const onPress = (link) => console.log(link);
 

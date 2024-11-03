@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -17,25 +17,190 @@ import { globalStyles } from "../utils/style";
 import { useForm, Controller } from "react-hook-form";
 import { Divider } from "react-native-elements";
 
+import { ref, onValue } from "firebase/database";
+import { db } from "../../firebaseConfig";
+
 // Get the screen dimensions
 const { width } = Dimensions.get("window");
+
+// User's data
+const defaultUser = {
+  name: "Bob",
+  surname: "Smith",
+  email: "b.smith@pollub.edu.pl",
+};
 
 const SettingsView = () => {
   const fontsLoaded = useCustomFonts();
   if (!fontsLoaded) return null;
 
+  // User
+  // const [user, setUser] = useState();
+  var userTmp = null;
+  useEffect(() => {
+    const usersRef = ref(db, "users");
+    onValue(usersRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const usersArray = Object.keys(data).map((key) => ({
+          id: key,
+          ...data[key],
+        }));
+        // setUser(usersArray[0]);
+        userTmp = usersArray[1];
+        console.log(userTmp);
+      }
+    });
+  }, []);
+  const [user, setUser] = useState(defaultUser);
+
+  // Name form
   const {
-    control,
-    handleSubmit,
-    formState: { errors },
+    control: controlName,
+    handleSubmit: handleSubmitName,
+    reset: resetName,
+    formState: { errors: errorsName },
   } = useForm();
-  const onSubmit = (data) => console.log(data);
+
+  const [editableName, setEditableName] = useState(false);
+  const [nameTextInputStyle, setNameTextInputStyle] = useState([
+    styles.textInput,
+    styles.textInputBlocked,
+  ]);
+  const [nameButtonsStyle, setNameButtonsStyle] = useState(
+    styles.buttonsHidden
+  );
+  const editName = () => {
+    setEditableName(true);
+    setNameTextInputStyle(styles.textInput);
+    setNameButtonsStyle(styles.buttons);
+
+    resetSurname();
+    setEditableSurname(false);
+    setSurnameTextInputStyle([styles.textInput, styles.textInputBlocked]);
+    setSurnameButtonsStyle(styles.buttonsHidden);
+
+    resetEmail();
+    setEditableEmail(false);
+    setEmailTextInputStyle([styles.textInput, styles.textInputBlocked]);
+    setEmailButtonsStyle(styles.buttonsHidden);
+  };
+
+  const onSubmitName = (data) => {
+    user.name = data.name;
+
+    setEditableName(false);
+    setNameTextInputStyle([styles.textInput, styles.textInputBlocked]);
+    setNameButtonsStyle(styles.buttonsHidden);
+  };
+
+  const onCancelName = () => {
+    resetName();
+    setEditableName(false);
+    setNameTextInputStyle([styles.textInput, styles.textInputBlocked]);
+    setNameButtonsStyle(styles.buttonsHidden);
+  };
+
+  // Surname form
+  const {
+    control: controlSurname,
+    handleSubmit: handleSubmitSurname,
+    reset: resetSurname,
+    formState: { errors: errorsSurname },
+  } = useForm();
+
+  const [editableSurname, setEditableSurname] = useState(false);
+  const [surnameTextInputStyle, setSurnameTextInputStyle] = useState([
+    styles.textInput,
+    styles.textInputBlocked,
+  ]);
+  const [surnameButtonsStyle, setSurnameButtonsStyle] = useState(
+    styles.buttonsHidden
+  );
+  const editSurname = () => {
+    setEditableSurname(true);
+    setSurnameTextInputStyle(styles.textInput);
+    setSurnameButtonsStyle(styles.buttons);
+
+    resetName();
+    setEditableName(false);
+    setNameTextInputStyle([styles.textInput, styles.textInputBlocked]);
+    setNameButtonsStyle(styles.buttonsHidden);
+
+    resetEmail();
+    setEditableEmail(false);
+    setEmailTextInputStyle([styles.textInput, styles.textInputBlocked]);
+    setEmailButtonsStyle(styles.buttonsHidden);
+  };
+
+  const onSubmitSurname = (data) => {
+    user.surname = data.surname;
+
+    setEditableSurname(false);
+    setSurnameTextInputStyle([styles.textInput, styles.textInputBlocked]);
+    setSurnameButtonsStyle(styles.buttonsHidden);
+  };
+
+  const onCancelSurname = () => {
+    resetSurname();
+    setEditableSurname(false);
+    setSurnameTextInputStyle([styles.textInput, styles.textInputBlocked]);
+    setSurnameButtonsStyle(styles.buttonsHidden);
+  };
+
+  // E-mail form
+  const {
+    control: controlEmail,
+    handleSubmit: handleSubmitEmail,
+    reset: resetEmail,
+    formState: { errors: errorsEmail },
+  } = useForm();
+
+  const [editableEmail, setEditableEmail] = useState(false);
+  const [emailTextInputStyle, setEmailTextInputStyle] = useState([
+    styles.textInput,
+    styles.textInputBlocked,
+  ]);
+  const [emailButtonsStyle, setEmailButtonsStyle] = useState(
+    styles.buttonsHidden
+  );
+  const editEmail = () => {
+    setEditableEmail(true);
+    setEmailTextInputStyle(styles.textInput);
+    setEmailButtonsStyle(styles.buttons);
+
+    resetName();
+    setEditableName(false);
+    setNameTextInputStyle([styles.textInput, styles.textInputBlocked]);
+    setNameButtonsStyle(styles.buttonsHidden);
+
+    resetSurname();
+    setEditableSurname(false);
+    setSurnameTextInputStyle([styles.textInput, styles.textInputBlocked]);
+    setSurnameButtonsStyle(styles.buttonsHidden);
+  };
+
+  const onSubmitEmail = (data) => {
+    user.email = data.email.toLowerCase();
+
+    setEditableEmail(false);
+    setEmailTextInputStyle([styles.textInput, styles.textInputBlocked]);
+    setEmailButtonsStyle(styles.buttonsHidden);
+  };
+
+  const onCancelEmail = () => {
+    resetEmail();
+    setEditableEmail(false);
+    setEmailTextInputStyle([styles.textInput, styles.textInputBlocked]);
+    setEmailButtonsStyle(styles.buttonsHidden);
+  };
 
   return (
     <View style={{ flex: 1, backgroundColor: globalStyles.backgroundColor }}>
       <View style={styles.container}>
         <View style={styles.mainSection}>
           <ScrollView showsVerticalScrollIndicator={false}>
+            {/* Profile image */}
             <View style={styles.imageContainer}>
               <Image
                 source={{
@@ -52,291 +217,232 @@ const SettingsView = () => {
                 }}
               />
               <TouchableOpacity
-                activeOpacity={0.8}
+                activeOpacity={0.6}
                 onPress={() => console.log("Edit picture")}
               >
                 <Text style={styles.imageText}>Edit profile picture</Text>
               </TouchableOpacity>
+              <Text>
+                {user.name} {user.surname}
+                {"\n"}
+                {user.email}
+              </Text>
             </View>
 
             <Divider style={styles.divider} />
 
-            <View style={styles.inputContainer}>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <Text style={styles.label}>E-mail:</Text>
-                <TouchableOpacity
-                  style={styles.buttonEdit}
-                  activeOpacity={0.8}
-                  onPress={() => console.log("You can edit")}
+            {/* Name form */}
+            <View>
+              <View style={styles.inputContainer}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
                 >
-                  <Text style={styles.buttonText}>Edit</Text>
-                </TouchableOpacity>
-                {/* <Button color={"blue"} title="Save" style={styles.button} /> */}
-                {/* <Button title="Edit" style={styles.button} /> */}
-              </View>
+                  <Text style={styles.label}>Name:</Text>
+                  <TouchableOpacity
+                    style={styles.buttonEdit}
+                    activeOpacity={0.8}
+                    onPress={editName}
+                  >
+                    <Text style={styles.buttonText}>Edit</Text>
+                  </TouchableOpacity>
+                </View>
 
-              {errors.email && (
-                <Text style={styles.textError}>{errors.email.message}</Text>
-              )}
-              <Controller
-                control={control}
-                rules={{
-                  required: "Email is required",
-                  pattern: {
-                    value:
-                      /^((?!\.)[\w-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/gim,
-                    message: "Invalid email format",
-                  },
-                }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput
-                    style={styles.textInput}
-                    placeholder="example@gmail.com"
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                  />
+                {errorsName.name && (
+                  <Text style={styles.textError}>
+                    {errorsName.name.message}
+                  </Text>
                 )}
-                name="email"
-              />
+                <Controller
+                  control={controlName}
+                  rules={{
+                    required: "Name is required",
+                    pattern: {
+                      value:
+                        /^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+(?:\s[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)?$/,
+                      message: "Invalid name format",
+                    },
+                  }}
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <TextInput
+                      style={nameTextInputStyle}
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      placeholder="Grzegorz"
+                      value={value}
+                      defaultValue={user.name}
+                      autoCapitalize="words"
+                      autoComplete="given-name"
+                      inputMode="text"
+                      editable={editableName}
+                    />
+                  )}
+                  name="name"
+                />
 
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                }}
-              >
-                <TouchableOpacity
-                  style={styles.buttonSave}
-                  activeOpacity={0.8}
-                  // onPress={() => console.log("Saved")}
-                  onPress={handleSubmit(onSubmit)}
-                >
-                  <Text style={styles.buttonText}>Save</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.buttonCancel}
-                  activeOpacity={0.8}
-                  onPress={() => console.log("Canceled")}
-                >
-                  <Text style={styles.buttonText}>Cancel</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-            <View style={styles.inputContainer}>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <Text style={styles.label}>E-mail:</Text>
-                <TouchableOpacity
-                  style={styles.buttonEdit}
-                  activeOpacity={0.8}
-                  onPress={() => console.log("You can edit")}
-                >
-                  <Text style={styles.buttonText}>Edit</Text>
-                </TouchableOpacity>
-                {/* <Button color={"blue"} title="Save" style={styles.button} /> */}
-                {/* <Button title="Edit" style={styles.button} /> */}
-              </View>
-
-              {errors.email && (
-                <Text style={styles.textError}>{errors.email.message}</Text>
-              )}
-              <Controller
-                control={control}
-                rules={{
-                  required: "Email is required",
-                  pattern: {
-                    value:
-                      /^((?!\.)[\w-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/gim,
-                    message: "Invalid email format",
-                  },
-                }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput
-                    style={styles.textInput}
-                    placeholder="example@gmail.com"
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                  />
-                )}
-                name="email"
-              />
-
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                }}
-              >
-                <TouchableOpacity
-                  style={styles.buttonSave}
-                  activeOpacity={0.8}
-                  // onPress={() => console.log("Saved")}
-                  onPress={handleSubmit(onSubmit)}
-                >
-                  <Text style={styles.buttonText}>Save</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.buttonCancel}
-                  activeOpacity={0.8}
-                  onPress={() => console.log("Canceled")}
-                >
-                  <Text style={styles.buttonText}>Cancel</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-            <View style={styles.inputContainer}>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <Text style={styles.label}>E-mail:</Text>
-                <TouchableOpacity
-                  style={styles.buttonEdit}
-                  activeOpacity={0.8}
-                  onPress={() => console.log("You can edit")}
-                >
-                  <Text style={styles.buttonText}>Edit</Text>
-                </TouchableOpacity>
-                {/* <Button color={"blue"} title="Save" style={styles.button} /> */}
-                {/* <Button title="Edit" style={styles.button} /> */}
-              </View>
-
-              {errors.email && (
-                <Text style={styles.textError}>{errors.email.message}</Text>
-              )}
-              <Controller
-                control={control}
-                rules={{
-                  required: "Email is required",
-                  pattern: {
-                    value:
-                      /^((?!\.)[\w-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/gim,
-                    message: "Invalid email format",
-                  },
-                }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput
-                    style={styles.textInput}
-                    placeholder="example@gmail.com"
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                  />
-                )}
-                name="email"
-              />
-
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                }}
-              >
-                <TouchableOpacity
-                  style={styles.buttonSave}
-                  activeOpacity={0.8}
-                  // onPress={() => console.log("Saved")}
-                  onPress={handleSubmit(onSubmit)}
-                >
-                  <Text style={styles.buttonText}>Save</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.buttonCancel}
-                  activeOpacity={0.8}
-                  onPress={() => console.log("Canceled")}
-                >
-                  <Text style={styles.buttonText}>Cancel</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-            <View style={styles.inputContainer}>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <Text style={styles.label}>E-mail:</Text>
-                <TouchableOpacity
-                  style={styles.buttonEdit}
-                  activeOpacity={0.8}
-                  onPress={() => console.log("You can edit")}
-                >
-                  <Text style={styles.buttonText}>Edit</Text>
-                </TouchableOpacity>
-                {/* <Button color={"blue"} title="Save" style={styles.button} /> */}
-                {/* <Button title="Edit" style={styles.button} /> */}
-              </View>
-
-              {errors.email && (
-                <Text style={styles.textError}>{errors.email.message}</Text>
-              )}
-              <Controller
-                control={control}
-                rules={{
-                  required: "Email is required",
-                  pattern: {
-                    value:
-                      /^((?!\.)[\w-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/gim,
-                    message: "Invalid email format",
-                  },
-                }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput
-                    style={styles.textInput}
-                    placeholder="example@gmail.com"
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                  />
-                )}
-                name="email"
-              />
-
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                }}
-              >
-                <TouchableOpacity
-                  style={styles.buttonSave}
-                  activeOpacity={0.8}
-                  // onPress={() => console.log("Saved")}
-                  onPress={handleSubmit(onSubmit)}
-                >
-                  <Text style={styles.buttonText}>Save</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.buttonCancel}
-                  activeOpacity={0.8}
-                  onPress={() => console.log("Canceled")}
-                >
-                  <Text style={styles.buttonText}>Cancel</Text>
-                </TouchableOpacity>
+                <View style={nameButtonsStyle}>
+                  <TouchableOpacity
+                    style={styles.buttonSave}
+                    activeOpacity={0.8}
+                    onPress={handleSubmitName(onSubmitName)}
+                  >
+                    <Text style={styles.buttonText}>Save</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.buttonCancel}
+                    activeOpacity={0.8}
+                    onPress={onCancelName}
+                  >
+                    <Text style={styles.buttonText}>Cancel</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
 
-            {/* <Divider
-              style={{ backgroundColor: "red", marginTop: 15, height: 5 }}
-            /> */}
+            {/* Surname form */}
+            <View>
+              <View style={styles.inputContainer}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <Text style={styles.label}>Surname:</Text>
+                  <TouchableOpacity
+                    style={styles.buttonEdit}
+                    activeOpacity={0.8}
+                    onPress={editSurname}
+                  >
+                    <Text style={styles.buttonText}>Edit</Text>
+                  </TouchableOpacity>
+                </View>
+
+                {errorsSurname.surname && (
+                  <Text style={styles.textError}>
+                    {errorsSurname.surname.message}
+                  </Text>
+                )}
+                <Controller
+                  control={controlSurname}
+                  rules={{
+                    required: "Surname is required",
+                    pattern: {
+                      value:
+                        /^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+$/,
+                      message: "Invalid surname format",
+                    },
+                  }}
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <TextInput
+                      style={surnameTextInputStyle}
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      placeholder="Brzęczyszczykiewicz"
+                      value={value}
+                      defaultValue={user.surname}
+                      autoCapitalize="words"
+                      autoComplete="family-name"
+                      inputMode="text"
+                      editable={editableSurname}
+                    />
+                  )}
+                  name="surname"
+                />
+
+                <View style={surnameButtonsStyle}>
+                  <TouchableOpacity
+                    style={styles.buttonSave}
+                    activeOpacity={0.8}
+                    onPress={handleSubmitSurname(onSubmitSurname)}
+                  >
+                    <Text style={styles.buttonText}>Save</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.buttonCancel}
+                    activeOpacity={0.8}
+                    onPress={onCancelSurname}
+                  >
+                    <Text style={styles.buttonText}>Cancel</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+
+            {/* E-mail form */}
+            <View>
+              <View style={styles.inputContainer}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <Text style={styles.label}>E-mail:</Text>
+                  <TouchableOpacity
+                    style={styles.buttonEdit}
+                    activeOpacity={0.8}
+                    onPress={editEmail}
+                  >
+                    <Text style={styles.buttonText}>Edit</Text>
+                  </TouchableOpacity>
+                </View>
+
+                {errorsEmail.email && (
+                  <Text style={styles.textError}>
+                    {errorsEmail.email.message}
+                  </Text>
+                )}
+                <Controller
+                  control={controlEmail}
+                  rules={{
+                    required: "Email is required",
+                    pattern: {
+                      value:
+                        /^((?!\.)[\w-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/gim,
+                      message: "Invalid email format",
+                    },
+                  }}
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <TextInput
+                      style={emailTextInputStyle}
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      placeholder="example@gmail.com"
+                      value={value}
+                      defaultValue={user.email}
+                      autoCapitalize="none"
+                      autoComplete="email"
+                      inputMode="email"
+                      editable={editableEmail}
+                    />
+                  )}
+                  name="email"
+                />
+
+                <View style={emailButtonsStyle}>
+                  <TouchableOpacity
+                    style={styles.buttonSave}
+                    activeOpacity={0.8}
+                    onPress={handleSubmitEmail(onSubmitEmail)}
+                  >
+                    <Text style={styles.buttonText}>Save</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.buttonCancel}
+                    activeOpacity={0.8}
+                    onPress={onCancelEmail}
+                  >
+                    <Text style={styles.buttonText}>Cancel</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
           </ScrollView>
         </View>
       </View>
@@ -350,21 +456,32 @@ const styles = StyleSheet.create({
     backgroundColor: globalStyles.backgroundColor,
     paddingHorizontal: 25,
     justifyContent: "flex-start",
-    marginTop: Platform.OS === "android" ? StatusBar.currentHeight + 10 : 60,
+    // marginTop: Platform.OS === "android" ? StatusBar.currentHeight + 10 : 60,
   },
 
   mainSection: {
     flex: 1,
     backgroundColor: globalStyles.secondaryColor,
     borderRadius: 15,
-    marginBottom: Platform.OS === "android" ? 25 : 30,
+    // marginBottom: Platform.OS === "android" ? 25 : 30,
+    marginBottom: 20,
     padding: 20,
+    // paddingHorizontal: 20,
   },
 
   label: {
     fontFamily: "WorkSans_900Black",
     fontSize: 16,
     color: globalStyles.textOnSecondaryColor,
+  },
+
+  buttons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+
+  buttonsHidden: {
+    display: "none",
   },
 
   buttonEdit: {
@@ -376,7 +493,7 @@ const styles = StyleSheet.create({
   },
 
   buttonSave: {
-    display: "none",
+    // display: "none",
     width: "50%",
     borderTopLeftRadius: 15,
     borderBottomLeftRadius: 15,
@@ -386,7 +503,7 @@ const styles = StyleSheet.create({
   },
 
   buttonCancel: {
-    display: "none",
+    // display: "none",
     width: "50%",
     borderTopRightRadius: 15,
     borderBottomRightRadius: 15,
@@ -394,6 +511,8 @@ const styles = StyleSheet.create({
     padding: 7,
     alignItems: "center",
   },
+
+  // buttonCancelHidden:
 
   buttonText: {
     fontFamily: "Poppins_500Medium",
@@ -419,6 +538,11 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
 
+  textInputBlocked: {
+    color: "darkslategray",
+    backgroundColor: "lightcyan",
+  },
+
   textError: {
     // overflow: "hidden",
     fontFamily: "Poppins_500Medium",
@@ -442,6 +566,7 @@ const styles = StyleSheet.create({
   imageText: {
     fontFamily: "Poppins_500Medium",
     fontSize: 15,
+    color: globalStyles.blueColor,
   },
 
   divider: {
