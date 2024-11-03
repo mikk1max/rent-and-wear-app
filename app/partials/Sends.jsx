@@ -12,7 +12,8 @@ import { globalStyles } from "../utils/style";
 import AdSendCard from "../components/AdSendCard";
 import { ScrollView } from "react-native-gesture-handler";
 import { TouchableOpacity } from "react-native";
-import { FontAwesome6 } from "@expo/vector-icons";
+import { useCustomFonts } from "../utils/fonts";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 import { ref, onValue } from "firebase/database";
 import { db } from "../../firebaseConfig";
@@ -37,6 +38,9 @@ const statuses = [
 ];
 
 const SendsView = () => {
+  const fontsLoaded = useCustomFonts();
+  if (!fontsLoaded) return null;
+
   const [products, setProducts] = useState([]);
   const [activeStatus, setActiveStatus] = useState("All");
 
