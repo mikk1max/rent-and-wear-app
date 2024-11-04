@@ -17,26 +17,18 @@ import { globalStyles } from "../utils/style";
 import { useForm, Controller } from "react-hook-form";
 import { Divider } from "react-native-elements";
 
-import { ref, onValue } from "firebase/database";
+import { ref, onValue, update } from "firebase/database";
 import { db } from "../../firebaseConfig";
 
 // Get the screen dimensions
 const { width } = Dimensions.get("window");
-
-// User's data
-const defaultUser = {
-  name: "Bob",
-  surname: "Smith",
-  email: "b.smith@pollub.edu.pl",
-};
 
 const SettingsView = () => {
   const fontsLoaded = useCustomFonts();
   if (!fontsLoaded) return null;
 
   // User
-  // const [user, setUser] = useState();
-  var userTmp = null;
+  const [user, setUser] = useState([]);
   useEffect(() => {
     const usersRef = ref(db, "users");
     onValue(usersRef, (snapshot) => {
@@ -46,13 +38,24 @@ const SettingsView = () => {
           id: key,
           ...data[key],
         }));
-        // setUser(usersArray[0]);
-        userTmp = usersArray[1];
-        console.log(userTmp);
+        setUser(usersArray[0]);
       }
     });
   }, []);
-  const [user, setUser] = useState(defaultUser);
+
+  // Funkcja do zapisu zmodyfikowanego użytkownika do bazy danych
+  const saveUser = (currentUser, fieldName) => {
+    const userRef = ref(db, `users/${currentUser.id}`); // Ustaw ścieżkę do konkretnego użytkownika za pomocą jego ID
+    update(userRef, {
+      [fieldName]: currentUser[fieldName], // Aktualizuj pole
+    })
+      .then(() => {
+        console.log(`User ${fieldName} updated successfully!`);
+      })
+      .catch((error) => {
+        console.error(`Error updating user ${fieldName}: `, error);
+      });
+  };
 
   // Name form
   const {
@@ -88,6 +91,7 @@ const SettingsView = () => {
 
   const onSubmitName = (data) => {
     user.name = data.name;
+    saveUser(user, "name");
 
     setEditableName(false);
     setNameTextInputStyle([styles.textInput, styles.textInputBlocked]);
@@ -135,6 +139,7 @@ const SettingsView = () => {
 
   const onSubmitSurname = (data) => {
     user.surname = data.surname;
+    saveUser(user, "surname");
 
     setEditableSurname(false);
     setSurnameTextInputStyle([styles.textInput, styles.textInputBlocked]);
@@ -182,6 +187,7 @@ const SettingsView = () => {
 
   const onSubmitEmail = (data) => {
     user.email = data.email.toLowerCase();
+    saveUser(user, "email");
 
     setEditableEmail(false);
     setEmailTextInputStyle([styles.textInput, styles.textInputBlocked]);
@@ -194,6 +200,13 @@ const SettingsView = () => {
     setEmailTextInputStyle([styles.textInput, styles.textInputBlocked]);
     setEmailButtonsStyle(styles.buttonsHidden);
   };
+
+  // Standard TextInput atributes like onChange, value etc.
+  // const standartTextInputAtributes = {
+  //   onBlur: { onBlur },
+  //   onChangeText: { onChange },
+  //   value: { value },
+  // };
 
   return (
     <View style={{ flex: 1, backgroundColor: globalStyles.backgroundColor }}>
@@ -222,11 +235,6 @@ const SettingsView = () => {
               >
                 <Text style={styles.imageText}>Edit profile picture</Text>
               </TouchableOpacity>
-              <Text>
-                {user.name} {user.surname}
-                {"\n"}
-                {user.email}
-              </Text>
             </View>
 
             <Divider style={styles.divider} />
@@ -333,7 +341,7 @@ const SettingsView = () => {
                     required: "Surname is required",
                     pattern: {
                       value:
-                        /^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+$/,
+                        /^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]*(?:[-'][A-ZĄĆĘŁŃÓŚŹŻ]?[a-ząćęłńóśźż]+)?(?:-[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]*(?:[-'][A-ZĄĆĘŁŃÓŚŹŻ]?[a-ząćęłńóśźż]+)?)?$/,
                       message: "Invalid surname format",
                     },
                   }}
@@ -342,8 +350,9 @@ const SettingsView = () => {
                       style={surnameTextInputStyle}
                       onBlur={onBlur}
                       onChangeText={onChange}
-                      placeholder="Brzęczyszczykiewicz"
                       value={value}
+                      // standartTextInputAtributes
+                      placeholder="Brzęczyszczykiewicz"
                       defaultValue={user.surname}
                       autoCapitalize="words"
                       autoComplete="family-name"
@@ -404,7 +413,7 @@ const SettingsView = () => {
                     required: "Email is required",
                     pattern: {
                       value:
-                        /^((?!\.)[\w-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/gim,
+                        /^(?!\.)[a-zA-Z0-9!#$%&'*+/=?^_`{|}~.-]{1,64}(?<!\.)@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$/,
                       message: "Invalid email format",
                     },
                   }}

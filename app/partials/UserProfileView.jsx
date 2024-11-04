@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -16,6 +16,9 @@ import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { globalStyles } from "../utils/style";
 import { useNavigation } from "@react-navigation/native";
 
+import { ref, onValue, update } from "firebase/database";
+import { db } from "../../firebaseConfig";
+
 // Get the screen dimensions
 const { width } = Dimensions.get("window");
 
@@ -27,9 +30,22 @@ const UserProfileView = () => {
   if (!fontsLoaded) return null;
 
   const navigation = useNavigation();
-  
-  const settingsLink = "settings";
-  const onPress = (link) => console.log(link);
+
+  // User
+  const [user, setUser] = useState([]);
+  useEffect(() => {
+    const usersRef = ref(db, "users");
+    onValue(usersRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const usersArray = Object.keys(data).map((key) => ({
+          id: key,
+          ...data[key],
+        }));
+        setUser(usersArray[0]);
+      }
+    });
+  }, []);
 
   return (
     <View
@@ -76,15 +92,15 @@ const UserProfileView = () => {
           >
             <View style={{ marginVertical: 0 }}>
               <Text style={styles.titleText}>Name:</Text>
-              <Text style={styles.valueText}>Bob</Text>
+              <Text style={styles.valueText}>{user.name}</Text>
             </View>
             <View style={{ marginVertical: 0 }}>
               <Text style={styles.titleText}>Surname:</Text>
-              <Text style={styles.valueText}>Smith</Text>
+              <Text style={styles.valueText}>{user.surname}</Text>
             </View>
             <View style={{ marginVertical: 0 }}>
               <Text style={styles.titleText}>E-mail:</Text>
-              <Text style={styles.valueText}>b.smith@pollub.pl</Text>
+              <Text style={styles.valueText}>{user.email}</Text>
             </View>
           </View>
         </View>
