@@ -4,6 +4,7 @@ import { Card } from "react-native-elements";
 import { globalStyles } from "../utils/style";
 import { useCustomFonts } from "../utils/fonts";
 import ProgressBarLine from "./ProgressBarLine";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 const AdSendCard = ({
   productName,
@@ -13,6 +14,7 @@ const AdSendCard = ({
   containerWidth,
   progressValue,
 }) => {
+  
   const fontsLoaded = useCustomFonts();
   if (!fontsLoaded) return null;
 
@@ -97,7 +99,8 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   productStatus: {
-    fontFamily: "Poppins_400Regular",
+    // fontFamily: "Poppins_400Regular",
+    fontFamily: "Poppins_500Medium",
     fontSize: 13,
     color: globalStyles.secondaryTextColor,
     // marginTop: 5,
