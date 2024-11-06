@@ -5,6 +5,7 @@ import SendsView from "../partials/Sends";
 import SettingsView from "../partials/SettingsView";
 import { globalStyles } from "../utils/style";
 import RentNowView from "../partials/RentNowView";
+import AddressesView from "../partials/AddressesView";
 
 const Stack = createStackNavigator();
 
@@ -47,6 +48,11 @@ const UserProfileStack = () => {
         name="SettingsView"
         component={SettingsView}
         options={{ title: "Settings", ...stackOptions }}
+      />
+      <Stack.Screen
+        name="AddressesView"
+        component={AddressesView}
+        options={{ title: "Addresses", ...stackOptions }}
       />
       <Stack.Screen
         name="RentNowView"

@@ -6,6 +6,7 @@ import { globalStyles } from "./app/utils/style";
 import SettingsView from "./app/partials/SettingsView";
 import Sends from "./app/partials/Sends";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import AddressCard from "./app/components/AddressCard";
 
 export default function App() {
   return (
@@ -15,9 +16,9 @@ export default function App() {
         backgroundColor: globalStyles.backgroundColor,
       }}
     >
-      {/* <RentNowView /> */}
-      <NavigationBar />
-      {/* <SettingsView /> */}
+      {/* <NavigationBar /> */}
+      <AddressCard />
+
       {/* <GestureHandlerRootView style={{ flex: 1 }}>
         <Sends />
       </GestureHandlerRootView> */}
