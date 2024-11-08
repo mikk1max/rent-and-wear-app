@@ -16,8 +16,8 @@ export default function App() {
         backgroundColor: globalStyles.backgroundColor,
       }}
     >
-      {/* <NavigationBar /> */}
-      <AddressCard />
+      <NavigationBar />
+      {/* <AddressCard /> */}
 
       {/* <GestureHandlerRootView style={{ flex: 1 }}>
         <Sends />

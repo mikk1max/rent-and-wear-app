@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import React from "react";
-import { Card } from "react-native-elements";
+import { Card, Divider } from "react-native-elements";
 import { globalStyles } from "../utils/style";
 import { useCustomFonts } from "../utils/fonts";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
@@ -17,40 +17,148 @@ const AddressCard = ({
   postalCode,
   city,
   country,
-  containerWidth,
+  isDefault,
+  selectAsDefaultAddress,
 }) => {
   // Fonts
   const fontsLoaded = useCustomFonts();
   if (!fontsLoaded) return null;
 
-  // Width of card
-  // const cardWidth = (containerWidth - 1 * 5);
-  const cardWidth = 200;
+  // Default address
+  let cardStyle = styles.backgroundView;
+  let star = "star";
+  if (isDefault) {
+    cardStyle = [styles.backgroundView, styles.backgroundViewDefault];
+    star = "star-half-stroke";
+  }
 
-  const onPress = () => console.log("Edytuj adres-" + id);
+  // Flat and floor numbers
+  let flatAndFloorNumber = "";
+  let flatAndFloorNumberStyle = styles.displayNone;
+  if (flatOrApartmentNumber != null && floorNumber != null) {
+    switch (floorNumber) {
+      case "0":
+        flatAndFloorNumber = flatOrApartmentNumber + ", ground floor";
+        break;
+      case "1":
+        flatAndFloorNumber = flatOrApartmentNumber + ", 1st floor";
+        break;
+      case "2":
+        flatAndFloorNumber = flatOrApartmentNumber + ", 2nd floor";
+        break;
+      case "3":
+        flatAndFloorNumber = flatOrApartmentNumber + ", 3rd floor";
+        break;
+      default:
+        flatAndFloorNumber =
+          flatOrApartmentNumber + ", " + floorNumber + "th floor";
+        break;
+    }
+    flatAndFloorNumberStyle = styles.textWithIcon;
+  } else if (flatOrApartmentNumber != null && floorNumber === null) {
+    flatAndFloorNumber = flatOrApartmentNumber;
+    flatAndFloorNumberStyle = styles.textWithIcon;
+  } else if (flatOrApartmentNumber === null && floorNumber != null) {
+    switch (floorNumber) {
+      case "0":
+        flatAndFloorNumber = "Ground floor";
+        break;
+      case "1":
+        flatAndFloorNumber = "1st floor";
+        break;
+      case "2":
+        flatAndFloorNumber = "2nd floor";
+        break;
+      case "3":
+        flatAndFloorNumber = "3rd floor";
+        break;
+      default:
+        flatAndFloorNumber = floorNumber + "th floor";
+        break;
+    }
+    flatAndFloorNumberStyle = styles.textWithIcon;
+  }
+
+  // Postal code + City + Country
+  const postalCodeCityCountry = postalCode + " " + city + ", " + country;
 
   return (
-    <View style={[styles.backgroundView, { width: cardWidth }]}>
-      <Text>Adressee</Text>
-			<Text>{adresse}</Text>
-			<Text>Phone number</Text>
-			<Text>{phoneNumber}</Text>
-			<Text>E-mail</Text>
-			<Text>{email}</Text>
-			<Text>Street</Text>
-			<Text>{street}</Text>
-			<Text>Building number</Text>
-			<Text>{buildingNumber}</Text>
-			<Text>Flat/Apartment number</Text>
-			<Text>{flatOrApartmentNumber}</Text>
-			<Text>Floor number</Text>
-			<Text>{floorNumber}</Text>
-			<Text>Postal code</Text>
-			<Text>{postalCode}</Text>
-			<Text>City</Text>
-			<Text>{city}</Text>
-			<Text>Country</Text>
-			<Text>{country}</Text>
+    <View style={cardStyle}>
+      <View style={styles.adresseWithButtons}>
+        <Text style={styles.adresse}>{adresse}</Text>
+        <View style={styles.buttons}>
+          <TouchableOpacity onPress={() => selectAsDefaultAddress(id)}>
+            <FontAwesome6
+              name={star}
+              size={20}
+              color={globalStyles.textOnAccentColor}
+              style={styles.button}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <FontAwesome6
+              name="edit"
+              size={20}
+              color={globalStyles.textOnAccentColor}
+              style={styles.button}
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <Divider style={styles.divider} />
+
+      {/* Phone number */}
+      <View style={styles.textWithIcon}>
+        <FontAwesome6
+          name="phone"
+          size={15}
+          color={globalStyles.textOnSecondaryColor}
+        />
+        <Text style={styles.text}>{phoneNumber}</Text>
+      </View>
+
+      {/* E-mail */}
+      <View style={styles.textWithIcon}>
+        <FontAwesome6
+          name="at"
+          size={15}
+          color={globalStyles.textOnSecondaryColor}
+        />
+        <Text style={styles.text}>{email}</Text>
+      </View>
+
+      {/* Street + Building bumber */}
+      <View style={styles.textWithIcon}>
+        <FontAwesome6
+          name="building"
+          size={15}
+          color={globalStyles.textOnSecondaryColor}
+        />
+        <Text style={styles.text}>
+          {street} {buildingNumber}
+        </Text>
+      </View>
+
+      {/* Flat number + Floor number */}
+      <View style={flatAndFloorNumberStyle}>
+        <FontAwesome6
+          name="door-open"
+          size={15}
+          color={globalStyles.textOnSecondaryColor}
+        />
+        <Text style={styles.text}>{flatAndFloorNumber}</Text>
+      </View>
+
+      {/* Postal code + City + Country */}
+      <View style={styles.textWithIcon}>
+        <FontAwesome6
+          name="city"
+          size={15}
+          color={globalStyles.textOnSecondaryColor}
+        />
+        <Text style={styles.text}>{postalCodeCityCountry}</Text>
+      </View>
     </View>
   );
 };
@@ -59,11 +167,67 @@ export default AddressCard;
 
 const styles = StyleSheet.create({
   backgroundView: {
-    flrx: 1,
-    marginTop: 50,
-		marginLeft: 20,
-		borderRadius: 15,
-		padding: 10,
-    backgroundColor: "lightblue",
+    flex: 1,
+    width: "100%",
+    borderRadius: 15,
+    padding: 20,
+    backgroundColor: globalStyles.secondaryColor,
+    color: globalStyles.textOnSecondaryColor,
+  },
+
+  backgroundViewDefault: {
+    borderWidth: 3,
+    borderColor: globalStyles.textOnSecondaryColor,
+  },
+
+  adresseWithButtons: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+
+  adresse: {
+    width: "70%",
+    color: globalStyles.accentColor,
+    fontFamily: "WorkSans_900Black",
+    fontSize: 18,
+  },
+
+  buttons: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    gap: 10,
+  },
+
+  button: {
+    backgroundColor: globalStyles.accentColor,
+    borderRadius: 15,
+    padding: 7,
+  },
+
+  divider: {
+    marginVertical: 10,
+    height: 2,
+    backgroundColor: globalStyles.accentColor,
+  },
+
+  textWithIcon: {
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    gap: 5,
+  },
+
+  text: {
+    width: "auto",
+    fontFamily: "Poppins_500Medium",
+    fontSize: 14,
+    color: globalStyles.textOnSecondaryColor,
+  },
+
+  displayNone: {
+    display: "none",
   },
 });
