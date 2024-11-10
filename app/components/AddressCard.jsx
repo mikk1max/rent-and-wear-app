@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Card, Divider } from "react-native-elements";
 import { globalStyles } from "../utils/style";
 import { useCustomFonts } from "../utils/fonts";
@@ -19,6 +19,8 @@ const AddressCard = ({
   country,
   isDefault,
   selectAsDefaultAddress,
+  openAddressForm,
+  openDeleteConfirmation,
 }) => {
   // Fonts
   const fontsLoaded = useCustomFonts();
@@ -35,7 +37,7 @@ const AddressCard = ({
   // Flat and floor numbers
   let flatAndFloorNumber = "";
   let flatAndFloorNumberStyle = styles.displayNone;
-  if (flatOrApartmentNumber != null && floorNumber != null) {
+  if (flatOrApartmentNumber != "" && floorNumber != "") {
     switch (floorNumber) {
       case "0":
         flatAndFloorNumber = flatOrApartmentNumber + ", ground floor";
@@ -55,22 +57,22 @@ const AddressCard = ({
         break;
     }
     flatAndFloorNumberStyle = styles.textWithIcon;
-  } else if (flatOrApartmentNumber != null && floorNumber === null) {
+  } else if (flatOrApartmentNumber != "" && floorNumber === "") {
     flatAndFloorNumber = flatOrApartmentNumber;
     flatAndFloorNumberStyle = styles.textWithIcon;
-  } else if (flatOrApartmentNumber === null && floorNumber != null) {
+  } else if (flatOrApartmentNumber === "" && floorNumber != "") {
     switch (floorNumber) {
       case "0":
         flatAndFloorNumber = "Ground floor";
         break;
-      case "1":
-        flatAndFloorNumber = "1st floor";
+      case "1" || "-1":
+        flatAndFloorNumber = floorNumber + "st floor";
         break;
-      case "2":
-        flatAndFloorNumber = "2nd floor";
+      case "2" || "-2":
+        flatAndFloorNumber = floorNumber + "nd floor";
         break;
-      case "3":
-        flatAndFloorNumber = "3rd floor";
+      case "3" || "-3":
+        flatAndFloorNumber = floorNumber + "rd floor";
         break;
       default:
         flatAndFloorNumber = floorNumber + "th floor";
@@ -79,85 +81,119 @@ const AddressCard = ({
     flatAndFloorNumberStyle = styles.textWithIcon;
   }
 
+  let emailStyle = styles.displayNone;
+  if (email != "") {
+    emailStyle = styles.textWithIcon
+  }
+
+  let phoneNumberStyle = styles.displayNone;
+  if (phoneNumber != "") {
+    phoneNumberStyle = styles.textWithIcon;
+  }
+
   // Postal code + City + Country
   const postalCodeCityCountry = postalCode + " " + city + ", " + country;
 
   return (
-    <View style={cardStyle}>
-      <View style={styles.adresseWithButtons}>
-        <Text style={styles.adresse}>{adresse}</Text>
-        <View style={styles.buttons}>
-          <TouchableOpacity onPress={() => selectAsDefaultAddress(id)}>
-            <FontAwesome6
-              name={star}
-              size={20}
-              color={globalStyles.textOnAccentColor}
+    <View>
+      <View style={cardStyle}>
+        <View style={styles.adresseWithButtons}>
+          <Text style={styles.adresse}>{adresse}</Text>
+          <View style={styles.buttons}>
+            <TouchableOpacity
+              onPress={() => selectAsDefaultAddress(id)}
               style={styles.button}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <FontAwesome6
-              name="edit"
-              size={20}
-              color={globalStyles.textOnAccentColor}
+              activeOpacity={0.8}
+            >
+              <FontAwesome6
+                name={star}
+                size={20}
+                color={globalStyles.textOnAccentColor}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => openAddressForm(id)}
               style={styles.button}
-            />
-          </TouchableOpacity>
+              activeOpacity={0.8}
+            >
+              <FontAwesome6
+                name="edit"
+                size={20}
+                color={globalStyles.textOnAccentColor}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => openDeleteConfirmation(id)}
+              style={[styles.button, styles.buttonDelete]}
+              activeOpacity={0.8}
+            >
+              <FontAwesome6
+                name="trash-can"
+                size={20}
+                color={globalStyles.textOnAccentColor}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
 
-      <Divider style={styles.divider} />
+        <Divider style={styles.divider} />
 
-      {/* Phone number */}
-      <View style={styles.textWithIcon}>
-        <FontAwesome6
-          name="phone"
-          size={15}
-          color={globalStyles.textOnSecondaryColor}
-        />
-        <Text style={styles.text}>{phoneNumber}</Text>
-      </View>
+        {/* Phone number */}
+        <View style={phoneNumberStyle}>
+          <FontAwesome6
+            name="phone"
+            size={15}
+            color={globalStyles.textOnSecondaryColor}
+            width="7%"
+          />
+          <Text style={styles.text}>{phoneNumber}</Text>
+        </View>
 
-      {/* E-mail */}
-      <View style={styles.textWithIcon}>
-        <FontAwesome6
-          name="at"
-          size={15}
-          color={globalStyles.textOnSecondaryColor}
-        />
-        <Text style={styles.text}>{email}</Text>
-      </View>
+        {/* E-mail */}
+        <View style={emailStyle}>
+          <FontAwesome6
+            name="at"
+            size={15}
+            color={globalStyles.textOnSecondaryColor}
+            width="7%"
+          />
+          <Text style={styles.text}>{email}</Text>
+        </View>
 
-      {/* Street + Building bumber */}
-      <View style={styles.textWithIcon}>
-        <FontAwesome6
-          name="building"
-          size={15}
-          color={globalStyles.textOnSecondaryColor}
-        />
-        <Text style={styles.text}>
-          {street} {buildingNumber}
-        </Text>
-      </View>
+        {/* Street + Building bumber */}
+        <View style={styles.textWithIcon}>
+          <FontAwesome6
+            name="building"
+            size={15}
+            color={globalStyles.textOnSecondaryColor}
+            width="7%"
+          />
+          <Text style={styles.text}>
+            {street} {buildingNumber}
+          </Text>
+        </View>
 
-      {/* Flat number + Floor number */}
-      <View style={flatAndFloorNumberStyle}>
-        <FontAwesome6
-          name="door-open"
-          size={15}
-          color={globalStyles.textOnSecondaryColor}
-        />
-        <Text style={styles.text}>{flatAndFloorNumber}</Text>
-      </View>
+        {/* Flat number + Floor number */}
+        <View style={flatAndFloorNumberStyle}>
+          <FontAwesome6
+            name="door-open"
+            size={15}
+            color={globalStyles.textOnSecondaryColor}
+            width="7%"
+          />
+          <Text style={styles.text}>{flatAndFloorNumber}</Text>
+        </View>
 
-      {/* Postal code + City + Country */}
-      <View style={styles.textWithIcon}>
-        <FontAwesome6
-          name="city"
-          size={15}
-          color={globalStyles.textOnSecondaryColor}
-        />
-        <Text style={styles.text}>{postalCodeCityCountry}</Text>
+        {/* Postal code + City + Country */}
+        <View style={styles.textWithIcon}>
+          <FontAwesome6
+            name="city"
+            size={15}
+            color={globalStyles.textOnSecondaryColor}
+            width="7%"
+          />
+          <Text style={styles.text}>{postalCodeCityCountry}</Text>
+        </View>
       </View>
     </View>
   );
@@ -187,7 +223,7 @@ const styles = StyleSheet.create({
   },
 
   adresse: {
-    width: "70%",
+    width: "60%",
     color: globalStyles.accentColor,
     fontFamily: "WorkSans_900Black",
     fontSize: 18,
@@ -204,6 +240,10 @@ const styles = StyleSheet.create({
     backgroundColor: globalStyles.accentColor,
     borderRadius: 15,
     padding: 7,
+  },
+
+  buttonDelete: {
+    backgroundColor: globalStyles.redColor,
   },
 
   divider: {
