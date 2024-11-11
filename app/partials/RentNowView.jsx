@@ -72,11 +72,20 @@ const RentNowView = () => {
   };
 
   const handleButtonPress = (iconName) => {
-    setActiveIcon(iconName); // Set active button
-    console.log(`${iconName} button pressed`);
+    setActiveIcon((prev) => {
+      const newActiveIcon = prev === iconName ? null : iconName;
+      console.log(
+        `${
+          newActiveIcon
+            ? `${iconName} button pressed`
+            : `${iconName} button unpressed`
+        }`
+      );
+      return newActiveIcon;
+    });
   };
 
-  const icons = ["shirt", "user-tie", "mitten", "hat-wizard", "glasses"];
+  const icons = ["t-shirt", "dress", "shorts", "coat", "sneakers"];
 
   const fontsLoaded = useCustomFonts();
 
@@ -112,6 +121,7 @@ const RentNowView = () => {
               {icons.map((iconName) => (
                 <IconButton
                   key={iconName}
+                  filePath={`app-icons/${iconName}.svg`}
                   iconName={iconName}
                   onPress={() => handleButtonPress(iconName)}
                   containerWidth={width - 60}
@@ -156,7 +166,7 @@ const styles = StyleSheet.create({
     backgroundColor: globalStyles.backgroundColor,
     paddingHorizontal: 25,
     justifyContent: "flex-start",
-    marginTop: Platform.OS === "android" ? StatusBar.currentHeight + 10 : 60,
+    // marginTop: Platform.OS === "android" ? StatusBar.currentHeight + 10 : 60,
   },
   categoryContainer: {
     alignItems: "center",

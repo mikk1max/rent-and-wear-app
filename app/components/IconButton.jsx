@@ -1,16 +1,28 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+// import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { globalStyles } from "../utils/style";
+import { SvgUri } from "react-native-svg";
+import fetchSVG from "../utils/fetchSVG";
 
-const IconButton = ({ iconName, onPress, containerWidth, isActive }) => {
+const IconButton = ({ filePath, ...props }) => {
+  const [svgUrl, setSvgUrl] = useState(null);
+
+  useEffect(() => {
+    async function loadSvg() {
+      const url = await fetchSVG(filePath);
+      setSvgUrl(url);
+    }
+    loadSvg();
+  }, [filePath]);
+
   // Obliczanie rozmiaru przycisku
-  const buttonSize = (containerWidth - 10 * 4) / 5; // 10 to odstęp między przyciskami
+  const buttonSize = (props.containerWidth - 10 * 4) / 5; // 10 to odstęp między przyciskami
 
-  const backgroundColor = isActive
+  const backgroundColor = props.isActive
     ? globalStyles.accentColor
     : globalStyles.secondaryColor;
-  const iconColor = isActive
+  const iconColor = props.isActive
     ? globalStyles.textOnAccentColor
     : globalStyles.accentColor;
 
@@ -18,10 +30,16 @@ const IconButton = ({ iconName, onPress, containerWidth, isActive }) => {
     <View style={styles.container(buttonSize)}>
       <TouchableOpacity
         style={[styles.iconBtn, { backgroundColor }]}
-        onPress={onPress}
+        onPress={props.onPress}
         activeOpacity={0.8}
       >
-        <FontAwesome6 name={iconName} size={25} color={iconColor} />
+        {/* <FontAwesome6 name={props.iconName} size={25} color={iconColor} /> */}
+        <SvgUri
+          uri={svgUrl}
+          width={35}
+          height={35}
+          style={{ fill: iconColor }}
+        />
       </TouchableOpacity>
     </View>
   );

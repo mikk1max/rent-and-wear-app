@@ -8,16 +8,19 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
+  SafeAreaView,
 } from "react-native";
 import { useCustomFonts } from "../utils/fonts";
-import { ActivityIndicator } from "react-native";
 import { Image } from "react-native-elements";
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+// import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { globalStyles } from "../utils/style";
 import { useNavigation } from "@react-navigation/native";
 
 import { ref, onValue, update } from "firebase/database";
 import { db } from "../../firebaseConfig";
+
+import fetchSVG from "../utils/fetchSVG";
+import { SvgUri } from "react-native-svg";
 
 // Get the screen dimensions
 const { width } = Dimensions.get("window");
@@ -26,6 +29,30 @@ const dataCardWidth = width - 50 - 100 - 15;
 // const dataCardWidth = width - 50 - 100;
 
 const UserProfileView = () => {
+  const [settingsSvg, setSettingsSvg] = useState(null);
+  const [addressesSvg, setAddressesSvg] = useState(null);
+  const [sendsSvg, setSendsSvg] = useState(null);
+  const [getsSvg, setGetsSvg] = useState(null);
+  const [logOutSvg, setLogOutSvg] = useState(null);
+
+  useEffect(() => {
+    async function loadSvg() {
+      const settingsIcon = await fetchSVG("app-icons/settings.svg");
+      const addressesIcon = await fetchSVG("app-icons/addresses.svg");
+      const sendsIcon = await fetchSVG("app-icons/sends.svg");
+      const getsIcon = await fetchSVG("app-icons/gets.svg");
+      const logOutIcon = await fetchSVG("app-icons/logout.svg");
+
+      setSettingsSvg(settingsIcon);
+      setAddressesSvg(addressesIcon);
+      setSendsSvg(sendsIcon);
+      setGetsSvg(getsIcon);
+      setLogOutSvg(logOutIcon);
+    }
+
+    loadSvg();
+  }, []);
+
   const fontsLoaded = useCustomFonts();
   if (!fontsLoaded) return null;
 
@@ -48,7 +75,7 @@ const UserProfileView = () => {
   }, []);
 
   return (
-    <View
+    <SafeAreaView
       style={{
         flex: 1,
         backgroundColor: globalStyles.backgroundColor,
@@ -74,7 +101,6 @@ const UserProfileView = () => {
               // borderTopLeftRadius: 15,
               // borderBottomLeftRadius: 15,
             }}
-            PlaceholderContent={<ActivityIndicator />}
           />
           <View
             style={{
@@ -114,11 +140,7 @@ const UserProfileView = () => {
               activeOpacity={0.8}
               onPress={() => navigation.navigate("SettingsView")}
             >
-              <FontAwesome6
-                name="gears"
-                size={25}
-                color={globalStyles.textOnPrimaryColor}
-              />
+              <SvgUri uri={settingsSvg} {...iconParams} />
               <Text style={styles.buttonText}>Settings</Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -126,56 +148,46 @@ const UserProfileView = () => {
               activeOpacity={0.8}
               onPress={() => console.log("Link to Addresses-page")}
             >
-              <FontAwesome6
-                name="house-user"
-                size={25}
-                color={globalStyles.textOnPrimaryColor}
-              />
+              <SvgUri uri={addressesSvg} {...iconParams} />
               <Text style={styles.buttonText}>Addresses</Text>
             </TouchableOpacity>
             <View style={{ flexDirection: "row", gap: 15 }}>
               <TouchableOpacity
                 style={[styles.button, styles.buttonRent]}
                 activeOpacity={0.8}
-                onPress={() => navigation.navigate("Sends")}
+                onPress={() => navigation.navigate("SendsView")}
               >
-                <FontAwesome6
-                  name="circle-up"
-                  size={25}
-                  color={globalStyles.textOnPrimaryColor}
-                />
+                <SvgUri uri={sendsSvg} {...iconParams} />
                 <Text style={styles.buttonText}>Sends</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.button, styles.buttonRent]}
                 activeOpacity={0.8}
-                onPress={() => console.log("Link to Gets-page")}
+                onPress={() => navigation.navigate("GetsView")}
               >
-                <FontAwesome6
-                  name="circle-down"
-                  size={25}
-                  color={globalStyles.textOnPrimaryColor}
-                />
+                <SvgUri uri={getsSvg} {...iconParams} />
                 <Text style={styles.buttonText}>Gets</Text>
               </TouchableOpacity>
             </View>
             <TouchableOpacity
               style={[styles.button, styles.buttonLogOut]}
               activeOpacity={0.8}
-              onPress={() => console.log("Succesfully logget out!")}
+              onPress={() => navigation.navigate("LogOut")}
             >
-              <FontAwesome6
-                name="right-from-bracket"
-                size={25}
-                color={globalStyles.textOnPrimaryColor}
-              />
+              <SvgUri uri={logOutSvg} {...iconParams} />
               <Text style={styles.buttonText}>Log Out</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
       </View>
-    </View>
+    </SafeAreaView>
   );
+};
+
+const iconParams = {
+  width: 30,
+  height: 30,
+  style: { fill: globalStyles.textOnPrimaryColor },
 };
 
 const styles = StyleSheet.create({
@@ -184,7 +196,7 @@ const styles = StyleSheet.create({
     backgroundColor: globalStyles.backgroundColor,
     paddingHorizontal: 25,
     justifyContent: "flex-start",
-    marginTop: Platform.OS === "android" ? StatusBar.currentHeight + 10 : 60,
+    // marginTop: Platform.OS === "android" ? StatusBar.currentHeight + 10 : 60,
     alignItems: "center",
   },
   titleText: {
