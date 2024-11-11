@@ -124,7 +124,7 @@ const UserProfileView = () => {
             <TouchableOpacity
               style={styles.button}
               activeOpacity={0.8}
-              onPress={() => console.log("Link to Addresses-page")}
+              onPress={() => navigation.navigate("AddressesView")}
             >
               <FontAwesome6
                 name="house-user"
