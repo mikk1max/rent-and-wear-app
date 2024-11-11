@@ -1,9 +1,11 @@
+import NavigationBar from "./NavigationBar";
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import UserProfileView from "../partials/UserProfileView";
-import SendsView from "../partials/Sends";
+import SendsGetsView from "../partials/SendsGetsView";
 import SettingsView from "../partials/SettingsView";
 import { globalStyles } from "../utils/style";
+import WelcomeView from "../partials/WelcomeView";
 import RentNowView from "../partials/RentNowView";
 import AddressesView from "../partials/AddressesView";
 
@@ -22,22 +24,39 @@ const stackOptions = {
   },
 };
 
-const UserProfileStack = () => {
+export default function Navigation() {
   return (
+    // *Welcome screen
     <Stack.Navigator
-      initialRouteName="UserProfileView"
+      initialRouteName="Welcome"
       screenOptions={{ headerShown: false }}
     >
+      <Stack.Screen name="Welcome" component={WelcomeView} />
+      <Stack.Screen name="MainApp" component={NavigationBar} />
+      {/* <Stack.Screen name="LogInView" component={LogInView} /> */}
+
+      {/* TODO:UserProfile screen */}
       <Stack.Screen
         name="UserProfileView"
         component={UserProfileView}
         screenOptions={{ headerShown: false }}
       />
       <Stack.Screen
-        name="Sends"
-        component={SendsView}
+        name="SendsView"
+        component={SendsGetsView}
         options={
-          { title: "Your ads", ...stackOptions }
+          { title: "Your sends", ...stackOptions }
+          // headerStatusBarHeight: 44,
+          // headerBackground: () => {
+          //   backgroundColor: globalStyles.accentColor;
+          // },
+        }
+      />
+      <Stack.Screen
+        name="GetsView"
+        component={SendsGetsView}
+        options={
+          { title: "Your gets", ...stackOptions }
           // headerStatusBarHeight: 44,
           // headerBackground: () => {
           //   backgroundColor: globalStyles.accentColor;
@@ -48,6 +67,11 @@ const UserProfileStack = () => {
         name="SettingsView"
         component={SettingsView}
         options={{ title: "Settings", ...stackOptions }}
+      />
+      <Stack.Screen
+        name="LogOut"
+        component={WelcomeView}
+        options={{ ...stackOptions, headerShown: false }}
       />
       <Stack.Screen
         name="AddressesView"
@@ -61,6 +85,4 @@ const UserProfileStack = () => {
       />
     </Stack.Navigator>
   );
-};
-
-export default UserProfileStack;
+}
