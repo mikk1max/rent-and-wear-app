@@ -1,18 +1,31 @@
-import React from "react";
-import { Text, View, StyleSheet, Platform } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
+import React, { useState, useEffect } from "react";
+import { Text, View, StyleSheet, Platform, SafeAreaView } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+// import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import RentNowView from "../partials/RentNowView";
 import RentOutView from "../partials/RentOutView";
 import { useCustomFonts } from "../utils/fonts";
 import { globalStyles } from "../utils/style";
-import UserProfileStack from "./UserProfileStack";
+import fetchSVG from "../utils/fetchSVG";
+import { SvgUri } from "react-native-svg";
+import UserProfileView from "../partials/UserProfileView";
 
 const Tab = createBottomTabNavigator();
 
 const renderIcon = (route, focused) => {
-  const iconStyle = {
+  const [svgUrl, setSvgUrl] = useState(null);
+
+  useEffect(() => {
+    async function loadSvg() {
+      const url = await fetchSVG(
+        focused ? `app-icons/user-fill.svg` : `app-icons/user-stroke.svg`
+      );
+      setSvgUrl(url);
+    }
+    loadSvg();
+  }, [focused]);
+
+  const textAndIconStyle = {
     fontFamily: "WorkSans_900Black",
     fontSize: 18,
     color: focused ? globalStyles.textOnAccentColor : globalStyles.accentColor,
@@ -21,18 +34,17 @@ const renderIcon = (route, focused) => {
   switch (route.name) {
     case "UserProfile":
       return (
-        <FontAwesome6
-          name="user"
-          size={24}
-          color={
-            focused ? globalStyles.textOnAccentColor : globalStyles.accentColor
-          }
+        <SvgUri
+          uri={svgUrl}
+          width={32}
+          height={32}
+          style={{ fill: textAndIconStyle.color }}
         />
       );
     case "RentOut":
-      return <Text style={iconStyle}>Rent out</Text>;
+      return <Text style={textAndIconStyle}>Rent out</Text>;
     case "RentNow":
-      return <Text style={iconStyle}>Rent now</Text>;
+      return <Text style={textAndIconStyle}>Rent now</Text>;
     default:
       return null;
   }
@@ -44,7 +56,10 @@ const NavigationBar = () => {
   if (!fontsLoaded) return null;
 
   return (
-    <NavigationContainer>
+    // <NavigationContainer>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: globalStyles.backgroundColor }}
+    >
       <View style={styles.navbarContainer}>
         <Tab.Navigator
           screenOptions={({ route }) => ({
@@ -62,7 +77,7 @@ const NavigationBar = () => {
           <Tab.Screen name="RentNow" component={RentNowView} />
           <Tab.Screen
             name="UserProfile"
-            component={UserProfileStack}
+            component={UserProfileView}
             style={styles.tabStyle}
           />
           <Tab.Screen
@@ -72,14 +87,16 @@ const NavigationBar = () => {
           />
         </Tab.Navigator>
       </View>
-    </NavigationContainer>
+    </SafeAreaView>
+    // </NavigationContainer>
   );
 };
 
 const styles = StyleSheet.create({
   navbarContainer: {
     flex: 1,
-    marginBottom: Platform.OS == "android" ? 20 : 30,
+    // backgroundColor: "red",
+    // marginBottom: Platform.OS == "android" ? 20 : 30,
   },
   tabBarStyle: {
     width: "86%",
@@ -92,6 +109,8 @@ const styles = StyleSheet.create({
     borderColor: globalStyles.accentColor,
     boxShadow: "none",
     shadowColor: "transparent",
+    height: 50,
+    paddingBottom: 0,
   },
   tabBarItemStyle: {
     borderRightWidth: 1,
