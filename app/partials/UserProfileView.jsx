@@ -146,7 +146,7 @@ const UserProfileView = () => {
             <TouchableOpacity
               style={styles.button}
               activeOpacity={0.8}
-              onPress={() => console.log("Link to Addresses-page")}
+              onPress={() => navigation.navigate("AddressesView")}
             >
               <SvgUri uri={addressesSvg} {...iconParams} />
               <Text style={styles.buttonText}>Addresses</Text>

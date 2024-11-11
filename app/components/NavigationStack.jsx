@@ -6,6 +6,8 @@ import SendsGetsView from "../partials/SendsGetsView";
 import SettingsView from "../partials/SettingsView";
 import { globalStyles } from "../utils/style";
 import WelcomeView from "../partials/WelcomeView";
+import RentNowView from "../partials/RentNowView";
+import AddressesView from "../partials/AddressesView";
 
 const Stack = createStackNavigator();
 
@@ -70,6 +72,16 @@ export default function Navigation() {
         name="LogOut"
         component={WelcomeView}
         options={{ ...stackOptions, headerShown: false }}
+      />
+      <Stack.Screen
+        name="AddressesView"
+        component={AddressesView}
+        options={{ title: "Addresses", ...stackOptions }}
+      />
+      <Stack.Screen
+        name="RentNowView"
+        component={RentNowView}
+        // options={{ title: "Settings", ...stackOptions }}
       />
     </Stack.Navigator>
   );
