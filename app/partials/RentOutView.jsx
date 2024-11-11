@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
     backgroundColor: globalStyles.backgroundColor,
     paddingHorizontal: 25,
     justifyContent: "flex-start",
-    marginTop: Platform.OS === "android" ? StatusBar.currentHeight + 10 : 60,
+    // marginTop: Platform.OS === "android" ? StatusBar.currentHeight + 10 : 60,
   },
 });
 

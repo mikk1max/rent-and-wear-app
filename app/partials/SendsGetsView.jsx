@@ -1,13 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  StyleSheet,
-  View,
-  Dimensions,
-  Platform,
-  StatusBar,
-  Text,
-  Image,
-} from "react-native";
+import { StyleSheet, View, Dimensions, Text } from "react-native";
 import { globalStyles } from "../utils/style";
 import AdSendCard from "../components/AdSendCard";
 import { ScrollView } from "react-native-gesture-handler";
@@ -18,6 +10,9 @@ import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { ref, onValue } from "firebase/database";
 import { db } from "../../firebaseConfig";
 
+import fetchSVG from "../utils/fetchSVG";
+import { SvgUri } from "react-native-svg";
+
 const { width } = Dimensions.get("window");
 
 const calculatePrice = (dateFrom, dateTo, price) => {
@@ -26,42 +21,59 @@ const calculatePrice = (dateFrom, dateTo, price) => {
   return days * price;
 };
 
-const statuses = [
-  "All",
-  "Pending",
-  "Reserved",
-  "Rented",
-  "Sent for use",
-  "In use",
-  "Sent back",
-  "Done",
-];
-
-const SendsView = () => {
+const SendsGetsView = () => {
   const fontsLoaded = useCustomFonts();
   if (!fontsLoaded) return null;
 
-  const [products, setProducts] = useState([]);
+  // const [products, setProducts] = useState([]);
+  const [announcements, setAnnouncements] = useState([]);
+  const [statuses, setStatuses] = useState([]);
   const [activeStatus, setActiveStatus] = useState("All");
+  const [boxSvg, setBoxSvg] = useState(null);
 
   useEffect(() => {
-    const productsRef = ref(db, "products");
-    onValue(productsRef, (snapshot) => {
+    async function loadSvg() {
+      const boxIcon = await fetchSVG("app-icons/open-box.svg");
+
+      setBoxSvg(boxIcon);
+    }
+
+    loadSvg();
+  }, []);
+
+  useEffect(() => {
+    const announcementsRef = ref(db, "announcements");
+    onValue(announcementsRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
-        const productsArray = Object.keys(data).map((key) => ({
+        const announcementsArray = Object.keys(data).map((key) => ({
           id: key,
           ...data[key],
           dateFrom: new Date(data[key].dateFrom),
           dateTo: new Date(data[key].dateTo),
         }));
-        setProducts(productsArray);
+        setAnnouncements(announcementsArray);
       }
     });
   }, []);
 
-  const filteredProducts = products.filter(
-    (product) => activeStatus === "All" || product.status === activeStatus
+  useEffect(() => {
+    const statusesRef = ref(db, "statuses");
+    onValue(statusesRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const statusesArray = Object.keys(data).map((key) => ({
+          id: key,
+          ...data[key],
+        }));
+        setStatuses(statusesArray);
+      }
+    });
+  }, []);
+
+  const filteredAnnouncements = announcements.filter(
+    (announcement) =>
+      activeStatus === "All" || announcement.status.status === activeStatus
   );
 
   return (
@@ -70,25 +82,25 @@ const SendsView = () => {
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {statuses.map((status) => (
             <TouchableOpacity
-              key={status}
+              key={status.code}
               style={[
                 styles.statusBtn,
-                activeStatus === status && styles.activeStatusBtn,
+                activeStatus === status.status && styles.activeStatusBtn,
               ]}
               onPress={() =>
                 setActiveStatus((prevStatus) =>
-                  prevStatus == status ? null : status
+                  prevStatus == status.status ? "All" : status.status
                 )
               }
             >
               <Text
                 style={
-                  activeStatus === status
+                  activeStatus === status.status
                     ? styles.activeStatusText
                     : styles.inactiveStatusText
                 }
               >
-                {status}
+                {status.status}
               </Text>
             </TouchableOpacity>
           ))}
@@ -99,29 +111,30 @@ const SendsView = () => {
         <ScrollView
           contentContainerStyle={[
             styles.productsContainer,
-            { flexGrow: filteredProducts.length === 0 ? 1 : 0 },
+            { flexGrow: filteredAnnouncements.length === 0 ? 1 : 0 },
           ]}
           showsVerticalScrollIndicator={false}
         >
-          {filteredProducts.length > 0 &&
-            filteredProducts.map((product) => (
+          {filteredAnnouncements.length > 0 &&
+            filteredAnnouncements.map((announcement) => (
               <AdSendCard
-                key={product.id}
-                productName={product.name}
+                key={announcement.id}
+                productName={announcement.name}
                 productPrice={calculatePrice(
-                  product.dateFrom,
-                  product.dateTo,
-                  product.price
+                  announcement.dateFrom,
+                  announcement.dateTo,
+                  announcement.price
                 )}
-                productLink={product.link}
-                productStatus={product.status}
+                productLink={announcement.link}
+                productStatus={announcement.status.status}
                 containerWidth={width - 50}
                 progressValue={
-                  statuses.indexOf(product.status) / (statuses.length - 1)
+                  // statuses.indexOf(product.status) / (statuses.length - 1)
+                  announcement.status.code / (statuses.length - 1 - 1)
                 }
               />
             ))}
-          {filteredProducts.length === 0 && (
+          {filteredAnnouncements.length === 0 && (
             <View style={styles.noItemsContainer}>
               <Text style={styles.noItemsMessage}>
                 No advertisements found! Please check your filters.
@@ -133,9 +146,14 @@ const SendsView = () => {
                 /> */}
                 <TouchableOpacity
                   style={styles.noItemsBox}
-                  onPress={() => console.log("Rent now button pressed")}
+                  onPress={() => console.log("No items button clicked")}
                 >
-                  <FontAwesome6 name="box-open" size={64} color="black" />
+                  <SvgUri
+                    uri={boxSvg}
+                    width={100}
+                    height={100}
+                    style={{ fill: globalStyles.accentColor }}
+                  />
                   <Text style={styles.noItemsBtn}>No items found</Text>
                 </TouchableOpacity>
               </View>
@@ -231,4 +249,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SendsView;
+export default SendsGetsView;
