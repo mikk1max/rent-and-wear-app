@@ -3,7 +3,6 @@ import React from "react";
 import { Card } from "react-native-elements";
 import { globalStyles } from "../utils/style";
 import { useCustomFonts } from "../utils/fonts";
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 const ProductCard = ({
   productName,
