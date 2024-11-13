@@ -13,7 +13,7 @@ export const iconParams = {
 export const styles = StyleSheet.create({
   userCard: {
     flexDirection: "row",
-    height: 160,
+    height: 170,
   },
   userCardIMG: {
     width: 100,
@@ -34,6 +34,7 @@ export const styles = StyleSheet.create({
     // borderBottomRightRadius: 15,
     gap: 20,
     paddingHorizontal: 15,
+    // paddingVertical: 15,
   },
   fullNameText: {
     fontFamily: "WorkSans_900Black",
@@ -48,12 +49,16 @@ export const styles = StyleSheet.create({
   verificationText: {
     fontFamily: "Poppins_500Medium",
     color: globalStyles.textOnPrimaryColor,
+    alignItems: "center",
+    justifyContent: "center",
+    
   },
   verificationOpacity: {
     padding: 5,
     backgroundColor: globalStyles.primaryColor,
     borderRadius: globalStyles.BORDER_RADIUS,
     alignItems: "center",
+    justifyContent: "center",
   },
   buttonText: {
     fontFamily: "WorkSans_900Black",
