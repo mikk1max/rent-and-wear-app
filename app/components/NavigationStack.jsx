@@ -32,7 +32,11 @@ export default function Navigation() {
       screenOptions={{ headerShown: false }}
     >
       <Stack.Screen name="Welcome" component={WelcomeView} />
-      <Stack.Screen name="MainApp" component={NavigationBar} />
+      <Stack.Screen
+        name="MainApp"
+        component={NavigationBar}
+        options={{ gestureEnabled: false }}
+      />
       {/* <Stack.Screen name="LogInView" component={LogInView} /> */}
 
       {/* TODO:UserProfile screen */}
