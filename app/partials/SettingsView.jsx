@@ -1,47 +1,62 @@
 import React, { useEffect, useState } from "react";
 import {
-  StyleSheet,
   View,
-  StatusBar,
-  Platform,
-  Dimensions,
   Text,
   TouchableOpacity,
   ScrollView,
   TextInput,
-  Button,
   Image,
+  SafeAreaView,
 } from "react-native";
 import { useCustomFonts } from "../utils/fonts";
-import { globalStyles } from "../utils/style";
 import { useForm, Controller } from "react-hook-form";
 import { Divider } from "react-native-elements";
 
 import { ref, onValue, update } from "firebase/database";
 import { db } from "../../firebaseConfig";
 
-// Get the screen dimensions
-const { width } = Dimensions.get("window");
+import { fetchImgURL } from "../utils/fetchSVG";
 
-const SettingsView = () => {
+import { styles as mainStyles } from "../utils/style";
+import { styles } from "../styles/SettingsViewStyles";
+
+export default function SettingsView() {
+  const [user, setUser] = useState([]);
+  const [userProfileImg, setUserProfileImg] = useState(null);
+
   const fontsLoaded = useCustomFonts();
   if (!fontsLoaded) return null;
 
   // User
-  const [user, setUser] = useState([]);
   useEffect(() => {
     const usersRef = ref(db, "users");
     onValue(usersRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
         const usersArray = Object.keys(data).map((key) => ({
-          id: key,
           ...data[key],
         }));
-        setUser(usersArray[0]);
+        // console.log(usersArray.filter((user) => user.id === 0));
+
+        const currentUser = usersArray.find((user) => user.id == 0);
+        setUser(currentUser || {});
       }
     });
   }, []);
+
+  useEffect(() => {
+    async function loadUrl() {
+      if (user && user.id != null) {
+        try {
+          const url = await fetchImgURL(`user-avatars/${user.id}-min.jpg`);
+          setUserProfileImg(url);
+        } catch (error) {
+          console.error("Error fetching user profile image:", error);
+        }
+      }
+    }
+    loadUrl();
+  }, [user.id]);
 
   // Funkcja do zapisu zmodyfikowanego użytkownika do bazy danych
   const saveUser = (currentUser, fieldName) => {
@@ -76,7 +91,7 @@ const SettingsView = () => {
   const editName = () => {
     setEditableName(true);
     setNameTextInputStyle(styles.textInput);
-    setNameButtonsStyle(styles.buttons);
+    setNameButtonsStyle(styles.SaveCancelBtns);
 
     resetSurname();
     setEditableSurname(false);
@@ -124,7 +139,7 @@ const SettingsView = () => {
   const editSurname = () => {
     setEditableSurname(true);
     setSurnameTextInputStyle(styles.textInput);
-    setSurnameButtonsStyle(styles.buttons);
+    setSurnameButtonsStyle(styles.SaveCancelBtns);
 
     resetName();
     setEditableName(false);
@@ -172,7 +187,7 @@ const SettingsView = () => {
   const editEmail = () => {
     setEditableEmail(true);
     setEmailTextInputStyle(styles.textInput);
-    setEmailButtonsStyle(styles.buttons);
+    setEmailButtonsStyle(styles.SaveCancelBtns);
 
     resetName();
     setEditableName(false);
@@ -201,33 +216,26 @@ const SettingsView = () => {
     setEmailButtonsStyle(styles.buttonsHidden);
   };
 
-  // Standard TextInput atributes like onChange, value etc.
-  // const standartTextInputAtributes = {
-  //   onBlur: { onBlur },
-  //   onChangeText: { onChange },
-  //   value: { value },
-  // };
-
   return (
-    <View style={{ flex: 1, backgroundColor: globalStyles.backgroundColor }}>
-      <View style={styles.container}>
+    <SafeAreaView style={mainStyles.whiteBack}>
+      <View
+        style={[
+          mainStyles.container,
+          { paddingTop: 20, alignItems: "stretch" },
+        ]}
+      >
         <View style={styles.mainSection}>
-          <ScrollView showsVerticalScrollIndicator={false}>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            style={mainStyles.scrollBase}
+          >
             {/* Profile image */}
             <View style={styles.imageContainer}>
               <Image
                 source={{
-                  uri: "https://images.ctfassets.net/h6goo9gw1hh6/2sNZtFAWOdP1lmQ33VwRN3/24e953b920a9cd0ff2e1d587742a2472/1-intro-photo-final.jpg?w=1200&h=992&fl=progressive&q=70&fm=jpg",
+                  uri: userProfileImg,
                 }}
-                style={{
-                  width: 100,
-                  height: 100,
-                  borderRadius: 100,
-
-                  // marginRight: 15,
-                  // borderTopLeftRadius: 15,
-                  // borderBottomLeftRadius: 15,
-                }}
+                style={styles.userProfileImg}
               />
               <TouchableOpacity
                 activeOpacity={0.6}
@@ -242,14 +250,8 @@ const SettingsView = () => {
             {/* Name form */}
             <View>
               <View style={styles.inputContainer}>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <Text style={styles.label}>Name:</Text>
+                <View style={styles.labelContainer}>
+                  <Text style={styles.label}>First Name:</Text>
                   <TouchableOpacity
                     style={styles.buttonEdit}
                     activeOpacity={0.8}
@@ -260,18 +262,20 @@ const SettingsView = () => {
                 </View>
 
                 {errorsName.name && (
-                  <Text style={styles.textError}>
-                    {errorsName.name.message}
-                  </Text>
+                  <View style={styles.textErrorContainer}>
+                    <Text style={styles.textError}>
+                      {errorsName.name.message}
+                    </Text>
+                  </View>
                 )}
                 <Controller
                   control={controlName}
                   rules={{
-                    required: "Name is required",
+                    required: "First Name is required",
                     pattern: {
                       value:
                         /^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+(?:\s[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)?$/,
-                      message: "Invalid name format",
+                      message: "Invalid First Name format",
                     },
                   }}
                   render={({ field: { onChange, onBlur, value } }) => (
@@ -313,14 +317,8 @@ const SettingsView = () => {
             {/* Surname form */}
             <View>
               <View style={styles.inputContainer}>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <Text style={styles.label}>Surname:</Text>
+                <View style={styles.labelContainer}>
+                  <Text style={styles.label}>Last Name:</Text>
                   <TouchableOpacity
                     style={styles.buttonEdit}
                     activeOpacity={0.8}
@@ -331,18 +329,20 @@ const SettingsView = () => {
                 </View>
 
                 {errorsSurname.surname && (
-                  <Text style={styles.textError}>
-                    {errorsSurname.surname.message}
-                  </Text>
+                  <View style={styles.textErrorContainer}>
+                    <Text style={styles.textError}>
+                      {errorsSurname.surname.message}
+                    </Text>
+                  </View>
                 )}
                 <Controller
                   control={controlSurname}
                   rules={{
-                    required: "Surname is required",
+                    required: "Last Name is required",
                     pattern: {
                       value:
                         /^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]*(?:[-'][A-ZĄĆĘŁŃÓŚŹŻ]?[a-ząćęłńóśźż]+)?(?:-[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]*(?:[-'][A-ZĄĆĘŁŃÓŚŹŻ]?[a-ząćęłńóśźż]+)?)?$/,
-                      message: "Invalid surname format",
+                      message: "Invalid Last Name format",
                     },
                   }}
                   render={({ field: { onChange, onBlur, value } }) => (
@@ -385,13 +385,7 @@ const SettingsView = () => {
             {/* E-mail form */}
             <View>
               <View style={styles.inputContainer}>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
+                <View style={styles.labelContainer}>
                   <Text style={styles.label}>E-mail:</Text>
                   <TouchableOpacity
                     style={styles.buttonEdit}
@@ -403,18 +397,20 @@ const SettingsView = () => {
                 </View>
 
                 {errorsEmail.email && (
-                  <Text style={styles.textError}>
-                    {errorsEmail.email.message}
-                  </Text>
+                  <View style={styles.textErrorContainer}>
+                    <Text style={styles.textError}>
+                      {errorsEmail.email.message}
+                    </Text>
+                  </View>
                 )}
                 <Controller
                   control={controlEmail}
                   rules={{
-                    required: "Email is required",
+                    required: "E-mail is required",
                     pattern: {
                       value:
                         /^(?!\.)[a-zA-Z0-9!#$%&'*+/=?^_`{|}~.-]{1,64}(?<!\.)@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$/,
-                      message: "Invalid email format",
+                      message: "Invalid E-mail format",
                     },
                   }}
                   render={({ field: { onChange, onBlur, value } }) => (
@@ -455,134 +451,6 @@ const SettingsView = () => {
           </ScrollView>
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: globalStyles.backgroundColor,
-    paddingHorizontal: 25,
-    justifyContent: "flex-start",
-    // marginTop: Platform.OS === "android" ? StatusBar.currentHeight + 10 : 60,
-  },
-
-  mainSection: {
-    flex: 1,
-    backgroundColor: globalStyles.secondaryColor,
-    borderRadius: 15,
-    // marginBottom: Platform.OS === "android" ? 25 : 30,
-    marginBottom: 20,
-    padding: 20,
-    // paddingHorizontal: 20,
-  },
-
-  label: {
-    fontFamily: "WorkSans_900Black",
-    fontSize: 16,
-    color: globalStyles.textOnSecondaryColor,
-  },
-
-  buttons: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-
-  buttonsHidden: {
-    display: "none",
-  },
-
-  buttonEdit: {
-    width: 70,
-    borderRadius: 15,
-    backgroundColor: globalStyles.primaryColor,
-    padding: 5,
-    alignItems: "center",
-  },
-
-  buttonSave: {
-    // display: "none",
-    width: "50%",
-    borderTopLeftRadius: 15,
-    borderBottomLeftRadius: 15,
-    backgroundColor: "green",
-    padding: 7,
-    alignItems: "center",
-  },
-
-  buttonCancel: {
-    // display: "none",
-    width: "50%",
-    borderTopRightRadius: 15,
-    borderBottomRightRadius: 15,
-    backgroundColor: globalStyles.redColor,
-    padding: 7,
-    alignItems: "center",
-  },
-
-  // buttonCancelHidden:
-
-  buttonText: {
-    fontFamily: "Poppins_500Medium",
-    fontSize: 13,
-    color: globalStyles.textOnPrimaryColor,
-  },
-
-  inputContainer: {
-    gap: 10,
-    // border: "black",
-    // borderWidth: 1,
-    // borderRadius: 15,
-    // padding: 10,
-    marginBottom: 25,
-  },
-
-  textInput: {
-    fontFamily: "Poppins_500Medium",
-    fontSize: 13,
-    backgroundColor: "lightyellow",
-    color: "black",
-    padding: 10,
-    borderRadius: 15,
-  },
-
-  textInputBlocked: {
-    color: "darkslategray",
-    backgroundColor: "lightcyan",
-  },
-
-  textError: {
-    // overflow: "hidden",
-    fontFamily: "Poppins_500Medium",
-    fontSize: 13,
-    color: globalStyles.redColor,
-    backgroundColor: "#FFCCCF",
-    paddingTop: 7,
-    paddingHorizontal: 10,
-    paddingBottom: 20,
-    marginBottom: -25,
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
-  },
-
-  imageContainer: {
-    alignItems: "center",
-    gap: 15,
-    // marginBottom: 30,
-  },
-
-  imageText: {
-    fontFamily: "Poppins_500Medium",
-    fontSize: 15,
-    color: globalStyles.blueColor,
-  },
-
-  divider: {
-    marginVertical: 20,
-    height: 2,
-    backgroundColor: globalStyles.accentColor,
-  },
-});
-
-export default SettingsView;
+}

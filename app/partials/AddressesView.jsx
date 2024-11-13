@@ -1,20 +1,14 @@
 import React, { useEffect, useState } from "react";
 import {
-  StyleSheet,
   View,
-  StatusBar,
-  Platform,
-  Dimensions,
   Text,
   TouchableOpacity,
   ScrollView,
   TextInput,
-  Button,
-  Image,
   Modal,
+  SafeAreaView,
 } from "react-native";
 import { useCustomFonts } from "../utils/fonts";
-import { globalStyles } from "../utils/style";
 import { useForm, Controller } from "react-hook-form";
 import { Divider } from "react-native-elements";
 
@@ -22,8 +16,8 @@ import { ref, onValue, update, get, set, remove } from "firebase/database";
 import { db } from "../../firebaseConfig";
 import AddressCard from "../components/AddressCard";
 
-// Get the screen dimensions
-const { width } = Dimensions.get("window");
+import { globalStyles, styles as mainStyles } from "../utils/style";
+import { styles } from "../styles/AddressesViewStyles";
 
 const AddressesView = () => {
   const fontsLoaded = useCustomFonts();
@@ -52,7 +46,7 @@ const AddressesView = () => {
   }, [userId]);
 
   const getAddressById = (addresses, addressId) => {
-    return addresses.find(address => address.id === addressId);
+    return addresses.find((address) => address.id === addressId);
   };
 
   // Funkcja, która ustawia isDefault na false dla bieżącego domyślnego adresu użytkownika
@@ -90,7 +84,7 @@ const AddressesView = () => {
   // Funkcja, która ustawia isDefault na true dla adresu o podanym addressId
   const setOrUnsetDefaultAddress = async (addressId) => {
     if (getAddressById(addresses, addressId).isDefault === true) {
-    // if (addresses[addressId].isDefault === true) {
+      // if (addresses[addressId].isDefault === true) {
       try {
         // Zmieniamy isDefault na false dla wskazanego addressId
         await update(ref(db, `users/${userId}/addresses/${addressId}`), {
@@ -151,7 +145,9 @@ const AddressesView = () => {
     if (addressId != null) {
       setCurrentAddress(getAddressById(addresses, addressId));
       setCurrentAddressId(addressId);
-      setFormTitle("Edit address for " + getAddressById(addresses, addressId).adresse);
+      setFormTitle(
+        "Edit address for " + getAddressById(addresses, addressId).adresse
+      );
     } else {
       setCurrentAddress(emptyAddress);
       setCurrentAddressId(null);
@@ -294,9 +290,9 @@ const AddressesView = () => {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: globalStyles.backgroundColor }}>
-      <View style={styles.container}>
-        <View style={styles.scrollView}>
+    <SafeAreaView style={mainStyles.whiteBack}>
+      <View style={mainStyles.container}>
+        <View style={[mainStyles.scrollBase, { marginTop: 20 }]}>
           <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.addressesWithButton}>
               <View style={styles.addresses}>
@@ -334,16 +330,21 @@ const AddressesView = () => {
       </View>
 
       <Modal
-        animationType="fade" // animacja otwierania
+        animationType="slide" // animacja otwierania
         transparent={true} // transparentne tło
         visible={isModalVisible}
         onRequestClose={onCancel} // zamykanie na Androidzie przyciskiem "back"
       >
         <View style={styles.modalBackground}>
           <View style={styles.modalCard}>
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              style={[mainStyles.scrollBase, { marginVertical: 40 }]}
+            >
               {/* Title */}
-              <Text style={styles.modalFormTitle}>{formTitle}</Text>
+              <Text style={[styles.modalFormTitle, { marginTop: 20 }]}>
+                {formTitle}
+              </Text>
               <Divider style={styles.modalDivider} />
 
               {/* Adresse */}
@@ -367,6 +368,7 @@ const AddressesView = () => {
                       onBlur={onBlur}
                       onChangeText={onChange}
                       placeholder="Bob Smith / Macrosoft Sp. z o. o."
+                      placeholderTextColor={globalStyles.textOnAccentColor}
                       value={value}
                       autoCapitalize="none"
                       autoComplete="name"
@@ -400,6 +402,7 @@ const AddressesView = () => {
                       onBlur={onBlur}
                       onChangeText={onChange}
                       placeholder="+48987654321 / 987654321"
+                      placeholderTextColor={globalStyles.textOnAccentColor}
                       value={value}
                       autoCapitalize="none"
                       autoComplete="tel"
@@ -434,6 +437,7 @@ const AddressesView = () => {
                       onBlur={onBlur}
                       onChangeText={onChange}
                       placeholder="example@gmail.com"
+                      placeholderTextColor={globalStyles.textOnAccentColor}
                       value={value}
                       autoCapitalize="none"
                       autoComplete="email"
@@ -466,6 +470,7 @@ const AddressesView = () => {
                       onBlur={onBlur}
                       onChangeText={onChange}
                       placeholder="ul. Nadbystrzycka"
+                      placeholderTextColor={globalStyles.textOnAccentColor}
                       value={value}
                       autoCapitalize="words"
                       autoComplete="street-address"
@@ -502,6 +507,7 @@ const AddressesView = () => {
                       onBlur={onBlur}
                       onChangeText={onChange}
                       placeholder="38Y"
+                      placeholderTextColor={globalStyles.textOnAccentColor}
                       value={value}
                       autoCapitalize="characters"
                       autoComplete="off"
@@ -529,6 +535,7 @@ const AddressesView = () => {
                       onBlur={onBlur}
                       onChangeText={onChange}
                       placeholder="m. 22"
+                      placeholderTextColor={globalStyles.textOnAccentColor}
                       value={value}
                       autoCapitalize="none"
                       autoComplete="off"
@@ -562,6 +569,7 @@ const AddressesView = () => {
                       onBlur={onBlur}
                       onChangeText={onChange}
                       placeholder="12"
+                      placeholderTextColor={globalStyles.textOnAccentColor}
                       value={value}
                       autoCapitalize="none"
                       autoComplete="off"
@@ -598,6 +606,7 @@ const AddressesView = () => {
                       onBlur={onBlur}
                       onChangeText={onChange}
                       placeholder="20-501"
+                      placeholderTextColor={globalStyles.textOnAccentColor}
                       value={value}
                       autoCapitalize="none"
                       autoComplete="postal-code"
@@ -630,6 +639,7 @@ const AddressesView = () => {
                       onBlur={onBlur}
                       onChangeText={onChange}
                       placeholder="Lublin"
+                      placeholderTextColor={globalStyles.textOnAccentColor}
                       value={value}
                       autoCapitalize="words"
                       autoComplete="off"
@@ -662,6 +672,7 @@ const AddressesView = () => {
                       onBlur={onBlur}
                       onChangeText={onChange}
                       placeholder="Polska"
+                      placeholderTextColor={globalStyles.textOnAccentColor}
                       value={value}
                       autoCapitalize="words"
                       autoComplete="country"
@@ -701,7 +712,7 @@ const AddressesView = () => {
         onRequestClose={rejectAddressDeletion} // zamykanie na Androidzie przyciskiem "back"
       >
         <View style={styles.modalBackground}>
-          <View style={[styles.modalCard, { gap: 15 }]}>
+          <View style={styles.modalCardMini}>
             <Text style={styles.modalFormTitle}>
               Delete address for {confirmationTitle}?
             </Text>
@@ -731,159 +742,8 @@ const AddressesView = () => {
           </View>
         </View>
       </Modal>
-    </View>
+    </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: globalStyles.backgroundColor,
-    paddingHorizontal: 25,
-    justifyContent: "flex-start",
-  },
-
-  scrollView: {
-    borderRadius: 15,
-    marginBottom: 20,
-    overflow: "hidden",
-  },
-
-  addresses: {
-    gap: 15,
-  },
-
-  modalBackground: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // lekko przyciemnione tło,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  modalCard: {
-    width: "80%",
-    padding: 20,
-    margin: 20,
-    borderRadius: 15,
-    alignItems: "center",
-    backgroundColor: globalStyles.backgroundColor,
-  },
-
-  modalFormTitle: {
-    fontFamily: "WorkSans_900Black",
-    fontSize: 18,
-    color: globalStyles.accentColor,
-  },
-
-  modalDivider: {
-    marginVertical: 10,
-    height: 2,
-    backgroundColor: globalStyles.accentColor,
-  },
-
-  modalInputContainer: {
-    gap: 5,
-    marginBottom: 10,
-  },
-
-  modalLabel: {
-    fontFamily: "WorkSans_900Black",
-    fontSize: 16,
-    color: globalStyles.primaryColor,
-  },
-
-  modalTextInput: {
-    fontFamily: "Poppins_500Medium",
-    fontSize: 13,
-    color: globalStyles.textOnSecondaryColor,
-    backgroundColor: globalStyles.secondaryColor,
-    borderRadius: 15,
-    padding: 10,
-  },
-
-  modalTextError: {
-    fontFamily: "Poppins_500Medium",
-    fontSize: 13,
-    color: globalStyles.redColor,
-    backgroundColor: "#FFCCCF",
-    paddingTop: 7,
-    paddingHorizontal: 10,
-    paddingBottom: 22,
-    marginBottom: -25,
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
-  },
-
-  modalButtons: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-
-  modalSaveButton: {
-    width: "50%",
-    borderTopLeftRadius: 15,
-    borderBottomLeftRadius: 15,
-    backgroundColor: "green",
-    padding: 7,
-    alignItems: "center",
-  },
-
-  modalCancelButton: {
-    width: "50%",
-    borderTopRightRadius: 15,
-    borderBottomRightRadius: 15,
-    backgroundColor: globalStyles.redColor,
-    padding: 7,
-    alignItems: "center",
-  },
-
-  modalButtonText: {
-    fontFamily: "Poppins_500Medium",
-    fontSize: 14,
-    color: globalStyles.textOnPrimaryColor,
-  },
-
-  addressesWithButton: {
-    flex: 1,
-    flexDirection: "column",
-    justifyContent: "space-between",
-    gap: 15,
-  },
-
-  newAddressButton: {
-    backgroundColor: globalStyles.accentColor,
-    width: "auto",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 15,
-    borderRadius: 15,
-  },
-
-  newAddressButtonText: {
-    fontFamily: "WorkSans_900Black",
-    fontSize: 16,
-    color: globalStyles.textOnAccentColor,
-  },
-
-  modalDeleteButton: {
-    width: "50%",
-    borderTopLeftRadius: 15,
-    borderBottomLeftRadius: 15,
-    backgroundColor: globalStyles.redColor,
-    padding: 7,
-    alignItems: "center",
-  },
-
-  modalRejectButton: {
-    width: "50%",
-    borderTopRightRadius: 15,
-    borderBottomRightRadius: 15,
-    borderColor: globalStyles.redColor,
-    borderWidth: 3,
-    padding: 4,
-    backgroundColor: globalStyles.backgroundColor,
-    alignItems: "center",
-  },
-});
 
 export default AddressesView;

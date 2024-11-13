@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, Dimensions, Text } from "react-native";
-import { globalStyles } from "../utils/style";
+import { StyleSheet, View, Dimensions, Text, SafeAreaView } from "react-native";
 import AdSendCard from "../components/AdSendCard";
 import { ScrollView } from "react-native-gesture-handler";
 import { TouchableOpacity } from "react-native";
 import { useCustomFonts } from "../utils/fonts";
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 import { ref, onValue } from "firebase/database";
 import { db } from "../../firebaseConfig";
 
 import fetchSVG from "../utils/fetchSVG";
 import { SvgUri } from "react-native-svg";
+
+import { globalStyles, styles as mainStyles } from "../utils/style";
+import { styles } from "../styles/SendsGetsViewStyles";
 
 const { width } = Dimensions.get("window");
 
@@ -77,176 +78,98 @@ const SendsGetsView = () => {
   );
 
   return (
-    <View style={styles.container}>
-      <View style={styles.statusContainer}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {statuses.map((status) => (
-            <TouchableOpacity
-              key={status.code}
-              style={[
-                styles.statusBtn,
-                activeStatus === status.status && styles.activeStatusBtn,
-              ]}
-              onPress={() =>
-                setActiveStatus((prevStatus) =>
-                  prevStatus == status.status ? "All" : status.status
-                )
-              }
-            >
-              <Text
-                style={
-                  activeStatus === status.status
-                    ? styles.activeStatusText
-                    : styles.inactiveStatusText
+    <SafeAreaView style={mainStyles.whiteBack}>
+      <View style={[mainStyles.container, { alignItems: "stretch" }]}>
+        <View style={styles.statusContainer}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={[mainStyles.scrollBase, { flex: 0 }]}
+          >
+            {statuses.map((status) => (
+              <TouchableOpacity
+                key={status.code}
+                style={[
+                  styles.statusBtn,
+                  activeStatus === status.status && styles.activeStatusBtn,
+                ]}
+                onPress={() =>
+                  setActiveStatus((prevStatus) =>
+                    prevStatus == status.status ? "All" : status.status
+                  )
                 }
               >
-                {status.status}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </View>
-
-      <View style={styles.mainList}>
-        <ScrollView
-          contentContainerStyle={[
-            styles.productsContainer,
-            { flexGrow: filteredAnnouncements.length === 0 ? 1 : 0 },
-          ]}
-          showsVerticalScrollIndicator={false}
-        >
-          {filteredAnnouncements.length > 0 &&
-            filteredAnnouncements.map((announcement) => (
-              <AdSendCard
-                key={announcement.id}
-                productName={announcement.name}
-                productPrice={calculatePrice(
-                  announcement.dateFrom,
-                  announcement.dateTo,
-                  announcement.price
-                )}
-                productLink={announcement.link}
-                productStatus={announcement.status.status}
-                containerWidth={width - 50}
-                progressValue={
-                  // statuses.indexOf(product.status) / (statuses.length - 1)
-                  announcement.status.code / (statuses.length - 1 - 1)
-                }
-              />
-            ))}
-          {filteredAnnouncements.length === 0 && (
-            <View style={styles.noItemsContainer}>
-              <Text style={styles.noItemsMessage}>
-                No advertisements found! Please check your filters.
-              </Text>
-              <View style={styles.centeredButtonContainer}>
-                {/* <Image
-                  style={styles.noItemsBoxImg}
-                  source={require("../../assets/images/NoItemsBox.png")}
-                /> */}
-                <TouchableOpacity
-                  style={styles.noItemsBox}
-                  onPress={() => console.log("No items button clicked")}
+                <Text
+                  style={
+                    activeStatus === status.status
+                      ? styles.activeStatusText
+                      : styles.inactiveStatusText
+                  }
                 >
-                  <SvgUri
-                    uri={boxSvg}
-                    width={100}
-                    height={100}
-                    style={{ fill: globalStyles.accentColor }}
-                  />
-                  <Text style={styles.noItemsBtn}>No items found</Text>
-                </TouchableOpacity>
+                  {status.status}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+
+        <View style={mainStyles.scrollBase}>
+          <ScrollView
+            contentContainerStyle={[
+              mainStyles.scrollBase,
+              styles.productsContainer,
+              {
+                flex: 0,
+                flexGrow: filteredAnnouncements.length === 0 ? 1 : 0,
+              },
+            ]}
+            showsVerticalScrollIndicator={false}
+          >
+            {filteredAnnouncements.length > 0 &&
+              filteredAnnouncements.map((announcement) => (
+                <AdSendCard
+                  key={announcement.id}
+                  productName={announcement.name}
+                  productPrice={calculatePrice(
+                    announcement.dateFrom,
+                    announcement.dateTo,
+                    announcement.price
+                  )}
+                  productLink={announcement.link}
+                  productStatus={announcement.status.status}
+                  containerWidth={width - 50}
+                  progressValue={
+                    // statuses.indexOf(product.status) / (statuses.length - 1)
+                    announcement.status.code / (statuses.length - 1 - 1)
+                  }
+                />
+              ))}
+            {filteredAnnouncements.length === 0 && (
+              <View style={styles.noItemsContainer}>
+                <Text style={styles.noItemsMessage}>
+                  No advertisements found! Please check your filters.
+                </Text>
+                <View style={styles.centeredButtonContainer}>
+                  <TouchableOpacity
+                    style={styles.noItemsBox}
+                    onPress={() => console.log("No items button clicked")}
+                  >
+                    <SvgUri
+                      uri={boxSvg}
+                      width={100}
+                      height={100}
+                      style={{ fill: globalStyles.accentColor }}
+                    />
+                    <Text style={styles.noItemsBtn}>No items found</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-            </View>
-          )}
-        </ScrollView>
+            )}
+          </ScrollView>
+        </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: globalStyles.backgroundColor,
-    paddingHorizontal: 25,
-    // marginTop: Platform.OS === "android" ? StatusBar.currentHeight + 10 : 60,
-    paddingTop: 20,
-    // paddingBottom: Platform.OS === "android" ? 25 : 30,
-  },
-  mainList: {
-    // paddingBottom: Platform.OS === "android" ? 25 : 30,
-    flex: 1,
-    marginBottom: 20,
-    borderRadius: 15,
-    overflow: "hidden",
-  },
-  statusContainer: {
-    marginBottom: 10,
-    maxWidth: width - 50,
-    // borderRadius: 15,
-    // overflow: "hidden",
-  },
-  productsContainer: {
-    // flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 10,
-    paddingBottom: 20,
-  },
-  statusBtn: {
-    padding: 10,
-    backgroundColor: globalStyles.secondaryColor,
-    borderRadius: 15,
-    marginRight: 10,
-    minWidth: 60,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  activeStatusBtn: {
-    backgroundColor: globalStyles.accentColor,
-  },
-  activeStatusText: {
-    color: globalStyles.textOnAccentColor,
-  },
-  inactiveStatusText: {
-    color: "white",
-  },
-
-  noItemsContainer: {},
-  noItemsMessage: {
-    marginTop: 10,
-    borderRadius: 15,
-    overflow: "hidden",
-    backgroundColor: globalStyles.secondaryColor,
-    padding: 10,
-    color: globalStyles.textOnSecondaryColor,
-    fontFamily: "Poppins_500Medium",
-    fontSize: 16,
-  },
-  centeredButtonContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  noItemsBox: {
-    // backgroundColor: globalStyles.secondaryColor,
-    padding: 20,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  // noItemsBoxImg: {
-  //   width: 150,
-  //   height: 150,
-  // },
-  noItemsBtn: {
-    padding: 10,
-    color: globalStyles.accentColor,
-    borderRadius: 15,
-    overflow: "hidden",
-    fontFamily: "Poppins_500Medium",
-    fontSize: 20,
-  },
-});
 
 export default SendsGetsView;
