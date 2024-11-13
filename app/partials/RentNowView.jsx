@@ -1,20 +1,20 @@
 import React, { useState } from "react";
 import {
-  StyleSheet,
   View,
-  StatusBar,
-  Platform,
   Dimensions,
   Text,
   TouchableOpacity,
   ScrollView,
+  SafeAreaView,
 } from "react-native";
 import SearchBar from "../components/SearchBar";
 import Swiper from "../components/Swiper";
 import IconButton from "../components/IconButton";
 import { useCustomFonts } from "../utils/fonts";
 import ProductCard from "../components/ProductCard";
-import { globalStyles } from "../utils/style";
+
+import { styles as mainStyles } from "../utils/style";
+import { styles } from "../styles/RentNowViewStyles";
 
 // Get the screen dimensions
 const { width } = Dimensions.get("window");
@@ -57,7 +57,7 @@ const products = [
   },
 ];
 
-export const getFilteredProducts = (searchQuery) => {
+const getFilteredProducts = (searchQuery) => {
   return products.filter((product) =>
     product.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -65,7 +65,7 @@ export const getFilteredProducts = (searchQuery) => {
 
 const RentNowView = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeIcon, setActiveIcon] = useState(null); // State to track active button
+  const [activeIcon, setActiveIcon] = useState(null);
 
   const handleSearch = (text) => {
     setSearchQuery(text);
@@ -91,26 +91,16 @@ const RentNowView = () => {
 
   if (!fontsLoaded) return null;
 
-  // Product Cards
-
   const filteredProducts = getFilteredProducts(searchQuery);
 
   return (
-    <View style={{ flex: 1, backgroundColor: globalStyles.backgroundColor }}>
-      <View style={styles.container}>
+    <SafeAreaView style={mainStyles.whiteBack}>
+      <View style={mainStyles.container}>
         <SearchBar onSearch={handleSearch} />
-        <View
-          style={{
-            flex: 1,
-            borderRadius: 15,
-            marginBottom: 20,
-            overflow: "hidden",
-          }}
-        >
+        <View style={[mainStyles.scrollBase, { marginVertical: 15 }]}>
           <ScrollView showsVerticalScrollIndicator={false}>
             <Swiper style={{ height: 200 }} />
 
-            {/* /Categories buttons starts/ */}
             <View style={styles.categoryContainer}>
               <Text style={styles.titleCategory}>Category</Text>
               <TouchableOpacity>
@@ -125,23 +115,12 @@ const RentNowView = () => {
                   iconName={iconName}
                   onPress={() => handleButtonPress(iconName)}
                   containerWidth={width - 60}
-                  isActive={activeIcon === iconName} // Pass active state
+                  isActive={activeIcon === iconName}
                 />
               ))}
             </View>
-            {/* /Categories buttons ended/ */}
 
-            {/* Product Cards start */}
-            <View
-              style={{
-                flex: 1,
-                flexWrap: "wrap",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                gap: 15,
-                marginTop: 15,
-              }}
-            >
+            <View style={styles.announcementsContainer}>
               {filteredProducts.map((product) => (
                 <ProductCard
                   key={product.name}
@@ -156,42 +135,8 @@ const RentNowView = () => {
           </ScrollView>
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: globalStyles.backgroundColor,
-    paddingHorizontal: 25,
-    justifyContent: "flex-start",
-    // marginTop: Platform.OS === "android" ? StatusBar.currentHeight + 10 : 60,
-  },
-  categoryContainer: {
-    alignItems: "center",
-    // marginTop: 20, // Space above the title
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: 5,
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 10, // space above the button container
-  },
-  titleCategory: {
-    // flex: 1,
-    fontFamily: "WorkSans_900Black",
-    fontSize: 16,
-    color: globalStyles.textOnSecondaryColor,
-    backgroundColor: "transparent",
-  },
-  allCategoriesTextBtn: {
-    fontFamily: "Poppins_500Medium",
-    fontSize: 12,
-    color: globalStyles.textOnSecondaryColor,
-  },
-});
 
 export default RentNowView;

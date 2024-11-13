@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Text, View, StyleSheet, Platform, SafeAreaView } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-// import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+
 import RentNowView from "../partials/RentNowView";
 import RentOutView from "../partials/RentOutView";
 import { useCustomFonts } from "../utils/fonts";
