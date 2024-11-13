@@ -1,23 +1,15 @@
 import React, { useState } from "react";
-import {
-  StyleSheet,
-  View,
-  StatusBar,
-  Platform,
-  Dimensions,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-} from "react-native";
+import { View, Dimensions, ScrollView } from "react-native";
 import SearchBar from "../components/SearchBar";
 import { useCustomFonts } from "../utils/fonts";
 import ProductCard from "../components/ProductCard";
-import { globalStyles } from "../utils/style";
+
+import { styles as mainStyles } from "../utils/style";
 
 // Get the screen dimensions
 const { width } = Dimensions.get("window");
 
-const RentOutView = () => {
+export default function RentOutView() {
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleSearch = (text) => {
@@ -85,18 +77,14 @@ const RentOutView = () => {
   );
 
   return (
-    <View style={{ flex: 1, backgroundColor: globalStyles.backgroundColor }}>
-      <View style={styles.container}>
+    <View style={mainStyles.whiteBack}>
+      <View style={mainStyles.container}>
         <SearchBar onSearch={handleSearch} />
-        <View
-          style={{
-            flex: 1,
-            borderRadius: 15,
-            marginBottom: 20,
-            overflow: "hidden",
-          }}
-        >
-          <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={{ flex: 1, marginVertical: 15 }}>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            style={mainStyles.scrollBase}
+          >
             {/* Product Cards start */}
             <View
               style={{
@@ -123,16 +111,4 @@ const RentOutView = () => {
       </View>
     </View>
   );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: globalStyles.backgroundColor,
-    paddingHorizontal: 25,
-    justifyContent: "flex-start",
-    // marginTop: Platform.OS === "android" ? StatusBar.currentHeight + 10 : 60,
-  },
-});
-
-export default RentOutView;
+}
