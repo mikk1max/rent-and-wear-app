@@ -291,7 +291,7 @@ const AddressesView = () => {
 
   return (
     <SafeAreaView style={mainStyles.whiteBack}>
-      <View style={mainStyles.container}>
+      <View style={[mainStyles.container, { paddingTop: 0 }]}>
         <View style={[mainStyles.scrollBase, { marginTop: 20 }]}>
           <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.addressesWithButton}>
