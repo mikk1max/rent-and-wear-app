@@ -79,8 +79,12 @@ const SendsGetsView = () => {
 
   return (
     <SafeAreaView style={mainStyles.whiteBack}>
-      <View style={[mainStyles.container, { alignItems: "stretch" }]}>
-        <View style={styles.statusContainer}>
+      <View
+        style={[mainStyles.container, { alignItems: "stretch", paddingTop: 0 }]}
+      >
+        <View
+          style={[mainStyles.scrollBase, { flex: 0 }, styles.statusContainer]}
+        >
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
