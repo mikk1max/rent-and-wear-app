@@ -36,4 +36,9 @@ export const styles = StyleSheet.create({
     borderRadius: globalStyles.BORDER_RADIUS,
     overflow: "hidden",
   },
+  logo: {
+    width: 240,
+    height: 70,
+    borderRadius: globalStyles.BORDER_RADIUS,
+  },
 });

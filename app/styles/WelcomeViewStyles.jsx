@@ -37,11 +37,6 @@ export const styles = StyleSheet.create({
     padding: 20,
     alignItems: "center",
   },
-  logo: {
-    width: 240,
-    height: 70,
-    borderRadius: globalStyles.BORDER_RADIUS,
-  },
   moveButtons: {
     width: width - 2 * 25,
     flexDirection: "row",
