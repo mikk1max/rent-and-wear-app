@@ -138,10 +138,10 @@ const SendsGetsView = () => {
                   productLink={announcement.link}
                   productStatus={announcement.status.status}
                   containerWidth={width - 50}
-                  progressValue={
-                    // statuses.indexOf(product.status) / (statuses.length - 1)
-                    announcement.status.code / (statuses.length - 1 - 1)
-                  }
+                  progressValue={(
+                    announcement.status.code /
+                    (statuses.length - 2)
+                  ).toFixed(3)}
                 />
               ))}
             {filteredAnnouncements.length === 0 && (

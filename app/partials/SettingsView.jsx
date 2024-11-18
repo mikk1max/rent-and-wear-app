@@ -19,6 +19,7 @@ import { fetchImgURL } from "../utils/fetchSVG";
 
 import { styles as mainStyles } from "../utils/style";
 import { styles } from "../styles/SettingsViewStyles";
+import InputWithLabel from "../components/InputWithLabel";
 
 export default function SettingsView() {
   const [user, setUser] = useState([]);
@@ -249,7 +250,140 @@ export default function SettingsView() {
 
             {/* Name form */}
             <View>
-              <View style={styles.inputContainer}>
+              <InputWithLabel
+                control={controlName}
+                name={"name"}
+                placeholder={"Grzegorz"}
+                errors={errorsName}
+                editable={editableName}
+                onEdit={editName}
+                onSubmit={handleSubmitName(onSubmitName)}
+                onCancel={onCancelName}
+                inputStyle={nameTextInputStyle}
+                buttonStyle={nameButtonsStyle}
+                label={"First Name:"}
+                validationRules={{
+                  required: "First Name is required",
+                  pattern: {
+                    value:
+                      /^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+(?:\s[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)?$/,
+                    message: "Invalid First Name format",
+                  },
+                }}
+                value={user.name}
+                defaultValue={user.name}
+                isWithEditBtn={true}
+              />
+
+              <View style={[nameButtonsStyle, { marginBottom: 20 }]}>
+                <TouchableOpacity
+                  style={styles.buttonSave}
+                  activeOpacity={0.8}
+                  onPress={handleSubmitName(onSubmitName)}
+                >
+                  <Text style={styles.buttonText}>Save</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.buttonCancel}
+                  activeOpacity={0.8}
+                  onPress={onCancelName}
+                >
+                  <Text style={styles.buttonText}>Cancel</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* Surname form */}
+            <View>
+              <InputWithLabel
+                control={controlSurname}
+                name={"surname"}
+                placeholder={"Brzęczyszczykiewicz"}
+                errors={errorsSurname}
+                editable={editableSurname}
+                onEdit={editSurname}
+                onSubmit={handleSubmitSurname(onSubmitSurname)}
+                onCancel={onCancelSurname}
+                inputStyle={surnameTextInputStyle}
+                buttonStyle={surnameButtonsStyle}
+                label={"Last Name:"}
+                validationRules={{
+                  required: "Last Name is required",
+                  pattern: {
+                    value:
+                      /^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]*(?:[-'][A-ZĄĆĘŁŃÓŚŹŻ]?[a-ząćęłńóśźż]+)?(?:-[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]*(?:[-'][A-ZĄĆĘŁŃÓŚŹŻ]?[a-ząćęłńóśźż]+)?)?$/,
+                    message: "Invalid Last Name format",
+                  },
+                }}
+                value={user.surname}
+                defaultValue={user.surname}
+                isWithEditBtn={true}
+              />
+
+              <View style={[surnameButtonsStyle, { marginBottom: 20 }]}>
+                <TouchableOpacity
+                  style={styles.buttonSave}
+                  activeOpacity={0.8}
+                  onPress={handleSubmitSurname(onSubmitSurname)}
+                >
+                  <Text style={styles.buttonText}>Save</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.buttonCancel}
+                  activeOpacity={0.8}
+                  onPress={onCancelSurname}
+                >
+                  <Text style={styles.buttonText}>Cancel</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* E-mail form */}
+            <View>
+              <InputWithLabel
+                control={controlEmail}
+                name={"email"}
+                placeholder={"example@gmail.com"}
+                errors={errorsEmail}
+                editable={editableEmail}
+                onEdit={editEmail}
+                onSubmit={handleSubmitEmail(onSubmitEmail)}
+                onCancel={onCancelEmail}
+                inputStyle={emailTextInputStyle}
+                buttonStyle={emailButtonsStyle}
+                label={"E-mail:"}
+                validationRules={{
+                  required: "E-mail is required",
+                  pattern: {
+                    value:
+                      /^(?!\.)[a-zA-Z0-9!#$%&'*+/=?^_`{|}~.-]{1,64}(?<!\.)@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$/,
+                    message: "Invalid E-mail format",
+                  },
+                }}
+                value={user.email}
+                defaultValue={user.email}
+                isWithEditBtn={true}
+              />
+
+              <View style={[emailButtonsStyle, { marginBottom: 20 }]}>
+                <TouchableOpacity
+                  style={styles.buttonSave}
+                  activeOpacity={0.8}
+                  onPress={handleSubmitEmail(onSubmitEmail)}
+                >
+                  <Text style={styles.buttonText}>Save</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.buttonCancel}
+                  activeOpacity={0.8}
+                  onPress={onSubmitEmail}
+                >
+                  <Text style={styles.buttonText}>Cancel</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* <View style={styles.inputContainer}>
                 <View style={styles.labelContainer}>
                   <Text style={styles.label}>First Name:</Text>
                   <TouchableOpacity
@@ -293,6 +427,7 @@ export default function SettingsView() {
                     />
                   )}
                   name="name"
+                  // defaultValue={user.name || ""}
                 />
 
                 <View style={nameButtonsStyle}>
@@ -311,11 +446,10 @@ export default function SettingsView() {
                     <Text style={styles.buttonText}>Cancel</Text>
                   </TouchableOpacity>
                 </View>
-              </View>
-            </View>
+              </View> */}
 
             {/* Surname form */}
-            <View>
+            {/* <View>
               <View style={styles.inputContainer}>
                 <View style={styles.labelContainer}>
                   <Text style={styles.label}>Last Name:</Text>
@@ -381,9 +515,9 @@ export default function SettingsView() {
                 </View>
               </View>
             </View>
+*/}
 
-            {/* E-mail form */}
-            <View>
+            {/* <View>
               <View style={styles.inputContainer}>
                 <View style={styles.labelContainer}>
                   <Text style={styles.label}>E-mail:</Text>
@@ -447,7 +581,7 @@ export default function SettingsView() {
                   </TouchableOpacity>
                 </View>
               </View>
-            </View>
+            </View> */}
           </ScrollView>
         </View>
       </View>
