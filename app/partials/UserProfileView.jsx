@@ -107,18 +107,25 @@ const UserProfileView = () => {
                 activeOpacity={0.9}
               >
                 <Text style={styles.verificationText}>
-                  <>
-                    {user.isVerified && (
-                      <SvgUri
-                        uri={verificationSvg}
-                        width={15}
-                        height={15}
-                        style={{
-                          fill: globalStyles.textOnPrimaryColor,
-                        }}
-                      />
-                    )}
-                  </>
+                  {user.isVerified && (
+                    <SvgUri
+                      uri={verificationSvg}
+                      width={15}
+                      height={15}
+                      style={{
+                        fill: globalStyles.textOnPrimaryColor,
+                      }}
+                    />
+                  )}
+                  {/* <Text
+                    style={{
+                      alignItems: "center",
+                      justifyContent: "center",
+                      alignSelf: "center",
+                    }}
+                  >
+            
+                  </Text> */}
                   {user.isVerified
                     ? ` Verification completed`
                     : ` Not verified yet`}

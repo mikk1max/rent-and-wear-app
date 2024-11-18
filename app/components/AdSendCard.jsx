@@ -42,23 +42,6 @@ const AdSendCard = ({
           ${productPrice.toFixed(2)} / rent
         </Text>
       </View>
-      {/* <ProgressSteps>
-        <ProgressStep label="First Step" removeBtnRow>
-          <View style={{ alignItems: "center" }}>
-            <Text>This is the content within step 1!</Text>
-          </View>
-        </ProgressStep>
-        <ProgressStep label="Second Step">
-          <View style={{ alignItems: "center" }}>
-            <Text>This is the content within step 2!</Text>
-          </View>
-        </ProgressStep>
-        <ProgressStep label="Third Step">
-          <View style={{ alignItems: "center" }}>
-            <Text>This is the content within step 3!</Text>
-          </View>
-        </ProgressStep>
-      </ProgressSteps> */}
 
       <ProgressBarLine progressValue={progressValue} />
 

@@ -34,7 +34,7 @@ export default function WelcomeView({ navigation }) {
           <View style={styles.logoAndBtns}>
             <Image
               source={require("../../assets/images/logo.png")}
-              style={styles.logo}
+              style={mainStyles.logo}
             />
             <View style={styles.moveButtons}>
               <TouchableOpacity
@@ -45,7 +45,7 @@ export default function WelcomeView({ navigation }) {
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.logBtn}
-                // onPress={() => navigation.navigate("AnotherView")}
+                onPress={() => navigation.navigate("LogIn")}
               >
                 <Text style={styles.logBtnText}>I've an account</Text>
               </TouchableOpacity>

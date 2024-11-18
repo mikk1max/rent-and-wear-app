@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Platform, StatusBar } from "react-native";
 
 export const globalStyles = {
   primaryColor: "#525252",
@@ -27,10 +27,18 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 25,
     justifyContent: "flex-start",
     alignItems: "center",
+
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+    paddingBottom: Platform.OS === "android" ? 20 : 0,
   },
   scrollBase: {
     flex: 1,
     borderRadius: globalStyles.BORDER_RADIUS,
     overflow: "hidden",
+  },
+  logo: {
+    width: 240,
+    height: 70,
+    borderRadius: globalStyles.BORDER_RADIUS,
   },
 });

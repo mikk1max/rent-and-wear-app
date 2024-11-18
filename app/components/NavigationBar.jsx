@@ -1,14 +1,23 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, StyleSheet, Platform, SafeAreaView } from "react-native";
+import {
+  Text,
+  View,
+  StyleSheet,
+  Platform,
+  SafeAreaView,
+  StatusBar,
+} from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import RentNowView from "../partials/RentNowView";
 import RentOutView from "../partials/RentOutView";
 import { useCustomFonts } from "../utils/fonts";
-import { globalStyles } from "../utils/style";
+import { globalStyles, styles as mainStyles } from "../utils/style";
 import fetchSVG from "../utils/fetchSVG";
 import { SvgUri } from "react-native-svg";
 import UserProfileView from "../partials/UserProfileView";
+
+
 
 const Tab = createBottomTabNavigator();
 
@@ -58,7 +67,9 @@ const NavigationBar = () => {
   return (
     // <NavigationContainer>
     <SafeAreaView
-      style={{ flex: 1, backgroundColor: globalStyles.backgroundColor }}
+      style={[mainStyles.whiteBack, {
+        paddingBottom: Platform.OS === "android" ? 20 : 0,
+      }]}
     >
       <View style={styles.navbarContainer}>
         <Tab.Navigator

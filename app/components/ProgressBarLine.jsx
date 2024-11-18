@@ -3,8 +3,6 @@ import { Animated, StyleSheet } from "react-native";
 import { ProgressBar } from "react-native-paper";
 import { globalStyles } from "../utils/style";
 
-// let progressValue = 0.125;
-
 const ProgressBarLine = ({ progressValue }) => {
   const glow = useRef(new Animated.Value(0)).current;
 
@@ -33,12 +31,13 @@ const ProgressBarLine = ({ progressValue }) => {
     }),
   };
 
+  console.log("progressValue: " + progressValue);
+
   return (
     <ProgressBar
       progress={progressValue}
       color={globalStyles.primaryColor}
-      fillStyle={[styles.fillStyle, glowStyle]}
-      style={styles.progressBar}
+      style={[styles.progressBar]}
     />
   );
 };
@@ -47,9 +46,6 @@ const styles = StyleSheet.create({
   progressBar: {
     height: 6,
     marginBottom: 15,
-  },
-  fillStyle: {
-    borderRadius: 4,
   },
 });
 
