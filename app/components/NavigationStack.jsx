@@ -8,6 +8,8 @@ import { globalStyles } from "../utils/style";
 import WelcomeView from "../partials/WelcomeView";
 import RentNowView from "../partials/RentNowView";
 import AddressesView from "../partials/AddressesView";
+import AuthLoginView from "../partials/AuthLoginView";
+import AuthRegistrationView from "../partials/AuthRegistrationView";
 
 const Stack = createStackNavigator();
 
@@ -32,6 +34,8 @@ export default function Navigation() {
       screenOptions={{ headerShown: false }}
     >
       <Stack.Screen name="Welcome" component={WelcomeView} />
+      <Stack.Screen name="LogIn" component={AuthLoginView} />
+      <Stack.Screen name="Registration" component={AuthRegistrationView} />
       <Stack.Screen
         name="MainApp"
         component={NavigationBar}
