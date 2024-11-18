@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Dimensions, ScrollView } from "react-native";
+import { View, Dimensions, ScrollView, SafeAreaView } from "react-native";
 import SearchBar from "../components/SearchBar";
 import { useCustomFonts } from "../utils/fonts";
 import ProductCard from "../components/ProductCard";
@@ -77,10 +77,10 @@ export default function RentOutView() {
   );
 
   return (
-    <View style={mainStyles.whiteBack}>
+    <SafeAreaView style={mainStyles.whiteBack}>
       <View style={mainStyles.container}>
         <SearchBar onSearch={handleSearch} />
-        <View style={{ flex: 1, marginVertical: 15 }}>
+        <View style={[mainStyles.scrollBase, { flex: 1, marginTop: 15 }]}>
           <ScrollView
             showsVerticalScrollIndicator={false}
             style={mainStyles.scrollBase}
@@ -88,11 +88,12 @@ export default function RentOutView() {
             {/* Product Cards start */}
             <View
               style={{
-                flex: 1,
+                flex: 0,
                 flexWrap: "wrap",
                 flexDirection: "row",
                 justifyContent: "space-between",
                 gap: 15,
+                // overflow: "hidden"
               }}
             >
               {filteredProducts.map((product) => (
@@ -109,6 +110,6 @@ export default function RentOutView() {
           </ScrollView>
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }

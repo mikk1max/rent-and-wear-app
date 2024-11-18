@@ -97,7 +97,7 @@ const RentNowView = () => {
     <SafeAreaView style={mainStyles.whiteBack}>
       <View style={mainStyles.container}>
         <SearchBar onSearch={handleSearch} />
-        <View style={[mainStyles.scrollBase, { marginVertical: 15 }]}>
+        <View style={[mainStyles.scrollBase, { marginTop: 15 }]}>
           <ScrollView showsVerticalScrollIndicator={false}>
             <Swiper style={{ height: 200 }} />
 
