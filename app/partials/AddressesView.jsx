@@ -13,7 +13,7 @@ import { useForm, Controller } from "react-hook-form";
 import { Divider } from "react-native-elements";
 
 import { ref, onValue, update, get, set, remove } from "firebase/database";
-import { db } from "../../firebaseConfig";
+import { db } from "../../firebase.config";
 import AddressCard from "../components/AddressCard";
 
 import { globalStyles, styles as mainStyles } from "../utils/style";

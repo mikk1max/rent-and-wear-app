@@ -11,7 +11,7 @@ import { useCustomFonts } from "../utils/fonts";
 import { useNavigation } from "@react-navigation/native";
 
 import { ref, onValue, update } from "firebase/database";
-import { db } from "../../firebaseConfig";
+import { db } from "../../firebase.config";
 
 import fetchSVG, { fetchImgURL } from "../utils/fetchSVG";
 import { SvgUri } from "react-native-svg";
@@ -117,15 +117,6 @@ const UserProfileView = () => {
                       }}
                     />
                   )}
-                  {/* <Text
-                    style={{
-                      alignItems: "center",
-                      justifyContent: "center",
-                      alignSelf: "center",
-                    }}
-                  >
-            
-                  </Text> */}
                   {user.isVerified
                     ? ` Verification completed`
                     : ` Not verified yet`}

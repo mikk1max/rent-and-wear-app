@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Dimensions, ScrollView, SafeAreaView } from "react-native";
+import {View, Dimensions, ScrollView, SafeAreaView, Platform} from "react-native";
 import SearchBar from "../components/SearchBar";
 import { useCustomFonts } from "../utils/fonts";
 import ProductCard from "../components/ProductCard";
@@ -80,7 +80,7 @@ export default function RentOutView() {
     <SafeAreaView style={mainStyles.whiteBack}>
       <View style={mainStyles.container}>
         <SearchBar onSearch={handleSearch} />
-        <View style={[mainStyles.scrollBase, { flex: 1, marginTop: 15 }]}>
+        <View style={[mainStyles.scrollBase, { flex: 1, marginTop: Platform.OS ==="android" ? 15 : 20 ,marginVertical: Platform.OS === "ios" ? 20 : 0 }]}>
           <ScrollView
             showsVerticalScrollIndicator={false}
             style={mainStyles.scrollBase}
