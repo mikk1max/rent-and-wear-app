@@ -43,7 +43,7 @@ export default function AuthLoginView() {
   return (
     <View style={{ flex: 1 }}>
       <ImageBackground
-        source={require("../../assets/images/clothes-back.png")}
+        source={require("../../assets/images/clothes_back.jpg")}
         style={{ flex: 1, resizeMode: "cover", justifyContent: "center" }}
       >
         <SafeAreaView

@@ -13,7 +13,7 @@ import { useForm, Controller } from "react-hook-form";
 import { Divider } from "react-native-elements";
 
 import { ref, onValue, update } from "firebase/database";
-import { db } from "../../firebaseConfig";
+import { db } from "../../firebase.config";
 
 import { fetchImgURL } from "../utils/fetchSVG";
 

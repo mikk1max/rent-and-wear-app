@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   SafeAreaView,
+    Platform
 } from "react-native";
 import SearchBar from "../components/SearchBar";
 import Swiper from "../components/Swiper";
@@ -97,7 +98,7 @@ const RentNowView = () => {
     <SafeAreaView style={mainStyles.whiteBack}>
       <View style={mainStyles.container}>
         <SearchBar onSearch={handleSearch} />
-        <View style={[mainStyles.scrollBase, { marginTop: 15 }]}>
+        <View style={[mainStyles.scrollBase, { marginTop: Platform.OS ==="android" ? 15 : 20 ,marginVertical: Platform.OS === "ios" ? 20 : 0 }]}>
           <ScrollView showsVerticalScrollIndicator={false}>
             <Swiper style={{ height: 200 }} />
 

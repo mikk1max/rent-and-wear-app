@@ -51,6 +51,8 @@ export const styles = StyleSheet.create({
     color: globalStyles.textOnPrimaryColor,
     alignItems: "center",
     justifyContent: "center",
+    textAlignVertical: "center",
+
     
   },
   verificationOpacity: {

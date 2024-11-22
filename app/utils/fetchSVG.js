@@ -1,5 +1,5 @@
 import { ref as storageRef, getDownloadURL } from "firebase/storage";
-import { storage } from "../../firebaseConfig";
+import { storage } from "../../firebase.config";
 
 export default async function fetchSvgURL(filePath) {
   const svgRef = storageRef(storage, filePath);
