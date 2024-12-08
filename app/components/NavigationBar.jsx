@@ -17,8 +17,6 @@ import fetchSVG from "../utils/fetchSVG";
 import { SvgUri } from "react-native-svg";
 import UserProfileView from "../partials/UserProfileView";
 
-
-
 const Tab = createBottomTabNavigator();
 
 const renderIcon = (route, focused) => {
@@ -59,7 +57,7 @@ const renderIcon = (route, focused) => {
   }
 };
 
-const NavigationBar = () => {
+const NavigationBar = (route) => {
   const fontsLoaded = useCustomFonts();
 
   if (!fontsLoaded) return null;
@@ -67,9 +65,12 @@ const NavigationBar = () => {
   return (
     // <NavigationContainer>
     <SafeAreaView
-      style={[mainStyles.whiteBack, {
-        paddingBottom: Platform.OS === "android" ? 20 : 0,
-      }]}
+      style={[
+        mainStyles.whiteBack,
+        {
+          paddingBottom: Platform.OS === "android" ? 20 : 0,
+        },
+      ]}
     >
       <View style={styles.navbarContainer}>
         <Tab.Navigator

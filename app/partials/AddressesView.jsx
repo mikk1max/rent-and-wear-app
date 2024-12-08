@@ -19,9 +19,13 @@ import AddressCard from "../components/AddressCard";
 import { globalStyles, styles as mainStyles } from "../utils/style";
 import { styles } from "../styles/AddressesViewStyles";
 
+import { useUser } from "../components/UserProvider";
+
 const AddressesView = () => {
   const fontsLoaded = useCustomFonts();
   if (!fontsLoaded) return null;
+
+  const { user, setUser } = useUser();
 
   // Addresses
   const [addresses, setAddresses] = useState([[]]);
