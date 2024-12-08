@@ -19,7 +19,7 @@ const { width } = Dimensions.get("window");
 const calculatePrice = (dateFrom, dateTo, price) => {
   const timeDiff = dateTo.getTime() - dateFrom.getTime();
   const days = Math.ceil(timeDiff / (1000 * 3600 * 24));
-  return Math.round(days * price * 100) / 100;  // Round to 2 decimal places
+  return Math.round(days * price * 100) / 100; // Round to 2 decimal places
 };
 
 const SendsGetsView = () => {
@@ -81,7 +81,6 @@ const SendsGetsView = () => {
     const rawValue = ann.status.code / (obj.length - 2);
     return parseFloat(rawValue.toFixed(2));
   };
-
 
   return (
     <SafeAreaView style={mainStyles.whiteBack}>

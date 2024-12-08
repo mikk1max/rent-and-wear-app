@@ -10,6 +10,7 @@ import RentNowView from "../partials/RentNowView";
 import AddressesView from "../partials/AddressesView";
 import AuthLoginView from "../partials/AuthLoginView";
 import AuthRegistrationView from "../partials/AuthRegistrationView";
+import { useUser } from "./UserProvider";
 
 const Stack = createStackNavigator();
 
@@ -27,10 +28,12 @@ const stackOptions = {
 };
 
 export default function Navigation() {
+  const { user } = useUser();
+
   return (
     // *Welcome screen
     <Stack.Navigator
-      initialRouteName="Welcome"
+      initialRouteName={user ? "MainApp" : "Welcome"}
       screenOptions={{ headerShown: false }}
     >
       <Stack.Screen name="Welcome" component={WelcomeView} />

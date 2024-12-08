@@ -21,29 +21,51 @@ import { styles as mainStyles } from "../utils/style";
 import { styles } from "../styles/SettingsViewStyles";
 import InputWithLabel from "../components/InputWithLabel";
 
+import { useUser } from "../components/UserProvider";
+
 export default function SettingsView() {
-  const [user, setUser] = useState([]);
+  // const [user, setUser] = useState([]);
+  const { user, setUser } = useUser();
   const [userProfileImg, setUserProfileImg] = useState(null);
 
   const fontsLoaded = useCustomFonts();
   if (!fontsLoaded) return null;
 
   // User
+  // useEffect(() => {
+  //   const usersRef = ref(db, "users");
+  //   onValue(usersRef, (snapshot) => {
+  //     const data = snapshot.val();
+  //     if (data) {
+  //       const usersArray = Object.keys(data).map((key) => ({
+  //         ...data[key],
+  //       }));
+  //       // console.log(usersArray.filter((user) => user.id === 0));
+
+  //       const currentUser = usersArray.find((user) => user.id == 0);
+  //       setUser(currentUser || {});
+  //     }
+  //   });
+  // }, []);
+
   useEffect(() => {
+    if (!user) return;
+
     const usersRef = ref(db, "users");
-    onValue(usersRef, (snapshot) => {
+    const unsubscribe = onValue(usersRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
-        const usersArray = Object.keys(data).map((key) => ({
-          ...data[key],
-        }));
-        // console.log(usersArray.filter((user) => user.id === 0));
-
-        const currentUser = usersArray.find((user) => user.id == 0);
-        setUser(currentUser || {});
+        const currentUser = Object.values(data).find(
+          (userData) => userData.email === user.email
+        );
+        setUser(currentUser || null);
+      } else {
+        setUser(null);
       }
     });
-  }, []);
+
+    return () => unsubscribe();
+  }, [user]);
 
   useEffect(() => {
     async function loadUrl() {
@@ -52,7 +74,9 @@ export default function SettingsView() {
           const url = await fetchImgURL(`user-avatars/${user.id}-min.jpg`);
           setUserProfileImg(url);
         } catch (error) {
-          console.error("Error fetching user profile image:", error);
+          setUserProfileImg(
+            "https://firebasestorage.googleapis.com/v0/b/rent-clothes-253cf.firebasestorage.app/o/user-avatars%2Fdefault-profile.png?alt=media&token=13058d8e-2f04-474d-baef-26196d7cd979"
+          );
         }
       }
     }
