@@ -46,14 +46,19 @@ export const styles = StyleSheet.create({
     fontSize: 15,
     color: globalStyles.accentColor,
   },
+
+  verificationContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  verificationIcon: {
+    fill: "white",
+    marginRight: 5,
+  },
   verificationText: {
     fontFamily: "Poppins_500Medium",
     color: globalStyles.textOnPrimaryColor,
-    alignItems: "center",
-    justifyContent: "center",
-    textAlignVertical: "center",
-
-    
   },
   verificationOpacity: {
     padding: 5,
@@ -62,6 +67,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+
   buttonText: {
     fontFamily: "WorkSans_900Black",
     fontSize: 20,

@@ -6,11 +6,12 @@ import {
   TouchableOpacity,
   Modal,
   StyleSheet,
+  Image,
 } from "react-native";
 import { useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
 import InputWithLabel from "../components/InputWithLabel";
-import { styles as mainStyles } from "../utils/style";
+import { globalStyles, styles as mainStyles } from "../utils/style";
 import { onLogin } from "../utils/auth";
 
 export default function AuthLoginView() {
@@ -32,7 +33,9 @@ export default function AuthLoginView() {
       await onLogin(data, initializeUser);
       navigation.replace("MainApp");
     } catch (error) {
-      setErrorMessage(error.message);
+      setErrorMessage(
+        "The email address or password that you've entered is not valid."
+      );
       setIsModalVisible(true);
     }
   };
@@ -45,55 +48,74 @@ export default function AuthLoginView() {
   };
 
   return (
-    <SafeAreaView style={[mainStyles.whiteBack, { padding: 20 }]}>
+    <SafeAreaView style={[mainStyles.whiteBack]}>
+      <Image
+        source={require("../../assets/images/loginBackClothes.png")}
+        style={styles.imgStyles}
+      />
+
       <View style={mainStyles.container}>
-        <View style={{}}>
-          <Text
-            style={{ fontSize: 32, fontWeight: "bold", marginVertical: 20 }}
-          >
-            Welcome Back!
-          </Text>
-          <InputWithLabel
-            control={control}
-            name="email"
-            placeholder="example@gmail.com"
-            errors={errors}
-            label="E-mail:"
-            validationRules={{
-              required: "E-mail is required",
-              pattern: {
-                value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$/,
-                message: "Invalid email format",
-              },
-            }}
-          />
-          <InputWithLabel
-            control={control}
-            name="password"
-            placeholder="Password"
-            errors={errors}
-            label="Password:"
-            secureTextEntry
-            validationRules={{
-              required: "Password is required",
-              minLength: {
-                value: 6,
-                message: "Password must be at least 6 characters",
-              },
-            }}
-          />
+        <View style={styles.loginPanel}>
+          <Text style={styles.loginTitle}>Welcome Back!</Text>
+          <View style={{ gap: 20 }}>
+            <InputWithLabel
+              control={control}
+              name="email"
+              placeholder="example@gmail.com"
+              errors={errors}
+              label="E-mail:"
+              validationRules={{
+                required: "E-mail is required",
+                pattern: {
+                  value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$/,
+                  message: "Invalid email format",
+                },
+              }}
+              inputStyle={styles.inputStyle}
+            />
+            <InputWithLabel
+              control={control}
+              name="password"
+              placeholder="Password"
+              errors={errors}
+              label="Password:"
+              secureTextEntry
+              validationRules={{
+                required: "Password is required",
+                minLength: {
+                  value: 6,
+                  message: "Password must be at least 6 characters",
+                },
+              }}
+              inputStyle={[styles.inputStyle, { marginBottom: 0 }]}
+            />
+          </View>
+
+          <TouchableOpacity>
+            <Text style={styles.forgotPass}>Forgot password?</Text>
+          </TouchableOpacity>
+
           <TouchableOpacity
-            style={[styles.loginBtn, { marginTop: 20 }]}
+            style={[styles.mainBtns, styles.loginBtn]}
             onPress={handleSubmit(handleLogin)}
           >
-            <Text style={styles.loginBtnText}>Log In</Text>
+            <Text style={styles.mainBtnText}>Log In</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.registerBtn, { marginTop: 10 }]}
-            onPress={() => navigation.navigate("Registration")}
-          >
-            <Text style={styles.registerBtnText}>Register</Text>
-          </TouchableOpacity>
+
+          <Text style={styles.orText}>or</Text>
+
+          <View style={{ gap: 15, flexDirection: "row" }}>
+            <TouchableOpacity
+              style={[styles.mainBtns, styles.anotherBtn]}
+              onPress={() => navigation.navigate("Registration")}
+            >
+              <Text style={styles.mainBtnText}>Sign Up</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={[styles.mainBtns, styles.anotherBtn]}>
+              <Text style={styles.mainBtnText}>Login with Google</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         <Modal
@@ -107,7 +129,7 @@ export default function AuthLoginView() {
               <Text style={styles.modalTitle}>Login Failed</Text>
               <Text style={styles.modalMessage}>{errorMessage}</Text>
               <TouchableOpacity onPress={closeModal} style={styles.modalButton}>
-                <Text style={styles.modalButtonText}>Close</Text>
+                <Text style={styles.modalButtonText}>Try again</Text>
               </TouchableOpacity>
             </View>
           </SafeAreaView>
@@ -118,24 +140,85 @@ export default function AuthLoginView() {
 }
 
 const styles = StyleSheet.create({
-  loginBtn: {
-    backgroundColor: "#6200EE",
+  loginPanel: {
+    flex: 1,
+    width: "100%",
+  },
+  imgStyles: {
+    resizeMode: "cover",
+    width: "100%",
+    height: 250,
+  },
+  loginTitle: {
+    fontSize: 32,
+    fontWeight: "bold",
+    marginVertical: 20,
+  },
+  inputStyle: {
+    backgroundColor: globalStyles.secondaryColor,
+    padding: 15,
+    borderRadius: globalStyles.BORDER_RADIUS,
+  },
+  forgotPass: {
+    color: globalStyles.primaryColor,
+    alignSelf: "flex-end",
+    fontWeight: "bold",
+    marginVertical: 15,
+  },
+  orText: {
+    paddingVertical: 10,
+    fontSize: 16,
+    fontFamily: "Poppins_500Medium",
+    alignSelf: "center",
+    fontWeight: "bold",
+  },
+  mainBtns: {
     paddingVertical: 15,
-    borderRadius: 8,
+    borderRadius: globalStyles.BORDER_RADIUS,
     alignItems: "center",
   },
-  loginBtnText: {
-    color: "#FFFFFF",
+  loginBtn: {
+    backgroundColor: globalStyles.accentColor,
+  },
+  anotherBtn: {
+    backgroundColor: globalStyles.secondaryColor,
+    flex: 1,
+  },
+  mainBtnText: {
+    color: globalStyles.textOnPrimaryColor,
     fontSize: 16,
     fontWeight: "bold",
   },
-  registerBtn: {
-    backgroundColor: "#03DAC6",
-    paddingVertical: 15,
-    borderRadius: 8,
+
+  // Modal
+  modalContainer: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
     alignItems: "center",
   },
-  registerBtnText: {
+  modalContent: {
+    backgroundColor: globalStyles.backgroundColor,
+    padding: 20,
+    borderRadius: globalStyles.BORDER_RADIUS,
+    width: "80%",
+    alignItems: "center",
+  },
+  modalTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  modalMessage: {
+    fontSize: 16,
+    marginBottom: 20,
+  },
+  modalButton: {
+    backgroundColor: globalStyles.accentColor,
+    padding: 10,
+    borderRadius: globalStyles.BORDER_RADIUS,
+  },
+  modalButtonText: {
     color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "bold",
