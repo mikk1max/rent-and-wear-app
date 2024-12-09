@@ -26,7 +26,7 @@ export default function WelcomeView({ navigation }) {
   return (
     <View style={{ flex: 1 }}>
       <>{Platform.OS === "ios" && <StatusBar barStyle="dark-content" />}</>
-      <>{Platform.OS === "android" && <StatusBar barStyle="light-content" />}</>
+      <>{Platform.OS === "android" && <StatusBar barStyle="dark-content" />}</>
       <ImageBackground
         source={require("../../assets/images/welcomeBack.jpg")}
         style={styles.backImage}

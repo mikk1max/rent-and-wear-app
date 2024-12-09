@@ -38,14 +38,13 @@ const AddressesView = () => {
         const addressesArray = Object.keys(data).map((key) => ({
           id: key,
           ...data[key],
-        })); // przekształcamy obiekt adresów na tablicę
+        }));
         setAddresses(addressesArray);
       } else {
-        setAddresses([]); // jeśli brak adresów, ustawiamy pustą tablicę
+        setAddresses([]);
       }
     });
 
-    // Czyszczenie nasłuchiwania po odmontowaniu komponentu
     return () => unsubscribe();
   }, [userId]);
 
