@@ -13,20 +13,22 @@ import { useCustomFonts } from "../utils/fonts";
 import { useNavigation } from "@react-navigation/native";
 import { ref, onValue } from "firebase/database";
 import { db } from "../../firebase.config";
-import fetchSVG, { fetchImgURL } from "../utils/fetchSVG";
+import {
+  fetchSvgURL,
+  fetchImgURL,
+  getRandomAvatarUrl,
+} from "../utils/fetchSVG";
 import { SvgUri } from "react-native-svg";
 import { globalStyles, styles as mainStyles } from "../utils/style";
 import { iconParams, styles } from "../styles/UserProfileViewStyles";
 import { useUser } from "../components/UserProvider";
-import { onLogout } from "../utils/auth";
+import { onLogin, onLogout } from "../utils/auth";
 
 const UserProfileView = () => {
   const [svgs, setSvgs] = useState({});
   const [userProfileImg, setUserProfileImg] = useState(null);
   const { user, setUser } = useUser();
-
   const navigation = useNavigation();
-
   const fontsLoaded = useCustomFonts();
 
   useEffect(() => {
@@ -38,9 +40,10 @@ const UserProfileView = () => {
         "gets",
         "logout",
         "verification",
+        "not-verified",
       ];
       const svgPromises = icons.map((icon) =>
-        fetchSVG(`app-icons/${icon}.svg`).then((svg) => ({ [icon]: svg }))
+        fetchSvgURL(`app-icons/${icon}.svg`).then((svg) => ({ [icon]: svg }))
       );
       const svgs = await Promise.all(svgPromises);
       setSvgs(Object.assign({}, ...svgs));
@@ -68,32 +71,20 @@ const UserProfileView = () => {
   }, [user]);
 
   useEffect(() => {
+    const fetchProfileImg = async () => {
+      try {
+        const url = await fetchImgURL(`user-avatars/${user.id}.jpg`);
+        setUserProfileImg(url);
+      } catch {
+        const randomUrl = await getRandomAvatarUrl();
+        setUserProfileImg(randomUrl);
+      }
+    };
+
     if (user?.id) {
-      fetchImgURL(`user-avatars/${user.id}-min.jpg`)
-        .then((url) => setUserProfileImg(url))
-        .catch(() =>
-          setUserProfileImg(
-            "https://firebasestorage.googleapis.com/v0/b/rent-clothes-253cf.firebasestorage.app/o/user-avatars%2Fdefault-profile.png?alt=media&token=13058d8e-2f04-474d-baef-26196d7cd979"
-          )
-        );
+      fetchProfileImg();
     }
   }, [user?.id]);
-
-  const handleLogout = () => {
-    onLogout()
-      .then(() => {
-        navigation.navigate("Welcome");
-      })
-      .catch((error) => console.error("Logout failed:", error.message));
-  };
-
-  if (!fontsLoaded || !user) {
-    return (
-      <SafeAreaView>
-        <Text>Loading...</Text>
-      </SafeAreaView>
-    );
-  }
 
   useFocusEffect(
     useCallback(() => {
@@ -106,7 +97,7 @@ const UserProfileView = () => {
           },
           { text: "YES", onPress: () => BackHandler.exitApp() },
         ]);
-        return true; // Предотвращает стандартное действие
+        return true;
       };
 
       const backHandler = BackHandler.addEventListener(
@@ -114,10 +105,21 @@ const UserProfileView = () => {
         backAction
       );
 
-      // Удаляем обработчик при выходе с экрана
       return () => backHandler.remove();
     }, [])
   );
+
+  if (!fontsLoaded || !user) {
+    return null;
+  }
+
+  const handleLogout = () => {
+    onLogout()
+      .then(() => {
+        navigation.navigate("Welcome");
+      })
+      .catch((error) => console.error("Logout failed:", error.message));
+  };
 
   return (
     <SafeAreaView style={mainStyles.whiteBack}>
@@ -135,19 +137,25 @@ const UserProfileView = () => {
             </Text>
             <Text style={styles.emailText}>{user.email}</Text>
             <TouchableOpacity style={styles.verificationOpacity}>
-              <Text style={styles.verificationText}>
-                {user.isVerified && svgs.verification && (
+              <View style={styles.verificationContent}>
+                {user.isVerified !== undefined && user.isVerified !== null && (
                   <SvgUri
-                    uri={svgs.verification}
+                    uri={
+                      user.isVerified
+                        ? svgs["verification"]
+                        : svgs["not-verified"]
+                    }
                     width={15}
                     height={15}
-                    style={{ fill: globalStyles.textOnPrimaryColor }}
+                    style={styles.verificationIcon}
                   />
                 )}
-                {user.isVerified
-                  ? " Verification completed"
-                  : " Not verified yet"}
-              </Text>
+                <Text style={styles.verificationText}>
+                  {user.isVerified
+                    ? " Verification completed"
+                    : " Not verified yet"}
+                </Text>
+              </View>
             </TouchableOpacity>
           </View>
         </View>
@@ -178,14 +186,24 @@ const UserProfileView = () => {
                 style={[styles.buttonBase, styles.buttonRent]}
                 onPress={() => navigation.navigate("SendsView")}
               >
-                <SvgUri uri={svgs.sends} width={65} height={65} />
+                <SvgUri
+                  uri={svgs.sends}
+                  width={65}
+                  height={65}
+                  style={{ fill: "white" }}
+                />
                 <Text style={styles.buttonRentText}>Sends</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.buttonBase, styles.buttonRent]}
                 onPress={() => navigation.navigate("GetsView")}
               >
-                <SvgUri uri={svgs.gets} width={65} height={65} />
+                <SvgUri
+                  uri={svgs.gets}
+                  width={65}
+                  height={65}
+                  style={{ fill: "white" }}
+                />
                 <Text style={styles.buttonRentText}>Gets</Text>
               </TouchableOpacity>
             </View>

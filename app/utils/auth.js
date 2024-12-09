@@ -19,12 +19,19 @@ export const onRegister = async (data, initializeUser) => {
     await set(userRef, {
       email: data.email,
       id: userCredential.user.uid,
-      name: "Unknown",
-      surname: "Unknown",
+      name: data.name,
+      surname: data.surname,
       addresses: {},
     });
 
-    initializeUser({ email: data.email, uid: userCredential.user.uid });
+    const userData = {
+      uid: userCredential.user.uid,
+      email: userCredential.user.email,
+      name: data.name,
+      surname: data.surname,
+    };
+
+    initializeUser(userData);
   } catch (error) {
     console.error("Registration error:", error.message);
     throw error;

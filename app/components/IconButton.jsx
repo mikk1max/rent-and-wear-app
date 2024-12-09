@@ -3,14 +3,14 @@ import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
 // import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { globalStyles } from "../utils/style";
 import { SvgUri } from "react-native-svg";
-import fetchSVG from "../utils/fetchSVG";
+import { fetchSvgURL } from "../utils/fetchSVG";
 
 const IconButton = ({ filePath, ...props }) => {
   const [svgUrl, setSvgUrl] = useState(null);
 
   useEffect(() => {
     async function loadSvg() {
-      const url = await fetchSVG(filePath);
+      const url = await fetchSvgURL(filePath);
       setSvgUrl(url);
     }
     loadSvg();

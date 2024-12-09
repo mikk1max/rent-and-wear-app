@@ -272,122 +272,124 @@ export default function SettingsView() {
 
             <Divider style={styles.divider} />
 
-            {/* Name form */}
-            <View>
-              <InputWithLabel
-                control={controlName}
-                name={"name"}
-                placeholder={"Grzegorz"}
-                errors={errorsName}
-                editable={editableName}
-                onEdit={editName}
-                onSubmit={handleSubmitName(onSubmitName)}
-                onCancel={onCancelName}
-                inputStyle={nameTextInputStyle}
-                buttonStyle={nameButtonsStyle}
-                label={"First Name:"}
-                validationRules={{
-                  required: "First Name is required",
-                  pattern: {
-                    value:
-                      /^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+(?:\s[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)?$/,
-                    message: "Invalid First Name format",
-                  },
-                }}
-                value={user.name}
-                defaultValue={user.name}
-                isWithEditBtn={true}
-              />
+            <View style={{ gap: 20 }}>
+              {/* Name form */}
+              <View style={{ gap: 25 }}>
+                <InputWithLabel
+                  control={controlName}
+                  name={"name"}
+                  placeholder={"Grzegorz"}
+                  errors={errorsName}
+                  editable={editableName}
+                  onEdit={editName}
+                  onSubmit={handleSubmitName(onSubmitName)}
+                  onCancel={onCancelName}
+                  inputStyle={nameTextInputStyle}
+                  buttonStyle={nameButtonsStyle}
+                  label={"First Name:"}
+                  validationRules={{
+                    required: "First Name is required",
+                    pattern: {
+                      value:
+                        /^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+(?:\s[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)?$/,
+                      message: "Invalid First Name format",
+                    },
+                  }}
+                  value={user.name}
+                  defaultValue={user.name}
+                  isWithEditBtn={true}
+                />
 
-              <View style={[nameButtonsStyle, { marginBottom: 20 }]}>
-                <TouchableOpacity
-                  style={styles.buttonSave}
-                  activeOpacity={0.8}
-                  onPress={handleSubmitName(onSubmitName)}
-                >
-                  <Text style={styles.buttonText}>Save</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.buttonCancel}
-                  activeOpacity={0.8}
-                  onPress={onCancelName}
-                >
-                  <Text style={styles.buttonText}>Cancel</Text>
-                </TouchableOpacity>
+                <View style={[nameButtonsStyle, { marginBottom: 20 }]}>
+                  <TouchableOpacity
+                    style={styles.buttonSave}
+                    activeOpacity={0.8}
+                    onPress={handleSubmitName(onSubmitName)}
+                  >
+                    <Text style={styles.buttonText}>Save</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.buttonCancel}
+                    activeOpacity={0.8}
+                    onPress={onCancelName}
+                  >
+                    <Text style={styles.buttonText}>Cancel</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-            </View>
 
-            {/* Surname form */}
-            <View>
-              <InputWithLabel
-                control={controlSurname}
-                name={"surname"}
-                placeholder={"Brzęczyszczykiewicz"}
-                errors={errorsSurname}
-                editable={editableSurname}
-                onEdit={editSurname}
-                onSubmit={handleSubmitSurname(onSubmitSurname)}
-                onCancel={onCancelSurname}
-                inputStyle={surnameTextInputStyle}
-                buttonStyle={surnameButtonsStyle}
-                label={"Last Name:"}
-                validationRules={{
-                  required: "Last Name is required",
-                  pattern: {
-                    value:
-                      /^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]*(?:[-'][A-ZĄĆĘŁŃÓŚŹŻ]?[a-ząćęłńóśźż]+)?(?:-[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]*(?:[-'][A-ZĄĆĘŁŃÓŚŹŻ]?[a-ząćęłńóśźż]+)?)?$/,
-                    message: "Invalid Last Name format",
-                  },
-                }}
-                value={user.surname}
-                defaultValue={user.surname}
-                isWithEditBtn={true}
-              />
+              {/* Surname form */}
+              <View>
+                <InputWithLabel
+                  control={controlSurname}
+                  name={"surname"}
+                  placeholder={"Brzęczyszczykiewicz"}
+                  errors={errorsSurname}
+                  editable={editableSurname}
+                  onEdit={editSurname}
+                  onSubmit={handleSubmitSurname(onSubmitSurname)}
+                  onCancel={onCancelSurname}
+                  inputStyle={surnameTextInputStyle}
+                  buttonStyle={surnameButtonsStyle}
+                  label={"Last Name:"}
+                  validationRules={{
+                    required: "Last Name is required",
+                    pattern: {
+                      value:
+                        /^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]*(?:[-'][A-ZĄĆĘŁŃÓŚŹŻ]?[a-ząćęłńóśźż]+)?(?:-[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]*(?:[-'][A-ZĄĆĘŁŃÓŚŹŻ]?[a-ząćęłńóśźż]+)?)?$/,
+                      message: "Invalid Last Name format",
+                    },
+                  }}
+                  value={user.surname}
+                  defaultValue={user.surname}
+                  isWithEditBtn={true}
+                />
 
-              <View style={[surnameButtonsStyle, { marginBottom: 20 }]}>
-                <TouchableOpacity
-                  style={styles.buttonSave}
-                  activeOpacity={0.8}
-                  onPress={handleSubmitSurname(onSubmitSurname)}
-                >
-                  <Text style={styles.buttonText}>Save</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.buttonCancel}
-                  activeOpacity={0.8}
-                  onPress={onCancelSurname}
-                >
-                  <Text style={styles.buttonText}>Cancel</Text>
-                </TouchableOpacity>
+                <View style={[surnameButtonsStyle, { marginBottom: 20 }]}>
+                  <TouchableOpacity
+                    style={styles.buttonSave}
+                    activeOpacity={0.8}
+                    onPress={handleSubmitSurname(onSubmitSurname)}
+                  >
+                    <Text style={styles.buttonText}>Save</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.buttonCancel}
+                    activeOpacity={0.8}
+                    onPress={onCancelSurname}
+                  >
+                    <Text style={styles.buttonText}>Cancel</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-            </View>
 
-            {/* E-mail form */}
-            <View>
-              <InputWithLabel
-                control={controlEmail}
-                name={"email"}
-                placeholder={"example@gmail.com"}
-                errors={errorsEmail}
-                editable={editableEmail}
-                onEdit={editEmail}
-                onSubmit={handleSubmitEmail(onSubmitEmail)}
-                onCancel={onCancelEmail}
-                inputStyle={emailTextInputStyle}
-                buttonStyle={emailButtonsStyle}
-                label={"E-mail:"}
-                validationRules={{
-                  required: "E-mail is required",
-                  pattern: {
-                    value:
-                      /^(?!\.)[a-zA-Z0-9!#$%&'*+/=?^_`{|}~.-]{1,64}(?<!\.)@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$/,
-                    message: "Invalid E-mail format",
-                  },
-                }}
-                value={user.email}
-                defaultValue={user.email}
-                isWithEditBtn={true}
-              />
+              {/* E-mail form */}
+              <View>
+                <InputWithLabel
+                  control={controlEmail}
+                  name={"email"}
+                  placeholder={"example@gmail.com"}
+                  errors={errorsEmail}
+                  editable={editableEmail}
+                  onEdit={editEmail}
+                  onSubmit={handleSubmitEmail(onSubmitEmail)}
+                  onCancel={onCancelEmail}
+                  inputStyle={emailTextInputStyle}
+                  buttonStyle={emailButtonsStyle}
+                  label={"E-mail:"}
+                  validationRules={{
+                    required: "E-mail is required",
+                    pattern: {
+                      value:
+                        /^(?!\.)[a-zA-Z0-9!#$%&'*+/=?^_`{|}~.-]{1,64}(?<!\.)@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$/,
+                      message: "Invalid E-mail format",
+                    },
+                  }}
+                  value={user.email}
+                  defaultValue={user.email}
+                  isWithEditBtn={true}
+                />
+              </View>
 
               <View style={[emailButtonsStyle, { marginBottom: 20 }]}>
                 <TouchableOpacity

@@ -1,11 +1,23 @@
 import React, { useState } from "react";
-import { SafeAreaView, Text, TouchableOpacity } from "react-native";
+import {
+  SafeAreaView,
+  View,
+  Text,
+  TouchableOpacity,
+  Modal,
+  StyleSheet,
+  Image,
+  Dimensions,
+} from "react-native";
 import { useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
 import InputWithLabel from "../components/InputWithLabel";
 import { styles as mainStyles } from "../utils/style";
 import { onRegister } from "../utils/auth";
 import { useUser } from "../components/UserProvider";
+import { globalStyles } from "../utils/style";
+
+const { width } = Dimensions.get("window");
 
 export default function AuthRegistrationView() {
   const { initializeUser } = useUser();
@@ -26,47 +38,197 @@ export default function AuthRegistrationView() {
     }
   };
 
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const closeModal = () => {
+    setIsModalVisible(false);
+    setErrorMessage(null);
+  };
+
   return (
-    <SafeAreaView style={[mainStyles.whiteBack, { padding: 20 }]}>
-      <Text style={{ fontSize: 32, fontWeight: "bold", marginVertical: 20 }}>
-        Register
-      </Text>
-      <InputWithLabel
-        control={control}
-        name="email"
-        placeholder="example@gmail.com"
-        errors={errors}
-        label="E-mail:"
-        validationRules={{
-          required: "E-mail is required",
-          pattern: {
-            value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$/,
-            message: "Invalid email format",
-          },
-        }}
+    <SafeAreaView style={[mainStyles.whiteBack]}>
+      <Image
+        source={require("../../assets/images/loginBackRegClothes.png")}
+        style={styles.imgStyles}
       />
-      <InputWithLabel
-        control={control}
-        name="password"
-        placeholder="Password"
-        errors={errors}
-        label="Password:"
-        secureTextEntry
-        validationRules={{
-          required: "Password is required",
-          minLength: {
-            value: 6,
-            message: "Password must be at least 6 characters",
-          },
-        }}
-      />
-      <TouchableOpacity
-        style={[mainStyles.button, { marginTop: 20 }]}
-        onPress={handleSubmit(handleRegister)}
-      >
-        <Text style={mainStyles.buttonText}>Register</Text>
-      </TouchableOpacity>
-      {errorMessage && <Text style={{ color: "red" }}>{errorMessage}</Text>}
+      <View style={mainStyles.container}>
+        <View style={[styles.registerPanel]}>
+          <Text style={styles.loginTitle}>Create Account</Text>
+
+          <View style={{ gap: 20 }}>
+            <View
+              style={{
+                flexDirection: "row",
+                gap: 20,
+                justifyContent: "center",
+              }}
+            >
+              <InputWithLabel
+                control={control}
+                name="name"
+                placeholder="John"
+                errors={errors}
+                label="Name:"
+                validationRules={{
+                  required: "First name is required",
+                  pattern: {
+                    value:
+                      /^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+(?:\s[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)?$/,
+                    message: "Invalid First Name format",
+                  },
+                }}
+                inputStyle={[
+                  styles.inputStyle,
+                  { width: (width - 2 * 20) / 2 - 15 },
+                ]}
+              />
+              <InputWithLabel
+                control={control}
+                name="surname"
+                placeholder="Doe"
+                errors={errors}
+                label="Surname:"
+                validationRules={{
+                  required: "Last name is required",
+                  pattern: {
+                    value:
+                      /^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]*(?:[-'][A-ZĄĆĘŁŃÓŚŹŻ]?[a-ząćęłńóśźż]+)?(?:-[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]*(?:[-'][A-ZĄĆĘŁŃÓŚŹŻ]?[a-ząćęłńóśźż]+)?)?$/,
+                    message: "Invalid Last Name format",
+                  },
+                }}
+                inputStyle={[
+                  styles.inputStyle,
+                  { width: (width - 2 * 20) / 2 - 15 },
+                ]}
+              />
+            </View>
+            <InputWithLabel
+              control={control}
+              name="email"
+              placeholder="example@gmail.com"
+              errors={errors}
+              label="E-mail:"
+              validationRules={{
+                required: "E-mail is required",
+                pattern: {
+                  value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$/,
+                  message: "Invalid email format",
+                },
+              }}
+              inputStyle={styles.inputStyle}
+            />
+            <InputWithLabel
+              control={control}
+              name="password"
+              placeholder="Password"
+              errors={errors}
+              label="Password:"
+              secureTextEntry
+              validationRules={{
+                required: "Password is required",
+                minLength: {
+                  value: 6,
+                  message: "Password must be at least 6 characters",
+                },
+              }}
+              inputStyle={styles.inputStyle}
+            />
+          </View>
+          <TouchableOpacity
+            style={[styles.mainBtns, styles.registerBtn]}
+            onPress={handleSubmit(handleRegister)}
+          >
+            <Text style={styles.mainBtnText}>Sign Up</Text>
+          </TouchableOpacity>
+          {errorMessage && <Text style={{ color: "red" }}>{errorMessage}</Text>}
+        </View>
+        <Modal
+          visible={isModalVisible}
+          transparent
+          animationType="slide"
+          onRequestClose={closeModal}
+        >
+          <SafeAreaView style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>Login Failed</Text>
+              <Text style={styles.modalMessage}>{errorMessage}</Text>
+              <TouchableOpacity onPress={closeModal} style={styles.modalButton}>
+                <Text style={styles.modalButtonText}>Try again</Text>
+              </TouchableOpacity>
+            </View>
+          </SafeAreaView>
+        </Modal>
+      </View>
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  registerPanel: {
+    flex: 1,
+    width: "100%",
+  },
+  imgStyles: {
+    resizeMode: "cover",
+    width: "100%",
+    height: 250,
+  },
+  loginTitle: {
+    fontSize: 32,
+    fontWeight: "bold",
+    marginVertical: 20,
+  },
+  inputStyle: {
+    backgroundColor: globalStyles.secondaryColor,
+    padding: 15,
+    borderRadius: globalStyles.BORDER_RADIUS,
+  },
+  mainBtns: {
+    paddingVertical: 15,
+    borderRadius: globalStyles.BORDER_RADIUS,
+    alignItems: "center",
+  },
+  registerBtn: {
+    backgroundColor: globalStyles.accentColor,
+    marginTop: 20,
+  },
+  mainBtnText: {
+    color: globalStyles.textOnPrimaryColor,
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+
+  // Modal
+  modalContainer: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContent: {
+    backgroundColor: globalStyles.backgroundColor,
+    padding: 20,
+    borderRadius: globalStyles.BORDER_RADIUS,
+    width: "80%",
+    alignItems: "center",
+  },
+  modalTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  modalMessage: {
+    fontSize: 16,
+    marginBottom: 20,
+  },
+  modalButton: {
+    backgroundColor: globalStyles.accentColor,
+    padding: 10,
+    borderRadius: globalStyles.BORDER_RADIUS,
+  },
+  modalButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+});
