@@ -28,7 +28,7 @@ export const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "center",
 
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+    // paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
     paddingBottom: Platform.OS === "android" ? 20 : 0,
   },
   scrollBase: {

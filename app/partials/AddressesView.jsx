@@ -13,15 +13,19 @@ import { useForm, Controller } from "react-hook-form";
 import { Divider } from "react-native-elements";
 
 import { ref, onValue, update, get, set, remove } from "firebase/database";
-import { db } from "../../firebaseConfig";
+import { db } from "../../firebase.config";
 import AddressCard from "../components/AddressCard";
 
 import { globalStyles, styles as mainStyles } from "../utils/style";
 import { styles } from "../styles/AddressesViewStyles";
 
+import { useUser } from "../components/UserProvider";
+
 const AddressesView = () => {
   const fontsLoaded = useCustomFonts();
   if (!fontsLoaded) return null;
+
+  const { user, setUser } = useUser();
 
   // Addresses
   const [addresses, setAddresses] = useState([[]]);
@@ -34,14 +38,13 @@ const AddressesView = () => {
         const addressesArray = Object.keys(data).map((key) => ({
           id: key,
           ...data[key],
-        })); // przekształcamy obiekt adresów na tablicę
+        }));
         setAddresses(addressesArray);
       } else {
-        setAddresses([]); // jeśli brak adresów, ustawiamy pustą tablicę
+        setAddresses([]);
       }
     });
 
-    // Czyszczenie nasłuchiwania po odmontowaniu komponentu
     return () => unsubscribe();
   }, [userId]);
 

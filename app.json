@@ -1,11 +1,12 @@
 {
   "expo": {
     "name": "react-native-app",
-    "slug": "react-native-app",
+    "slug": "rent-clothes-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -26,11 +27,21 @@
     },
     "extra": {
       "eas": {
-        "projectId": "22bb45d8-f733-42ac-ba76-de07a23059b9"
+        "projectId": "f7c91daa-3dd0-44a5-b934-c414b19fde16"
       }
     },
     "plugins": [
-      "expo-font"
-    ]
+      "expo-font",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "enablePngCrunchInReleaseBuilds": false
+          }
+        }
+      ],
+      "expo-asset"
+    ],
+    "owner": "mikki_max"
   }
 }

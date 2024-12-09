@@ -134,6 +134,7 @@ dist
 # basic trash
 .vscode
 .expo
+.idea
 
 # secrets
 firebaseConfig.js

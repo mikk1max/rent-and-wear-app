@@ -1,5 +1,13 @@
-import React, { useState } from "react";
-import { View, Dimensions, ScrollView, SafeAreaView } from "react-native";
+import React, { useState, useEffect, useCallback } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import { BackHandler, Alert } from "react-native";
+import {
+  View,
+  Dimensions,
+  ScrollView,
+  SafeAreaView,
+  Platform,
+} from "react-native";
 import SearchBar from "../components/SearchBar";
 import { useCustomFonts } from "../utils/fonts";
 import ProductCard from "../components/ProductCard";
@@ -76,11 +84,44 @@ export default function RentOutView() {
     product.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  useFocusEffect(
+    useCallback(() => {
+      const backAction = () => {
+        Alert.alert("Hold on!", "Are you sure you want to go back?", [
+          {
+            text: "Cancel",
+            onPress: () => null,
+            style: "cancel",
+          },
+          { text: "YES", onPress: () => BackHandler.exitApp() },
+        ]);
+        return true; // Предотвращает стандартное действие
+      };
+
+      const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        backAction
+      );
+
+      // Удаляем обработчик при выходе с экрана
+      return () => backHandler.remove();
+    }, [])
+  );
+
   return (
     <SafeAreaView style={mainStyles.whiteBack}>
       <View style={mainStyles.container}>
         <SearchBar onSearch={handleSearch} />
-        <View style={[mainStyles.scrollBase, { flex: 1, marginTop: 15 }]}>
+        <View
+          style={[
+            mainStyles.scrollBase,
+            {
+              flex: 1,
+              marginTop: Platform.OS === "android" ? 15 : 20,
+              marginVertical: Platform.OS === "ios" ? 20 : 0,
+            },
+          ]}
+        >
           <ScrollView
             showsVerticalScrollIndicator={false}
             style={mainStyles.scrollBase}
