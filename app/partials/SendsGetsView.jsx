@@ -6,9 +6,9 @@ import { TouchableOpacity } from "react-native";
 import { useCustomFonts } from "../utils/fonts";
 
 import { ref, onValue } from "firebase/database";
-import { db } from "../../firebaseConfig";
+import { db } from "../../firebase.config";
 
-import fetchSVG from "../utils/fetchSVG";
+import { fetchSvgURL } from "../utils/fetchSVG";
 import { SvgUri } from "react-native-svg";
 
 import { globalStyles, styles as mainStyles } from "../utils/style";
@@ -19,7 +19,7 @@ const { width } = Dimensions.get("window");
 const calculatePrice = (dateFrom, dateTo, price) => {
   const timeDiff = dateTo.getTime() - dateFrom.getTime();
   const days = Math.ceil(timeDiff / (1000 * 3600 * 24));
-  return days * price;
+  return Math.round(days * price * 100) / 100; // Round to 2 decimal places
 };
 
 const SendsGetsView = () => {
@@ -34,7 +34,7 @@ const SendsGetsView = () => {
 
   useEffect(() => {
     async function loadSvg() {
-      const boxIcon = await fetchSVG("app-icons/open-box.svg");
+      const boxIcon = await fetchSvgURL("app-icons/open-box.svg");
 
       setBoxSvg(boxIcon);
     }
@@ -76,6 +76,11 @@ const SendsGetsView = () => {
     (announcement) =>
       activeStatus === "All" || announcement.status.status === activeStatus
   );
+
+  const calculateProgress = (ann, obj) => {
+    const rawValue = ann.status.code / (obj.length - 2);
+    return parseFloat(rawValue.toFixed(2));
+  };
 
   return (
     <SafeAreaView style={mainStyles.whiteBack}>
@@ -142,10 +147,8 @@ const SendsGetsView = () => {
                   productLink={announcement.link}
                   productStatus={announcement.status.status}
                   containerWidth={width - 50}
-                  progressValue={(
-                    announcement.status.code /
-                    (statuses.length - 2)
-                  ).toFixed(3)}
+                  // progressValue={calculateProgress(announcement, statuses)}
+                  progressValue={0.5}
                 />
               ))}
             {filteredAnnouncements.length === 0 && (

@@ -13,11 +13,9 @@ import RentNowView from "../partials/RentNowView";
 import RentOutView from "../partials/RentOutView";
 import { useCustomFonts } from "../utils/fonts";
 import { globalStyles, styles as mainStyles } from "../utils/style";
-import fetchSVG from "../utils/fetchSVG";
+import { fetchSvgURL } from "../utils/fetchSVG";
 import { SvgUri } from "react-native-svg";
 import UserProfileView from "../partials/UserProfileView";
-
-
 
 const Tab = createBottomTabNavigator();
 
@@ -26,7 +24,7 @@ const renderIcon = (route, focused) => {
 
   useEffect(() => {
     async function loadSvg() {
-      const url = await fetchSVG(
+      const url = await fetchSvgURL(
         focused ? `app-icons/user-fill.svg` : `app-icons/user-stroke.svg`
       );
       setSvgUrl(url);
@@ -59,7 +57,7 @@ const renderIcon = (route, focused) => {
   }
 };
 
-const NavigationBar = () => {
+const NavigationBar = (route) => {
   const fontsLoaded = useCustomFonts();
 
   if (!fontsLoaded) return null;
@@ -67,9 +65,12 @@ const NavigationBar = () => {
   return (
     // <NavigationContainer>
     <SafeAreaView
-      style={[mainStyles.whiteBack, {
-        paddingBottom: Platform.OS === "android" ? 20 : 0,
-      }]}
+      style={[
+        mainStyles.whiteBack,
+        {
+          paddingBottom: Platform.OS === "android" ? 20 : 0,
+        },
+      ]}
     >
       <View style={styles.navbarContainer}>
         <Tab.Navigator
