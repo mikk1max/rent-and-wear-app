@@ -3,6 +3,7 @@ import React from "react";
 import { Card } from "react-native-elements";
 import { globalStyles } from "../utils/style";
 import { useCustomFonts } from "../utils/fonts";
+import { useNavigation } from "@react-navigation/native";
 
 const ProductCard = ({
   productName,
@@ -11,14 +12,15 @@ const ProductCard = ({
   containerWidth,
   isOwner,
 }) => {
+  // Navigation
+  const navigation = useNavigation();
+
   // Fonts
   const fontsLoaded = useCustomFonts();
   if (!fontsLoaded) return null;
 
   // Width of card
   const cardWidth = (containerWidth - 1 * 5) / 2;
-
-  const onPress = () => console.log(productLink);
 
   // Styles
   var plateStyle = null;
@@ -52,7 +54,16 @@ const ProductCard = ({
           }}
         />
 
-        <TouchableOpacity onPress={onPress} style={styles.cardButton}>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate("AnnouncementView", {
+              name: "Name 1",
+              id: "325",
+            })
+            // navigation.navigate("AnnouncementView")
+          }
+          style={styles.cardButton}
+        >
           <Text style={styles.textOnButtonName}>{productName}</Text>
           <Text style={styles.textOnButtonPrice}>${productPrice} / day</Text>
         </TouchableOpacity>
