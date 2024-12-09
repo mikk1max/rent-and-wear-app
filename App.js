@@ -7,9 +7,17 @@ import { UserProvider, useUser } from "./app/components/UserProvider";
 
 export default function App() {
   return (
-    <View style={[styles.whiteBack, { flex: 1 }]}>
+    <View
+      style={[
+        styles.whiteBack,
+        {
+          flex: 1,
+          paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+        },
+      ]}
+    >
       <StatusBar
-        barStyle={Platform.OS === "ios" ? "dark-content" : "light-content"}
+        // barStyle={Platform.OS === "ios" ? "dark-content" : "light-content"}
         backgroundColor="#FFFFFF"
       />
       <UserProvider>

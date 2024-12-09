@@ -8,7 +8,7 @@ import { useCustomFonts } from "../utils/fonts";
 import { ref, onValue } from "firebase/database";
 import { db } from "../../firebase.config";
 
-import fetchSVG from "../utils/fetchSVG";
+import { fetchSvgURL } from "../utils/fetchSVG";
 import { SvgUri } from "react-native-svg";
 
 import { globalStyles, styles as mainStyles } from "../utils/style";
@@ -34,7 +34,7 @@ const SendsGetsView = () => {
 
   useEffect(() => {
     async function loadSvg() {
-      const boxIcon = await fetchSVG("app-icons/open-box.svg");
+      const boxIcon = await fetchSvgURL("app-icons/open-box.svg");
 
       setBoxSvg(boxIcon);
     }
