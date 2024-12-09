@@ -96,7 +96,7 @@ export const styles = StyleSheet.create({
     // borderWidth: 1,
     // borderRadius: 15,
     // padding: 10,
-    marginBottom: 25,
+    // marginBottom: 25,
   },
 
   textInput: {
