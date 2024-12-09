@@ -1,127 +1,226 @@
-import { View, Text, SafeAreaView, ImageBackground } from "react-native";
 import React, { useState } from "react";
+import {
+  View,
+  Text,
+  SafeAreaView,
+  TouchableOpacity,
+  Modal,
+  StyleSheet,
+  Image,
+} from "react-native";
 import { useForm } from "react-hook-form";
-
-import { useCustomFonts } from "../utils/fonts";
-import { globalStyles, styles as mainStyles } from "../utils/style";
-import { styles } from "../styles/AuthLoginViewStyles";
+import { useNavigation } from "@react-navigation/native";
 import InputWithLabel from "../components/InputWithLabel";
-import { TouchableOpacity } from "react-native";
-import { Divider } from "react-native-paper";
+import { globalStyles, styles as mainStyles } from "../utils/style";
+import { onLogin } from "../utils/auth";
 
 export default function AuthLoginView() {
-  const fontsLoaded = useCustomFonts();
-  if (!fontsLoaded) return null;
-
-  // Define state for user information
-  const [user, setUser] = useState({
-    email: "",
-    password: "",
-  });
-
-  // Form hooks for email and password
+  const navigation = useNavigation();
   const {
-    control: controlEmail,
-    handleSubmit: handleSubmitEmail,
-    formState: { errors: errorsEmail },
+    control,
+    handleSubmit,
+    formState: { errors },
   } = useForm();
+  const [errorMessage, setErrorMessage] = useState(null);
 
-  const {
-    control: controlPassword,
-    handleSubmit: handleSubmitPassword,
-    formState: { errors: errorsPassword },
-  } = useForm();
-
-  const onSubmitEmail = (data) => {
-    setUser((prevUser) => ({ ...prevUser, email: data.email.toLowerCase() }));
+  const initializeUser = (user) => {
+    console.log("Zainicjalizowano użytkownika:", user);
   };
 
-  const onSubmitPassword = (data) => {
-    setUser((prevUser) => ({ ...prevUser, password: data.password }));
+  const handleLogin = async (data) => {
+    console.log("Dane logowania:", data);
+    try {
+      await onLogin(data, initializeUser);
+      navigation.replace("MainApp");
+    } catch (error) {
+      setErrorMessage(
+        "The email address or password that you've entered is not valid."
+      );
+      setIsModalVisible(true);
+    }
+  };
+
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const closeModal = () => {
+    setIsModalVisible(false);
+    setErrorMessage(null);
   };
 
   return (
-    <View style={{ flex: 1 }}>
-      <ImageBackground
-        source={require("../../assets/images/clothes-back.png")}
-        style={{ flex: 1, resizeMode: "cover", justifyContent: "center" }}
-      >
-        <SafeAreaView
-          style={[mainStyles.whiteBack, { backgroundColor: "transparent" }]}
-        >
-          <View
-            style={[
-              mainStyles.container,
-              mainStyles.scrollBase,
-              {
-                paddingVertical: 20,
-                marginVertical: 60,
-                marginHorizontal: 20,
-                opacity: 0.85,
-              },
-            ]}
-          >
-            <Text
-              style={{
-                fontFamily: "WorkSans_900Black",
-                fontSize: 32,
-                marginBottom: 20,
+    <SafeAreaView style={[mainStyles.whiteBack]}>
+      <Image
+        source={require("../../assets/images/loginBackClothes.png")}
+        style={styles.imgStyles}
+      />
+
+      <View style={mainStyles.container}>
+        <View style={styles.loginPanel}>
+          <Text style={styles.loginTitle}>Welcome Back!</Text>
+          <View style={{ gap: 20 }}>
+            <InputWithLabel
+              control={control}
+              name="email"
+              placeholder="example@gmail.com"
+              errors={errors}
+              label="E-mail:"
+              validationRules={{
+                required: "E-mail is required",
+                pattern: {
+                  value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$/,
+                  message: "Invalid email format",
+                },
               }}
-            >
-              Welcome back!
-            </Text>
-            <View style={{ width: "100%" }}>
-              <InputWithLabel
-                control={controlEmail}
-                name={"email"}
-                placeholder={"example@gmail.com"}
-                errors={errorsEmail}
-                onSubmit={handleSubmitEmail(onSubmitEmail)}
-                inputStyle={styles.textInput}
-                label={"E-mail:"}
-                validationRules={{
-                  required: "E-mail is required",
-                  pattern: {
-                    value:
-                      /^(?!\.)[a-zA-Z0-9!#$%&'*+/=?^_`{|}~.-]{1,64}(?<!\.)@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$/,
-                    message: "Invalid E-mail format",
-                  },
-                }}
-                value={user.email}
-                defaultValue={user.email}
-              />
-              <InputWithLabel
-                control={controlPassword}
-                name={"password"}
-                placeholder={"Password"}
-                errors={errorsPassword}
-                onSubmit={handleSubmitPassword(onSubmitPassword)}
-                inputStyle={styles.textInput}
-                label={"Password:"}
-                secureTextEntry={true}
-                validationRules={{
-                  required: "Password is required",
-                  minLength: {
-                    value: 6,
-                    message: "Password must be at least 6 characters",
-                  },
-                }}
-                isSecure={true}
-              />
-
-              <TouchableOpacity>
-                <Text style={styles.forgotPass}>Forgot password?</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.loginBtn}>
-                <Text style={styles.loginBtnText}>Log in</Text>
-              </TouchableOpacity>
-
-              <Divider style={{ marginTop: 20, height: 2 }} />
-            </View>
+              inputStyle={styles.inputStyle}
+            />
+            <InputWithLabel
+              control={control}
+              name="password"
+              placeholder="Password"
+              errors={errors}
+              label="Password:"
+              secureTextEntry
+              validationRules={{
+                required: "Password is required",
+                minLength: {
+                  value: 6,
+                  message: "Password must be at least 6 characters",
+                },
+              }}
+              inputStyle={[styles.inputStyle, { marginBottom: 0 }]}
+            />
           </View>
-        </SafeAreaView>
-      </ImageBackground>
-    </View>
+
+          <TouchableOpacity>
+            <Text style={styles.forgotPass}>Forgot password?</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.mainBtns, styles.loginBtn]}
+            onPress={handleSubmit(handleLogin)}
+          >
+            <Text style={styles.mainBtnText}>Log In</Text>
+          </TouchableOpacity>
+
+          <Text style={styles.orText}>or</Text>
+
+          <View style={{ gap: 15, flexDirection: "row" }}>
+            <TouchableOpacity
+              style={[styles.mainBtns, styles.anotherBtn]}
+              onPress={() => navigation.navigate("Registration")}
+            >
+              <Text style={styles.mainBtnText}>Sign Up</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={[styles.mainBtns, styles.anotherBtn]}>
+              <Text style={styles.mainBtnText}>Login with Google</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <Modal
+          visible={isModalVisible}
+          transparent
+          animationType="slide"
+          onRequestClose={closeModal}
+        >
+          <SafeAreaView style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>Login Failed</Text>
+              <Text style={styles.modalMessage}>{errorMessage}</Text>
+              <TouchableOpacity onPress={closeModal} style={styles.modalButton}>
+                <Text style={styles.modalButtonText}>Try again</Text>
+              </TouchableOpacity>
+            </View>
+          </SafeAreaView>
+        </Modal>
+      </View>
+    </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  loginPanel: {
+    flex: 1,
+    width: "100%",
+  },
+  imgStyles: {
+    resizeMode: "cover",
+    width: "100%",
+    height: 250,
+  },
+  loginTitle: {
+    fontSize: 32,
+    fontWeight: "bold",
+    marginVertical: 20,
+  },
+  inputStyle: {
+    backgroundColor: globalStyles.secondaryColor,
+    padding: 15,
+    borderRadius: globalStyles.BORDER_RADIUS,
+  },
+  forgotPass: {
+    color: globalStyles.primaryColor,
+    alignSelf: "flex-end",
+    fontWeight: "bold",
+    marginVertical: 15,
+  },
+  orText: {
+    paddingVertical: 10,
+    fontSize: 16,
+    fontFamily: "Poppins_500Medium",
+    alignSelf: "center",
+    fontWeight: "bold",
+  },
+  mainBtns: {
+    paddingVertical: 15,
+    borderRadius: globalStyles.BORDER_RADIUS,
+    alignItems: "center",
+  },
+  loginBtn: {
+    backgroundColor: globalStyles.accentColor,
+  },
+  anotherBtn: {
+    backgroundColor: globalStyles.secondaryColor,
+    flex: 1,
+  },
+  mainBtnText: {
+    color: globalStyles.textOnPrimaryColor,
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+
+  // Modal
+  modalContainer: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContent: {
+    backgroundColor: globalStyles.backgroundColor,
+    padding: 20,
+    borderRadius: globalStyles.BORDER_RADIUS,
+    width: "80%",
+    alignItems: "center",
+  },
+  modalTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  modalMessage: {
+    fontSize: 16,
+    marginBottom: 20,
+  },
+  modalButton: {
+    backgroundColor: globalStyles.accentColor,
+    padding: 10,
+    borderRadius: globalStyles.BORDER_RADIUS,
+  },
+  modalButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+});

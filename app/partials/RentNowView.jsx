@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import { BackHandler, Alert } from "react-native";
 import {
   View,
   Dimensions,
@@ -6,6 +8,7 @@ import {
   TouchableOpacity,
   ScrollView,
   SafeAreaView,
+  Platform,
 } from "react-native";
 import SearchBar from "../components/SearchBar";
 import Swiper from "../components/Swiper";
@@ -93,11 +96,43 @@ const RentNowView = () => {
 
   const filteredProducts = getFilteredProducts(searchQuery);
 
+  useFocusEffect(
+    useCallback(() => {
+      const backAction = () => {
+        Alert.alert("Hold on!", "Are you sure you want to go back?", [
+          {
+            text: "Cancel",
+            onPress: () => null,
+            style: "cancel",
+          },
+          { text: "YES", onPress: () => BackHandler.exitApp() },
+        ]);
+        return true; // Предотвращает стандартное действие
+      };
+
+      const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        backAction
+      );
+
+      // Удаляем обработчик при выходе с экрана
+      return () => backHandler.remove();
+    }, [])
+  );
+
   return (
     <SafeAreaView style={mainStyles.whiteBack}>
       <View style={mainStyles.container}>
         <SearchBar onSearch={handleSearch} />
-        <View style={[mainStyles.scrollBase, { marginTop: 15 }]}>
+        <View
+          style={[
+            mainStyles.scrollBase,
+            {
+              marginTop: Platform.OS === "android" ? 15 : 20,
+              marginVertical: Platform.OS === "ios" ? 20 : 0,
+            },
+          ]}
+        >
           <ScrollView showsVerticalScrollIndicator={false}>
             <Swiper style={{ height: 200 }} />
 
