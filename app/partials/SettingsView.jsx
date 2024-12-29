@@ -319,7 +319,7 @@ export default function SettingsView() {
               </View>
 
               {/* Surname form */}
-              <View>
+              <View style={{ gap: 25 }}>
                 <InputWithLabel
                   control={controlSurname}
                   name={"surname"}
@@ -364,7 +364,7 @@ export default function SettingsView() {
               </View>
 
               {/* E-mail form */}
-              <View>
+              <View style={{ gap: 25 }}>
                 <InputWithLabel
                   control={controlEmail}
                   name={"email"}

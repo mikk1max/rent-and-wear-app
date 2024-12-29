@@ -12,7 +12,7 @@ import { useCustomFonts } from "../utils/fonts";
 import { useNavigation } from "@react-navigation/native";
 
 import { ref, onValue, update } from "firebase/database";
-import { db } from "../../firebaseConfig";
+import { db } from "../../firebase.config";
 
 import fetchSVG, { fetchImgURL } from "../utils/fetchSVG";
 import { G, SvgUri } from "react-native-svg";

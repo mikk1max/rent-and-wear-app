@@ -24,6 +24,9 @@ import { iconParams, styles } from "../styles/UserProfileViewStyles";
 import { useUser } from "../components/UserProvider";
 import { onLogin, onLogout } from "../utils/auth";
 
+import Addresses from "../../assets/icons/addresses.svg";
+import { Svg, Path, SvgProps } from "react-native-svg";
+
 const UserProfileView = () => {
   const [svgs, setSvgs] = useState({});
   const [userProfileImg, setUserProfileImg] = useState(null);
@@ -177,7 +180,8 @@ const UserProfileView = () => {
               style={styles.buttonBase}
               onPress={() => navigation.navigate("AddressesView")}
             >
-              <SvgUri uri={svgs.addresses} {...iconParams} />
+              {/* <SvgUri uri={svgs.addresses} {...iconParams} /> */}
+              <Addresses {...iconParams} />
               <Text style={styles.buttonText}>Addresses</Text>
             </TouchableOpacity>
 
