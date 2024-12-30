@@ -6,11 +6,13 @@ import { useCustomFonts } from "../utils/fonts";
 import { useNavigation } from "@react-navigation/native";
 
 const ProductCard = ({
-  productName,
-  productPrice,
-  productLink,
+  id,
+  mainImage,
+  title,
+  pricePerDay,
+  currentUserId,
+  advertiserId,
   containerWidth,
-  isOwner,
 }) => {
   // Navigation
   const navigation = useNavigation();
@@ -25,7 +27,7 @@ const ProductCard = ({
   // Styles
   var plateStyle = null;
   var imageStyle = null;
-  if (isOwner) {
+  if (currentUserId === advertiserId) {
     plateStyle = styles.cardPlateWithPlate;
     imageStyle = [styles.cardImageNoPlate, styles.cardImageWithPlate];
   } else {
@@ -50,22 +52,20 @@ const ProductCard = ({
         <Card.Image
           style={imageStyle}
           source={{
-            uri: "https://www.tommyjohn.com/cdn/shop/articles/holey.webp?v=1659548657&width=1500",
+            uri: mainImage,
           }}
         />
 
         <TouchableOpacity
           onPress={() =>
             navigation.navigate("AnnouncementView", {
-              name: "Name 1",
-              id: "325",
+              id: id,
             })
-            // navigation.navigate("AnnouncementView")
           }
           style={styles.cardButton}
         >
-          <Text style={styles.textOnButtonName}>{productName}</Text>
-          <Text style={styles.textOnButtonPrice}>${productPrice} / day</Text>
+          <Text style={styles.textOnButtonName}>{title}</Text>
+          <Text style={styles.textOnButtonPrice}>${pricePerDay} / day</Text>
         </TouchableOpacity>
       </Card>
     </View>

@@ -148,7 +148,8 @@ const SendsGetsView = () => {
                   productStatus={announcement.status.status}
                   containerWidth={width - 50}
                   // progressValue={calculateProgress(announcement, statuses)}
-                  progressValue={0.5}
+                  progressValue={15/100}
+                  // progressValue={calculatePrice(1732292072263, 1832292072263, 1)}
                 />
               ))}
             {filteredAnnouncements.length === 0 && (
