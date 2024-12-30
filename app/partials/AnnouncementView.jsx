@@ -7,12 +7,10 @@ import {
   SafeAreaView,
   Image,
   StyleSheet,
+  ActivityIndicator,
 } from "react-native";
 import { useCustomFonts } from "../utils/fonts";
 import { useNavigation } from "@react-navigation/native";
-
-import { ref, onValue, update } from "firebase/database";
-import { db } from "../../firebaseConfig";
 
 import fetchSVG, { fetchImgURL } from "../utils/fetchSVG";
 import { G, SvgUri } from "react-native-svg";
@@ -24,50 +22,89 @@ import OpinionCard from "../components/OpinionCard";
 import Swiper from "react-native-swiper";
 import ImageViewing from "react-native-image-viewing";
 
+import { ref, onValue, update, get, set, remove } from "firebase/database";
+import { db } from "../../firebase.config";
+import { useUser } from "../components/UserProvider";
+
 const AnnouncementView = ({ route }) => {
   const navigation = useNavigation();
 
   const fontsLoaded = useCustomFonts();
   if (!fontsLoaded) return null;
 
-  // Parameters from navigation.navigate()
-  const { name, id } = route.params;
+  const { user, setUser } = useUser();
+  const [isLoading, setLoading] = useState(true);
+  const [announcement, setAnnouncement] = useState([]);
+  const [isVisible, setIsVisible] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  // const [advertiser, setAdvertiser] = useState([]);
 
-  // Temp Announcement data
-  const announcement = {
-    id: "111",
-    title: "Holey underpants",
-    mainImage:
-      "https://www.tommyjohn.com/cdn/shop/articles/holey.webp?v=1659548657&width=1500",
-    images: [
-      {
-        uri: "https://www.tommyjohn.com/cdn/shop/articles/holey.webp?v=1659548657&width=1500",
+  const { id } = route.params;
+
+  // Pobieranie bieżącego użytkownika
+  useEffect(() => {
+    if (!user) return;
+
+    const usersRef = ref(db, "users");
+    const unsubscribe = onValue(usersRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const currentUser = Object.values(data).find(
+          (userData) => userData.email === user.email
+        );
+        setUser(currentUser || null);
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => unsubscribe();
+  }, [user]);
+
+  useEffect(() => {
+    const announcementsRef = ref(db, `announcements/${id}`);
+    const unsubscribe = onValue(
+      announcementsRef,
+      (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+          setAnnouncement({ id, ...data });
+        } else {
+          setAnnouncement(null);
+        }
+        setLoading(false); // Ustawienie ładowania na false po zakończeniu pobierania
       },
-      {
-        uri: "https://static01.nyt.com/images/2012/05/01/business/SMITH-obit/SMITH-obit-superJumbo.jpg",
-      },
-      {
-        uri: "https://images.unsplash.com/photo-1571501679680-de32f1e7aad4",
-      },
-      {
-        uri: "https://images.unsplash.com/photo-1573273787173-0eb81a833b34",
-      },
-      {
-        uri: "https://images.unsplash.com/photo-1569569970363-df7b6160d111",
-      },
-    ],
-    category: "Underwear",
-    description:
-      "Say hello to our delightfully quirky Holey Underpants—because life’s too short for boring underwear! Designed with intentional, strategically placed holes, these underpants bring a new twist to comfort and breathability. Whether you’re lounging at home or adding a fun flair to your wardrobe, these playful undergarments are a conversation starter that doesn’t compromise on practicality. Made from soft, stretchy fabric, they provide a comfortable fit while keeping things cool and airy all day long.\n\nHoley Underpants aren’t just about fun — they’re functional, too. The lightweight, breathable material is perfect for those who prioritize comfort and love a good laugh. With a durable elastic waistband, these underpants are designed to stay in place, ensuring a snug fit without being restrictive. They’re available in a variety of colors and sizes, catering to every personality and style preference. Plus, they make a hilarious gift for the jokester in your life or the person who already has everything!\n\nFrom cozying up at home to surprising a friend with a laugh-out-loud gift, Holey Underpants are here to brighten your day. They’re easy to care for—simply toss them in the wash, and they’re ready for another round of fun. Whether you're buying them as a gag gift, for everyday use, or just to bring a smile to your face, these unique underpants are a perfect blend of humor and practicality. Grab your pair today and add a little playfulness to your wardrobe!",
-    publicationDate: 1832209087178,
-    pricePerDay: 8.75,
-    rating: 3.4,
-    sizes: ["S", "M", "L", "XL", "XXL"],
-    // sizes: ["XS", "S", "M", "L", "XL", "XXL", "3XL", "4XL"],
-    condition: "has traces of use",
-    // condition: "nosi lekkie ślady użytkowania",
-    advertiserId: "123",
-  };
+      (error) => {
+        console.error("Błąd podczas pobierania danych:", error);
+        setLoading(false); // Nawet w przypadku błędu przerywamy ładowanie
+      }
+    );
+
+    return () => unsubscribe();
+  }, [id]);
+
+  if (isLoading) {
+    // Komponent ładowania
+    return (
+      <SafeAreaView style={mainStyles.whiteBack}>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#0000ff" />
+          <Text>Ładowanie ogłoszenia...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (!announcement) {
+    // Obsługa braku danych
+    return (
+      <SafeAreaView style={mainStyles.whiteBack}>
+        <View style={styles.noDataContainer}>
+          <Text style={styles.noDataText}>Brak danych do wyświetlenia</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   const displayedPublicationDate = new Date(
     announcement.publicationDate
@@ -77,6 +114,28 @@ const AnnouncementView = ({ route }) => {
     month: "long",
     day: "numeric",
   });
+
+  // useEffect(() => {
+  //   const advertiserRef = ref(db, `users/${announcement.advertiserId}`);
+  //   const unsubscribe = onValue(
+  //     advertiserRef,
+  //     (snapshot) => {
+  //       const data = snapshot.val();
+  //       if (data) {
+  //         setAnnouncement({ id, ...data });
+  //       } else {
+  //         setAnnouncement(null);
+  //       }
+  //       setLoading(false); // Ustawienie ładowania na false po zakończeniu pobierania
+  //     },
+  //     (error) => {
+  //       console.error("Błąd podczas pobierania danych:", error);
+  //       setLoading(false); // Nawet w przypadku błędu przerywamy ładowanie
+  //     }
+  //   );
+
+  //   return () => unsubscribe();
+  // }, [announcement.advertiserId]);
 
   const advertiser = {
     id: "222",
@@ -114,9 +173,6 @@ const AnnouncementView = ({ route }) => {
     day: "numeric",
   });
 
-  const [isVisible, setIsVisible] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
-
   const openImage = (index) => {
     setCurrentIndex(index); // Ustaw aktualny indeks
     setIsVisible(true); // Pokaż pełnoekranowy obraz
@@ -138,7 +194,7 @@ const AnnouncementView = ({ route }) => {
             <Swiper style={styles.annSwiper} showsButtons={false}>
               {announcement.images.map((image, index) => (
                 <TouchableOpacity
-                  key={index}
+                  key={"SwiperImage_" + index}
                   style={styles.annSlide}
                   onPress={() => openImage(index)}
                 >
@@ -192,11 +248,7 @@ const AnnouncementView = ({ route }) => {
           <View style={styles.annSizeWithCondition}>
             <View style={styles.annSizes}>
               <Text style={styles.annSizesLabel}>Size:</Text>
-              {announcement.sizes.map((size) => (
-                <Text key={size} style={styles.annSize}>
-                  {size}
-                </Text>
-              ))}
+              <Text style={styles.annSize}>{announcement.size}</Text>
             </View>
             <View style={styles.annCondition}>
               <Text style={styles.annConditionLabel}>Condition:</Text>
@@ -297,82 +349,6 @@ const AnnouncementView = ({ route }) => {
                 text={opinion.text}
                 isOnModeration={false}
               />
-
-              {/* <View style={styles.opinOnModeration}>
-                <Text style={styles.opinOnModerationText}>On Moderation...</Text>
-                <View style={styles.opinion}>
-                  <View style={styles.opinAuthorNameWithPlate}>
-                    <Text style={styles.opinAuthorName}>
-                      {opinion.authorFirstName} {opinion.authorLastName}
-                    </Text>
-                    <Text style={styles.opinPlate}>Your opinion</Text>
-                  </View>
-                  <View style={styles.opinRateWithDate}>
-                    <Rating
-                      type={"custom"}
-                      style={styles.opinRate}
-                      imageSize={20}
-                      ratingColor={globalStyles.redColor}
-                      tintColor={globalStyles.secondaryColor}
-                      ratingBackgroundColor={globalStyles.primaryColor}
-                      startingValue={opinion.rate}
-                      readonly
-                    />
-                    <Text style={styles.opinDate}>
-                      {displayedOpinionPublicationDate}
-                    </Text>
-                  </View>
-                  <Text style={styles.opinText}>{opinion.text}</Text>
-                </View>
-              </View>
-
-              <View style={styles.opinion}>
-                <View style={styles.opinAuthorNameWithPlate}>
-                  <Text style={styles.opinAuthorName}>
-                    {opinion.authorFirstName} {opinion.authorLastName}
-                  </Text>
-                  <Text style={styles.opinPlate}>Your opinion</Text>
-                </View>
-                <View style={styles.opinRateWithDate}>
-                  <Rating
-                    type={"custom"}
-                    style={styles.opinRate}
-                    imageSize={20}
-                    ratingColor={globalStyles.redColor}
-                    tintColor={globalStyles.secondaryColor}
-                    ratingBackgroundColor={globalStyles.primaryColor}
-                    startingValue={opinion.rate}
-                    readonly
-                  />
-                  <Text style={styles.opinDate}>
-                    {displayedOpinionPublicationDate}
-                  </Text>
-                </View>
-                <Text style={styles.opinText}>{opinion.text}</Text>
-
-              </View>
-
-              <View style={styles.opinion}>
-                <Text style={styles.opinAuthorName}>
-                  {opinion.authorFirstName} {opinion.authorLastName}
-                </Text>
-                <View style={styles.opinRateWithDate}>
-                  <Rating
-                    type={"custom"}
-                    style={styles.opinRate}
-                    imageSize={20}
-                    ratingColor={globalStyles.redColor}
-                    tintColor={globalStyles.secondaryColor}
-                    ratingBackgroundColor={globalStyles.primaryColor}
-                    startingValue={opinion.rate}
-                    readonly
-                  />
-                  <Text style={styles.opinDate}>
-                    {displayedOpinionPublicationDate}
-                  </Text>
-                </View>
-                <Text style={styles.opinText}>{opinion.text}</Text>
-              </View> */}
             </View>
           </View>
         </ScrollView>
