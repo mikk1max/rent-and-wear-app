@@ -11,14 +11,11 @@ import {
 import { useCustomFonts } from "../utils/fonts";
 import { useForm, Controller } from "react-hook-form";
 import { Divider } from "react-native-elements";
-
 import { ref, onValue, update, get, set, remove } from "firebase/database";
 import { db } from "../../firebase.config";
 import AddressCard from "../components/AddressCard";
-
 import { globalStyles, styles as mainStyles } from "../utils/style";
 import { styles } from "../styles/AddressesViewStyles";
-
 import { useUser } from "../components/UserProvider";
 
 const AddressesView = () => {
@@ -27,7 +24,6 @@ const AddressesView = () => {
 
   const { user, setUser } = useUser();
 
-  // Addresses
   const [addresses, setAddresses] = useState([[]]);
   const userId = 0;
   useEffect(() => {

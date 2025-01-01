@@ -119,7 +119,7 @@ const RentNowView = () => {
           },
           { text: "YES", onPress: () => BackHandler.exitApp() },
         ]);
-        return true; // Предотвращает стандартное действие
+        return true;
       };
 
       const backHandler = BackHandler.addEventListener(
@@ -127,7 +127,6 @@ const RentNowView = () => {
         backAction
       );
 
-      // Удаляем обработчик при выходе с экрана
       return () => backHandler.remove();
     }, [])
   );
@@ -158,7 +157,6 @@ const RentNowView = () => {
               {icons.map((iconName) => (
                 <IconButton
                   key={iconName}
-                  filePath={`app-icons/${iconName}.svg`}
                   iconName={iconName}
                   onPress={() => handleButtonPress(iconName)}
                   containerWidth={width - 60}
