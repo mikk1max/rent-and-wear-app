@@ -3,25 +3,26 @@ import { SearchBar } from "react-native-elements";
 import { StyleSheet } from "react-native";
 import { useCustomFonts } from "../utils/fonts";
 import { globalStyles } from "../utils/style";
+import 'react-native-get-random-values'
 
 const SearchBarComp = ({ onSearch }) => {
   const [search, setSearch] = useState("");
 
   const updateSearch = (search) => {
     setSearch(search);
-    onSearch(search); // Trigger search function from parent
+    onSearch(search);
   };
 
   const fontsLoaded = useCustomFonts();
 
   if (!fontsLoaded) return null;
-
+  
   return (
     <SearchBar
       placeholder="Search"
       onChangeText={updateSearch}
       value={search}
-      round={true}
+      round
       containerStyle={styles.container}
       inputContainerStyle={styles.inputContainer}
       inputStyle={styles.input}
@@ -37,10 +38,8 @@ const styles = StyleSheet.create({
     borderTopColor: "transparent",
     borderBottomColor: "transparent",
     paddingHorizontal: 0,
-    // height: 45,
     padding: 0,
     margin: 0,
-    // marginBottom: 10,
   },
   inputContainer: {
     width: "100%",

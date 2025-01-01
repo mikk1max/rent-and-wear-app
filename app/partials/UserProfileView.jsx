@@ -14,45 +14,22 @@ import { useNavigation } from "@react-navigation/native";
 import { ref, onValue } from "firebase/database";
 import { db } from "../../firebase.config";
 import {
-  fetchSvgURL,
   fetchImgURL,
   getRandomAvatarUrl,
 } from "../utils/fetchSVG";
-import { SvgUri } from "react-native-svg";
 import { globalStyles, styles as mainStyles } from "../utils/style";
 import { iconParams, styles } from "../styles/UserProfileViewStyles";
 import { useUser } from "../components/UserProvider";
 import { onLogin, onLogout } from "../utils/auth";
 
-import Addresses from "../../assets/icons/addresses.svg";
-import { Svg, Path, SvgProps } from "react-native-svg";
+import Icon from "../components/Icon";
+
 
 const UserProfileView = () => {
-  const [svgs, setSvgs] = useState({});
   const [userProfileImg, setUserProfileImg] = useState(null);
   const { user, setUser } = useUser();
   const navigation = useNavigation();
   const fontsLoaded = useCustomFonts();
-
-  useEffect(() => {
-    async function loadSvgs() {
-      const icons = [
-        "settings",
-        "addresses",
-        "sends",
-        "gets",
-        "logout",
-        "verification",
-        "not-verified",
-      ];
-      const svgPromises = icons.map((icon) =>
-        fetchSvgURL(`app-icons/${icon}.svg`).then((svg) => ({ [icon]: svg }))
-      );
-      const svgs = await Promise.all(svgPromises);
-      setSvgs(Object.assign({}, ...svgs));
-    }
-    loadSvgs();
-  }, []);
 
   useEffect(() => {
     if (!user) return;
@@ -142,15 +119,16 @@ const UserProfileView = () => {
             <TouchableOpacity style={styles.verificationOpacity}>
               <View style={styles.verificationContent}>
                 {user.isVerified !== undefined && user.isVerified !== null && (
-                  <SvgUri
-                    uri={
+                  <Icon
+                    name={
                       user.isVerified
-                        ? svgs["verification"]
-                        : svgs["not-verified"]
+                        ? "verification"
+                        : "not-verified"
                     }
                     width={15}
                     height={15}
-                    style={styles.verificationIcon}
+                    fillColor="white"
+                    styles={{ marginRight: 5 }}
                   />
                 )}
                 <Text style={styles.verificationText}>
@@ -172,7 +150,7 @@ const UserProfileView = () => {
               style={styles.buttonBase}
               onPress={() => navigation.navigate("SettingsView")}
             >
-              <SvgUri uri={svgs.settings} {...iconParams} />
+              <Icon name="settings" {...iconParams} />
               <Text style={styles.buttonText}>Settings</Text>
             </TouchableOpacity>
 
@@ -180,8 +158,7 @@ const UserProfileView = () => {
               style={styles.buttonBase}
               onPress={() => navigation.navigate("AddressesView")}
             >
-              {/* <SvgUri uri={svgs.addresses} {...iconParams} /> */}
-              <Addresses {...iconParams} />
+              <Icon name="addresses" {...iconParams} />
               <Text style={styles.buttonText}>Addresses</Text>
             </TouchableOpacity>
 
@@ -190,11 +167,11 @@ const UserProfileView = () => {
                 style={[styles.buttonBase, styles.buttonRent]}
                 onPress={() => navigation.navigate("SendsView")}
               >
-                <SvgUri
-                  uri={svgs.sends}
+                <Icon
+                  name="sends"
                   width={65}
                   height={65}
-                  style={{ fill: "white" }}
+                  fillColor="white"
                 />
                 <Text style={styles.buttonRentText}>Sends</Text>
               </TouchableOpacity>
@@ -202,11 +179,11 @@ const UserProfileView = () => {
                 style={[styles.buttonBase, styles.buttonRent]}
                 onPress={() => navigation.navigate("GetsView")}
               >
-                <SvgUri
-                  uri={svgs.gets}
+                <Icon
+                  name="gets"
                   width={65}
                   height={65}
-                  style={{ fill: "white" }}
+                  fillColor="white"
                 />
                 <Text style={styles.buttonRentText}>Gets</Text>
               </TouchableOpacity>
@@ -216,7 +193,7 @@ const UserProfileView = () => {
               style={[styles.buttonBase, styles.buttonLogOut]}
               onPress={handleLogout}
             >
-              <SvgUri uri={svgs.logout} {...iconParams} />
+              <Icon name="logout" {...iconParams}/>
               <Text style={styles.buttonText}>Log Out</Text>
             </TouchableOpacity>
           </View>

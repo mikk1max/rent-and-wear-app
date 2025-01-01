@@ -7,7 +7,7 @@ const dataCardWidth = width - 50 - 100 - 15;
 export const iconParams = {
   width: 30,
   height: 30,
-  style: { fill: globalStyles.textOnPrimaryColor },
+  fillColor: "white",
 };
 
 export const styles = StyleSheet.create({
@@ -51,10 +51,6 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-  },
-  verificationIcon: {
-    fill: "white",
-    marginRight: 5,
   },
   verificationText: {
     fontFamily: "Poppins_500Medium",
