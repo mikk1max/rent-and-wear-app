@@ -1,0 +1,32 @@
+{
+  "welcome": {
+    "guestBtn": "Kontynuuj jako gość",
+    "loginBtn": "Zaloguj się / Zarejestruj się"
+  },
+  "login": {
+    "title": "Witamy z powrotem!",
+    "emailLabel": "E-mail",
+    "passLabel": "Hasło"
+  },
+  "rentNow": {
+    "searchPlaceHolder": "Wyszukaj",
+    "categoryTitle": "Kategorie",
+    "allCategoriesBtn": "Więcej",
+    "yourAnnouncementLabel": "Twoje ogłoszenie"
+  },
+  "navigationBar": {
+    "rentNowBtn": "Najem",
+    "rentOutBtn": "Wynajem"
+  },
+  "userProfile": {
+    "verificationInfo": {
+      "completed": "Weryfikacja zrealizowana",
+      "uncompleted": "Jeszcze nie zweryfikowano"
+    },
+    "settings": "Ustawienia",
+    "addresses": "Adresy",
+    "sends": "Wysyłam",
+    "gets": "Otrzymuję",
+    "logout": "Wyloguj"
+  }
+}

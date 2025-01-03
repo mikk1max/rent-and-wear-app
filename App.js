@@ -1,9 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Platform, StatusBar, Text } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import NavigationStack from "./app/components/NavigationStack";
 import { styles } from "./app/utils/style";
 import { UserProvider, useUser } from "./app/components/UserProvider";
+import "./app/utils/i18n";
 
 export default function App() {
   return (
