@@ -83,7 +83,7 @@ const AddressCard = ({
 
   let emailStyle = styles.displayNone;
   if (email != "") {
-    emailStyle = styles.textWithIcon
+    emailStyle = styles.textWithIcon;
   }
 
   let phoneNumberStyle = styles.displayNone;
@@ -105,12 +105,7 @@ const AddressCard = ({
               style={styles.button}
               activeOpacity={0.8}
             >
-              <Icon
-                name={star}
-                width={20}
-                height={20}
-                fillColor="white"
-              />
+              <Icon name={star} width={20} height={20} fillColor="white" />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => openAddressForm(id)}
@@ -129,12 +124,7 @@ const AddressCard = ({
               style={[styles.button, styles.buttonDelete]}
               activeOpacity={0.8}
             >
-              <Icon
-                name="trash"
-                width={20}
-                height={20}
-                fillColor="white"
-              />
+              <Icon name="trash" width={20} height={20} fillColor="white" />
             </TouchableOpacity>
           </View>
         </View>
@@ -143,37 +133,19 @@ const AddressCard = ({
 
         {/* Phone number */}
         <View style={phoneNumberStyle}>
-          <Icon
-            name="phone"
-            width={15}
-            height={15}
-            fillColor="black"
-            colorStroke="black"
-          />
+          <Icon name="phone" width={15} height={15} colorStroke="black" />
           <Text style={styles.text}>{phoneNumber}</Text>
         </View>
 
         {/* E-mail */}
         <View style={emailStyle}>
-          <Icon
-            name="at"
-            width={15}
-            height={15}
-            // fillColor="black"
-            colorStroke="black"
-          />
+          <Icon name="envelope" width={15} height={15} fillColor="black" />
           <Text style={styles.text}>{email}</Text>
         </View>
 
         {/* Street + Building bumber */}
         <View style={styles.textWithIcon}>
-          <Icon
-            name="building"
-            width={15}
-            height={15}
-            fillColor="black"
-            colorStroke="black"
-          />
+          <Icon name="location" width={15} height={15} colorStroke="black" />
           <Text style={styles.text}>
             {street} {buildingNumber}
           </Text>
@@ -181,25 +153,13 @@ const AddressCard = ({
 
         {/* Flat number + Floor number */}
         <View style={flatAndFloorNumberStyle}>
-          <Icon
-            name="door"
-            width={15}
-            height={15}
-            fillColor="black"
-            colorStroke="black"
-          />
+          <Icon name="door" width={15} height={15} colorStroke="black" />
           <Text style={styles.text}>{flatAndFloorNumber}</Text>
         </View>
 
         {/* Postal code + City + Country */}
         <View style={styles.textWithIcon}>
-          <Icon
-            name="city"
-            width={15}
-            height={15}
-            fillColor="black"
-            colorStroke="black"
-          />
+          <Icon name="city" width={15} height={15} fillColor="black" />
           <Text style={styles.text}>{postalCodeCityCountry}</Text>
         </View>
       </View>

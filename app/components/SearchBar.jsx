@@ -3,7 +3,6 @@ import { SearchBar } from "react-native-elements";
 import { StyleSheet } from "react-native";
 import { useCustomFonts } from "../utils/fonts";
 import { globalStyles } from "../utils/style";
-import 'react-native-get-random-values'
 
 const SearchBarComp = ({ onSearch }) => {
   const [search, setSearch] = useState("");
@@ -16,7 +15,7 @@ const SearchBarComp = ({ onSearch }) => {
   const fontsLoaded = useCustomFonts();
 
   if (!fontsLoaded) return null;
-  
+
   return (
     <SearchBar
       placeholder="Search"
