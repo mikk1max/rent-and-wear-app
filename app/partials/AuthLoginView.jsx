@@ -16,8 +16,10 @@ import { useNavigation } from "@react-navigation/native";
 import InputWithLabel from "../components/InputWithLabel";
 import { globalStyles, styles as mainStyles } from "../utils/style";
 import { onLogin } from "../utils/auth";
+import { useTranslation } from "react-i18next";
 
 export default function AuthLoginView() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const {
     control,
@@ -63,14 +65,14 @@ export default function AuthLoginView() {
 
         <View style={mainStyles.container}>
           <View style={styles.loginPanel}>
-            <Text style={styles.loginTitle}>Welcome Back!</Text>
+            <Text style={styles.loginTitle}>{`${t("login.title")}!`}</Text>
             <View style={{ gap: 20 }}>
               <InputWithLabel
                 control={control}
                 name="email"
                 placeholder="example@gmail.com"
                 errors={errors}
-                label="E-mail:"
+                label={`${t("login.emailLabel")}:`}
                 validationRules={{
                   required: "E-mail is required",
                   pattern: {
@@ -83,9 +85,9 @@ export default function AuthLoginView() {
               <InputWithLabel
                 control={control}
                 name="password"
-                placeholder="Password"
+                placeholder="qwerty123"
                 errors={errors}
-                label="Password:"
+                label={`${t("login.passLabel")}:`}
                 secureTextEntry
                 validationRules={{
                   required: "Password is required",
@@ -99,14 +101,16 @@ export default function AuthLoginView() {
             </View>
 
             <TouchableOpacity>
-              <Text style={styles.forgotPass}>Forgot password?</Text>
+              <Text style={styles.forgotPass}>{`${t(
+                "login.forgotPass"
+              )}?`}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={[styles.mainBtns, styles.loginBtn]}
               onPress={handleSubmit(handleLogin)}
             >
-              <Text style={styles.mainBtnText}>Log In</Text>
+              <Text style={styles.mainBtnText}>{t("login.loginBtn")}</Text>
             </TouchableOpacity>
 
             <Text style={styles.orText}>or</Text>
@@ -116,11 +120,11 @@ export default function AuthLoginView() {
                 style={[styles.mainBtns, styles.anotherBtn]}
                 onPress={() => navigation.navigate("Registration")}
               >
-                <Text style={styles.mainBtnText}>Sign Up</Text>
+                <Text style={styles.mainBtnText}>{t("login.signUpBtn")}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={[styles.mainBtns, styles.anotherBtn]}>
-                <Text style={styles.mainBtnText}>Login with Google</Text>
+                <Text style={styles.mainBtnText}>{t("login.googleBtn")}</Text>
               </TouchableOpacity>
             </View>
           </View>

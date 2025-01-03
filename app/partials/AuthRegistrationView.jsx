@@ -50,7 +50,7 @@ export default function AuthRegistrationView() {
     <SafeAreaView style={[mainStyles.whiteBack]}>
       <KeyboardAwareScrollView
         extraScrollHeight={10}
-        // keyboardShouldPersistTaps="handled"
+        keyboardShouldPersistTaps="handled"
       >
         <Image
           source={require("../../assets/images/loginBackRegClothes.png")}
