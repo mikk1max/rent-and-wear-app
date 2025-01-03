@@ -9,6 +9,7 @@ import {
   Image,
   Dimensions,
 } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
 import InputWithLabel from "../components/InputWithLabel";
@@ -47,118 +48,128 @@ export default function AuthRegistrationView() {
 
   return (
     <SafeAreaView style={[mainStyles.whiteBack]}>
-      <Image
-        source={require("../../assets/images/loginBackRegClothes.png")}
-        style={styles.imgStyles}
-      />
-      <View style={mainStyles.container}>
-        <View style={[styles.registerPanel]}>
-          <Text style={styles.loginTitle}>Create Account</Text>
+      <KeyboardAwareScrollView
+        extraScrollHeight={10}
+        // keyboardShouldPersistTaps="handled"
+      >
+        <Image
+          source={require("../../assets/images/loginBackRegClothes.png")}
+          style={styles.imgStyles}
+        />
+        <View style={mainStyles.container}>
+          <View style={[styles.registerPanel]}>
+            <Text style={styles.loginTitle}>Create Account</Text>
 
-          <View style={{ gap: 20 }}>
-            <View
-              style={{
-                flexDirection: "row",
-                gap: 20,
-                justifyContent: "center",
-              }}
+            <View style={{ gap: 20 }}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  gap: 20,
+                  justifyContent: "center",
+                }}
+              >
+                <InputWithLabel
+                  control={control}
+                  name="name"
+                  placeholder="John"
+                  errors={errors}
+                  label="Name:"
+                  validationRules={{
+                    required: "First name is required",
+                    pattern: {
+                      value:
+                        /^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+(?:\s[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)?$/,
+                      message: "Invalid First Name format",
+                    },
+                  }}
+                  inputStyle={[
+                    styles.inputStyle,
+                    { width: (width - 2 * 20) / 2 - 15 },
+                  ]}
+                />
+                <InputWithLabel
+                  control={control}
+                  name="surname"
+                  placeholder="Doe"
+                  errors={errors}
+                  label="Surname:"
+                  validationRules={{
+                    required: "Last name is required",
+                    pattern: {
+                      value:
+                        /^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]*(?:[-'][A-ZĄĆĘŁŃÓŚŹŻ]?[a-ząćęłńóśźż]+)?(?:-[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]*(?:[-'][A-ZĄĆĘŁŃÓŚŹŻ]?[a-ząćęłńóśźż]+)?)?$/,
+                      message: "Invalid Last Name format",
+                    },
+                  }}
+                  inputStyle={[
+                    styles.inputStyle,
+                    { width: (width - 2 * 20) / 2 - 15 },
+                  ]}
+                />
+              </View>
+              <InputWithLabel
+                control={control}
+                name="email"
+                placeholder="example@gmail.com"
+                errors={errors}
+                label="E-mail:"
+                validationRules={{
+                  required: "E-mail is required",
+                  pattern: {
+                    value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$/,
+                    message: "Invalid email format",
+                  },
+                }}
+                inputStyle={styles.inputStyle}
+              />
+              <InputWithLabel
+                control={control}
+                name="password"
+                placeholder="Password"
+                errors={errors}
+                label="Password:"
+                secureTextEntry
+                validationRules={{
+                  required: "Password is required",
+                  minLength: {
+                    value: 6,
+                    message: "Password must be at least 6 characters",
+                  },
+                }}
+                inputStyle={styles.inputStyle}
+              />
+            </View>
+            <TouchableOpacity
+              style={[styles.mainBtns, styles.registerBtn]}
+              onPress={handleSubmit(handleRegister)}
             >
-              <InputWithLabel
-                control={control}
-                name="name"
-                placeholder="John"
-                errors={errors}
-                label="Name:"
-                validationRules={{
-                  required: "First name is required",
-                  pattern: {
-                    value:
-                      /^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+(?:\s[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)?$/,
-                    message: "Invalid First Name format",
-                  },
-                }}
-                inputStyle={[
-                  styles.inputStyle,
-                  { width: (width - 2 * 20) / 2 - 15 },
-                ]}
-              />
-              <InputWithLabel
-                control={control}
-                name="surname"
-                placeholder="Doe"
-                errors={errors}
-                label="Surname:"
-                validationRules={{
-                  required: "Last name is required",
-                  pattern: {
-                    value:
-                      /^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]*(?:[-'][A-ZĄĆĘŁŃÓŚŹŻ]?[a-ząćęłńóśźż]+)?(?:-[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]*(?:[-'][A-ZĄĆĘŁŃÓŚŹŻ]?[a-ząćęłńóśźż]+)?)?$/,
-                    message: "Invalid Last Name format",
-                  },
-                }}
-                inputStyle={[
-                  styles.inputStyle,
-                  { width: (width - 2 * 20) / 2 - 15 },
-                ]}
-              />
-            </View>
-            <InputWithLabel
-              control={control}
-              name="email"
-              placeholder="example@gmail.com"
-              errors={errors}
-              label="E-mail:"
-              validationRules={{
-                required: "E-mail is required",
-                pattern: {
-                  value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$/,
-                  message: "Invalid email format",
-                },
-              }}
-              inputStyle={styles.inputStyle}
-            />
-            <InputWithLabel
-              control={control}
-              name="password"
-              placeholder="Password"
-              errors={errors}
-              label="Password:"
-              secureTextEntry
-              validationRules={{
-                required: "Password is required",
-                minLength: {
-                  value: 6,
-                  message: "Password must be at least 6 characters",
-                },
-              }}
-              inputStyle={styles.inputStyle}
-            />
+              <Text style={styles.mainBtnText}>Sign Up</Text>
+            </TouchableOpacity>
+            {errorMessage && (
+              <Text style={{ color: "red" }}>{errorMessage}</Text>
+            )}
           </View>
-          <TouchableOpacity
-            style={[styles.mainBtns, styles.registerBtn]}
-            onPress={handleSubmit(handleRegister)}
+          <Modal
+            visible={isModalVisible}
+            transparent
+            animationType="slide"
+            onRequestClose={closeModal}
           >
-            <Text style={styles.mainBtnText}>Sign Up</Text>
-          </TouchableOpacity>
-          {errorMessage && <Text style={{ color: "red" }}>{errorMessage}</Text>}
+            <SafeAreaView style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>Login Failed</Text>
+                <Text style={styles.modalMessage}>{errorMessage}</Text>
+                <TouchableOpacity
+                  onPress={closeModal}
+                  style={styles.modalButton}
+                >
+                  <Text style={styles.modalButtonText}>Try again</Text>
+                </TouchableOpacity>
+              </View>
+            </SafeAreaView>
+          </Modal>
         </View>
-        <Modal
-          visible={isModalVisible}
-          transparent
-          animationType="slide"
-          onRequestClose={closeModal}
-        >
-          <SafeAreaView style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>Login Failed</Text>
-              <Text style={styles.modalMessage}>{errorMessage}</Text>
-              <TouchableOpacity onPress={closeModal} style={styles.modalButton}>
-                <Text style={styles.modalButtonText}>Try again</Text>
-              </TouchableOpacity>
-            </View>
-          </SafeAreaView>
-        </Modal>
-      </View>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }

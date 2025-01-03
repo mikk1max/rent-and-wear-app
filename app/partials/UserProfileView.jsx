@@ -13,17 +13,13 @@ import { useCustomFonts } from "../utils/fonts";
 import { useNavigation } from "@react-navigation/native";
 import { ref, onValue } from "firebase/database";
 import { db } from "../../firebase.config";
-import {
-  fetchImgURL,
-  getRandomAvatarUrl,
-} from "../utils/fetchSVG";
+import { fetchImgURL, getRandomAvatarUrl } from "../utils/fetchSVG";
 import { globalStyles, styles as mainStyles } from "../utils/style";
 import { iconParams, styles } from "../styles/UserProfileViewStyles";
 import { useUser } from "../components/UserProvider";
-import { onLogin, onLogout } from "../utils/auth";
+import { onConfirmEmail, onLogin, onLogout } from "../utils/auth";
 
 import Icon from "../components/Icon";
-
 
 const UserProfileView = () => {
   const [userProfileImg, setUserProfileImg] = useState(null);
@@ -116,15 +112,14 @@ const UserProfileView = () => {
               {user.name} {user.surname}
             </Text>
             <Text style={styles.emailText}>{user.email}</Text>
-            <TouchableOpacity style={styles.verificationOpacity}>
+            <TouchableOpacity
+              style={styles.verificationOpacity}
+              onPress={user.isVerified && (() => onConfirmEmail())}
+            >
               <View style={styles.verificationContent}>
                 {user.isVerified !== undefined && user.isVerified !== null && (
                   <Icon
-                    name={
-                      user.isVerified
-                        ? "verification"
-                        : "not-verified"
-                    }
+                    name={user.isVerified ? "verification" : "not-verified"}
                     width={15}
                     height={15}
                     fillColor="white"
@@ -167,24 +162,14 @@ const UserProfileView = () => {
                 style={[styles.buttonBase, styles.buttonRent]}
                 onPress={() => navigation.navigate("SendsView")}
               >
-                <Icon
-                  name="sends"
-                  width={65}
-                  height={65}
-                  fillColor="white"
-                />
+                <Icon name="sends" width={65} height={65} fillColor="white" />
                 <Text style={styles.buttonRentText}>Sends</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.buttonBase, styles.buttonRent]}
                 onPress={() => navigation.navigate("GetsView")}
               >
-                <Icon
-                  name="gets"
-                  width={65}
-                  height={65}
-                  fillColor="white"
-                />
+                <Icon name="gets" width={65} height={65} fillColor="white" />
                 <Text style={styles.buttonRentText}>Gets</Text>
               </TouchableOpacity>
             </View>
@@ -193,7 +178,7 @@ const UserProfileView = () => {
               style={[styles.buttonBase, styles.buttonLogOut]}
               onPress={handleLogout}
             >
-              <Icon name="logout" {...iconParams}/>
+              <Icon name="logout" {...iconParams} />
               <Text style={styles.buttonText}>Log Out</Text>
             </TouchableOpacity>
           </View>
