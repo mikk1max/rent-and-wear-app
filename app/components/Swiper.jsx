@@ -1,16 +1,18 @@
 import React from "react";
-import { View, Image, StyleSheet } from "react-native";
+import { View, Image, StyleSheet, Dimensions } from "react-native";
 import Swiper from "react-native-swiper";
+
+const { width } = Dimensions.get("window");
 
 const SwiperComponent = () => {
   return (
     <View style={styles.swiperContainer}>
       <Swiper
-        style={styles.wrapper}
         showsButtons={false}
         showsPagination={false}
         autoplay={true}
         autoplayTimeout={5}
+        loop={true}
       >
         <View style={styles.slide}>
           <Image
@@ -43,7 +45,8 @@ const SwiperComponent = () => {
 
 const styles = StyleSheet.create({
   swiperContainer: {
-    height: 180,
+    height: 200,
+    width: "100%",
     marginBottom: 15,
 
     // round the whole block of swiper

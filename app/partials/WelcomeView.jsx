@@ -15,7 +15,6 @@ import { globalStyles, styles as mainStyles } from "../utils/style";
 import { styles } from "../styles/WelcomeViewStyles";
 import { onLogin } from "../utils/auth";
 import { useTranslation } from "react-i18next";
-import LanguageSwitcher from "../components/LanguageSwitcher";
 
 export default function WelcomeView({ navigation }) {
   const { t } = useTranslation();
@@ -40,7 +39,6 @@ export default function WelcomeView({ navigation }) {
         <SafeAreaView
           style={[mainStyles.container, { backgroundColor: "transparent" }]}
         >
-          {/* <LanguageSwitcher /> */}
           <View style={styles.logoAndBtns}>
             <View style={styles.logo}>
               <Text style={styles.logoText}>{t("brand.name")}</Text>

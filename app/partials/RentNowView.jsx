@@ -9,6 +9,7 @@ import {
   ScrollView,
   SafeAreaView,
   Platform,
+  RefreshControl
 } from "react-native";
 import SearchBar from "../components/SearchBar";
 import Swiper from "../components/Swiper";
@@ -31,6 +32,9 @@ const RentNowView = () => {
   const { t } = useTranslation();
   const fontsLoaded = useCustomFonts();
   const navigation = useNavigation();
+  const [refreshing, setRefreshing] = useState(false);
+
+  const [reloadKey, setReloadKey] = useState(0);
 
   if (!fontsLoaded) return null;
 
@@ -85,7 +89,7 @@ const RentNowView = () => {
     });
 
     return () => unsubscribe();
-  }, []);
+  });
 
   const [searchQuery, setSearchQuery] = useState("");
   const [activeIcon, setActiveIcon] = useState(null);
@@ -149,9 +153,37 @@ const RentNowView = () => {
     handleButtonPress(icon);
   };
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      const announcementsRef = ref(db, `announcements`);
+      const snapshot = await get(announcementsRef);
+      const data = snapshot.val();
+  
+      if (data) {
+        const announcementPreviewsArray = Object.keys(data).map((key) => ({
+          id: key,
+          mainImage: data[key].mainImage,
+          title: data[key].title,
+          pricePerDay: data[key].pricePerDay,
+          advertiserId: data[key].advertiserId,
+        }));
+        setAnnouncementPreviews(announcementPreviewsArray);
+      } else {
+        setAnnouncementPreviews([]);
+      }
+      setReloadKey((prevKey) => prevKey + 1);
+    } catch (error) {
+      console.error("Error refreshing data:", error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+  
+
   return (
     <SafeAreaView style={mainStyles.whiteBack}>
-      <View style={mainStyles.container}>
+      <View style={[mainStyles.container, {marginTop: Platform.OS === "android" ? 15 : 0,}]} key={reloadKey}>
         <SearchBar onSearch={handleSearch} />
         <View
           style={[
@@ -162,7 +194,7 @@ const RentNowView = () => {
             },
           ]}
         >
-          <ScrollView showsVerticalScrollIndicator={false}>
+          <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
             <Swiper style={{ height: 200 }} />
 
             <View style={styles.categoryContainer}>
@@ -173,7 +205,7 @@ const RentNowView = () => {
                 onPress={() =>
                   navigation.navigate("Categories", {
                     recentIcons: icons,
-                    changeIcon,
+                    changeIcon: changeIcon,
                     changeActiveIcon: setActiveIcon,
                   })
                 }
@@ -206,6 +238,13 @@ const RentNowView = () => {
                   currentUserId={user != null ? user.id : "guest"}
                   advertiserId={announcementPreview.advertiserId}
                   containerWidth={width - 60}
+                  onChatPress={() =>
+                    navigation.navigate("Chat", {
+                      chatId: `${user.id}_${announcementPreview.advertiserId}`, // Generate a unique chat ID
+                      buyerId: user.id,
+                      sellerId: announcementPreview.advertiserId,
+                    })
+                  }
                 />
               ))}
             </View>
