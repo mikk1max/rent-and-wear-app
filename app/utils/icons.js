@@ -50,6 +50,7 @@ import DoorIcon from "../../assets/icons/door.svg";
 import CityIcon from "../../assets/icons/city.svg";
 import LocationIcon from "../../assets/icons/location.svg";
 import EnvelopeIcon from "../../assets/icons/envelope.svg";
+import LanguageIcon from "../../assets/icons/language.svg";
 
 export const icons = {
   addresses: AddressesIcon,
@@ -75,6 +76,7 @@ export const icons = {
   hat: HatIcon,
   "high-heel": HighHeelIcon,
   jersey: JerseyIcon,
+  language: LanguageIcon,
   location: LocationIcon,
   login: LoginIcon,
   logout: LogoutIcon,

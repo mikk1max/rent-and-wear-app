@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { BackHandler, Alert } from "react-native";
 import {
   View,
@@ -22,16 +22,26 @@ import { styles } from "../styles/RentNowViewStyles";
 import { ref, onValue, update, get, set, remove } from "firebase/database";
 import { db } from "../../firebase.config";
 import { useUser } from "../components/UserProvider";
+import { useTranslation } from "react-i18next";
 
 // Get the screen dimensions
 const { width } = Dimensions.get("window");
 
 const RentNowView = () => {
+  const { t } = useTranslation();
   const fontsLoaded = useCustomFonts();
+  const navigation = useNavigation();
+
   if (!fontsLoaded) return null;
 
   // Ikonki do kategorii
-  const icons = ["t-shirt", "dress", "shorts", "coat", "sneakers"];
+  const [icons, setIcons] = useState([
+    "t-shirt",
+    "dress",
+    "shorts",
+    "coat",
+    "sneakers",
+  ]);
 
   // Pobieranie bieżącego użytkownika
   const { user, setUser } = useUser();
@@ -131,6 +141,14 @@ const RentNowView = () => {
     }, [])
   );
 
+  const changeIcon = (icon) => {
+    console.log(icons);
+    if (!icon) return;
+    const updatedIcons = [icon, ...icons.slice(0, -1)];
+    setIcons(updatedIcons);
+    handleButtonPress(icon);
+  };
+
   return (
     <SafeAreaView style={mainStyles.whiteBack}>
       <View style={mainStyles.container}>
@@ -148,9 +166,21 @@ const RentNowView = () => {
             <Swiper style={{ height: 200 }} />
 
             <View style={styles.categoryContainer}>
-              <Text style={styles.titleCategory}>Category</Text>
-              <TouchableOpacity>
-                <Text style={styles.allCategoriesTextBtn}>See all</Text>
+              <Text style={styles.titleCategory}>
+                {t("rentNow.categoryTitle")}
+              </Text>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate("Categories", {
+                    recentIcons: icons,
+                    changeIcon,
+                    changeActiveIcon: setActiveIcon,
+                  })
+                }
+              >
+                <Text style={styles.allCategoriesTextBtn}>
+                  {t("rentNow.allCategoriesBtn")}
+                </Text>
               </TouchableOpacity>
             </View>
             <View style={styles.buttonContainer}>

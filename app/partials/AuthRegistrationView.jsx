@@ -17,10 +17,12 @@ import { styles as mainStyles } from "../utils/style";
 import { onRegister } from "../utils/auth";
 import { useUser } from "../components/UserProvider";
 import { globalStyles } from "../utils/style";
+import { useTranslation } from "react-i18next";
 
 const { width } = Dimensions.get("window");
 
 export default function AuthRegistrationView() {
+  const { t } = useTranslation();
   const { initializeUser } = useUser();
   const navigation = useNavigation();
   const {
@@ -58,7 +60,7 @@ export default function AuthRegistrationView() {
         />
         <View style={mainStyles.container}>
           <View style={[styles.registerPanel]}>
-            <Text style={styles.loginTitle}>Create Account</Text>
+            <Text style={styles.loginTitle}>{t("signUp.title")}</Text>
 
             <View style={{ gap: 20 }}>
               <View
@@ -73,7 +75,7 @@ export default function AuthRegistrationView() {
                   name="name"
                   placeholder="John"
                   errors={errors}
-                  label="Name:"
+                  label={`${t("signUp.nameLabel")}:`}
                   validationRules={{
                     required: "First name is required",
                     pattern: {
@@ -92,7 +94,7 @@ export default function AuthRegistrationView() {
                   name="surname"
                   placeholder="Doe"
                   errors={errors}
-                  label="Surname:"
+                  label={`${t("signUp.surnameLabel")}:`}
                   validationRules={{
                     required: "Last name is required",
                     pattern: {
@@ -112,7 +114,7 @@ export default function AuthRegistrationView() {
                 name="email"
                 placeholder="example@gmail.com"
                 errors={errors}
-                label="E-mail:"
+                label={`${t("signUp.emailLabel")}:`}
                 validationRules={{
                   required: "E-mail is required",
                   pattern: {
@@ -127,7 +129,7 @@ export default function AuthRegistrationView() {
                 name="password"
                 placeholder="Password"
                 errors={errors}
-                label="Password:"
+                label={`${t("signUp.passLabel")}:`}
                 secureTextEntry
                 validationRules={{
                   required: "Password is required",
@@ -143,7 +145,7 @@ export default function AuthRegistrationView() {
               style={[styles.mainBtns, styles.registerBtn]}
               onPress={handleSubmit(handleRegister)}
             >
-              <Text style={styles.mainBtnText}>Sign Up</Text>
+              <Text style={styles.mainBtnText}>{t("signUp.signUpBtn")}</Text>
             </TouchableOpacity>
             {errorMessage && (
               <Text style={{ color: "red" }}>{errorMessage}</Text>
@@ -157,13 +159,17 @@ export default function AuthRegistrationView() {
           >
             <SafeAreaView style={styles.modalContainer}>
               <View style={styles.modalContent}>
-                <Text style={styles.modalTitle}>Login Failed</Text>
+                <Text style={styles.modalTitle}>
+                  {t("signUp.modalError.title")}
+                </Text>
                 <Text style={styles.modalMessage}>{errorMessage}</Text>
                 <TouchableOpacity
                   onPress={closeModal}
                   style={styles.modalButton}
                 >
-                  <Text style={styles.modalButtonText}>Try again</Text>
+                  <Text style={styles.modalButtonText}>
+                    {t("signUp.modalError.closeBtn")}
+                  </Text>
                 </TouchableOpacity>
               </View>
             </SafeAreaView>

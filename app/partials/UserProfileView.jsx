@@ -18,14 +18,19 @@ import { globalStyles, styles as mainStyles } from "../utils/style";
 import { iconParams, styles } from "../styles/UserProfileViewStyles";
 import { useUser } from "../components/UserProvider";
 import { onConfirmEmail, onLogin, onLogout } from "../utils/auth";
-
 import Icon from "../components/Icon";
+import { useTranslation } from "react-i18next";
+import LanguageSwitcher from "../components/LanguageSwitcher";
 
 const UserProfileView = () => {
   const [userProfileImg, setUserProfileImg] = useState(null);
   const { user, setUser } = useUser();
   const navigation = useNavigation();
+  const { t, i18n } = useTranslation();
   const fontsLoaded = useCustomFonts();
+  const [isDropdownVisible, setDropdownVisible] = useState(false);
+
+  const toggleDropdown = () => setDropdownVisible(!isDropdownVisible);
 
   useEffect(() => {
     if (!user) return;
@@ -49,7 +54,7 @@ const UserProfileView = () => {
   useEffect(() => {
     const fetchProfileImg = async () => {
       try {
-        const url = await fetchImgURL(`user-avatars/${user.id}.jpg`);
+        const url = await fetchImgURL(`user-avatars/${user.id}/${user.id}.jpg`);
         setUserProfileImg(url);
       } catch {
         const randomUrl = await getRandomAvatarUrl();
@@ -57,9 +62,7 @@ const UserProfileView = () => {
       }
     };
 
-    if (user?.id) {
-      fetchProfileImg();
-    }
+    fetchProfileImg();
   }, [user?.id]);
 
   useFocusEffect(
@@ -97,8 +100,20 @@ const UserProfileView = () => {
       .catch((error) => console.error("Logout failed:", error.message));
   };
 
+  const hideEmail = (email) => {
+    const atIndex = email.indexOf("@");
+    if (atIndex === -1) return email;
+    const hiddenPart = "*".repeat(3);
+    return (
+      email.slice(0, 3) +
+      hiddenPart +
+      email.slice(atIndex - 3, atIndex) +
+      email.slice(atIndex)
+    );
+  };
+
   return (
-    <SafeAreaView style={mainStyles.whiteBack}>
+    <SafeAreaView style={mainStyles.whiteBack} key={i18n.language}>
       <View style={mainStyles.container}>
         <View style={styles.userCard}>
           <Image
@@ -111,10 +126,12 @@ const UserProfileView = () => {
             <Text style={styles.fullNameText}>
               {user.name} {user.surname}
             </Text>
-            <Text style={styles.emailText}>{user.email}</Text>
+            <Text style={styles.emailText}>{hideEmail(user.email)}</Text>
             <TouchableOpacity
               style={styles.verificationOpacity}
-              onPress={user.isVerified && (() => onConfirmEmail())}
+              onPress={!user.isVerified && (() => onConfirmEmail())}
+              activeOpacity={0.9}
+              disabled={user.isVerified && true}
             >
               <View style={styles.verificationContent}>
                 {user.isVerified !== undefined && user.isVerified !== null && (
@@ -128,8 +145,8 @@ const UserProfileView = () => {
                 )}
                 <Text style={styles.verificationText}>
                   {user.isVerified
-                    ? " Verification completed"
-                    : " Not verified yet"}
+                    ? ` ${t("userProfile.verificationInfo.completed")}`
+                    : ` ${t("userProfile.verificationInfo.uncompleted")}`}
                 </Text>
               </View>
             </TouchableOpacity>
@@ -143,43 +160,67 @@ const UserProfileView = () => {
           <View style={{ gap: 15 }}>
             <TouchableOpacity
               style={styles.buttonBase}
-              onPress={() => navigation.navigate("SettingsView")}
+              onPress={() => navigation.navigate("AddressesView")}
+              activeOpacity={0.9}
             >
-              <Icon name="settings" {...iconParams} />
-              <Text style={styles.buttonText}>Settings</Text>
+              <Icon name="addresses" {...iconParams} />
+              <Text style={styles.buttonText}>
+                {t("userProfile.addresses")}
+              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={styles.buttonBase}
-              onPress={() => navigation.navigate("AddressesView")}
+              onPress={() => navigation.navigate("SettingsView")}
+              activeOpacity={0.9}
             >
-              <Icon name="addresses" {...iconParams} />
-              <Text style={styles.buttonText}>Addresses</Text>
+              <Icon name="settings" {...iconParams} />
+              <Text style={styles.buttonText}>{t("userProfile.settings")}</Text>
             </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.buttonBase}
+              onPress={toggleDropdown}
+              activeOpacity={0.9}
+            >
+              <Icon name="language" {...iconParams} />
+              <Text style={styles.buttonText}>{t("userProfile.language")}</Text>
+            </TouchableOpacity>
+
+            {isDropdownVisible && (
+              <LanguageSwitcher toggleDropdown={toggleDropdown} />
+            )}
 
             <View style={{ flexDirection: "row", gap: 15 }}>
               <TouchableOpacity
                 style={[styles.buttonBase, styles.buttonRent]}
                 onPress={() => navigation.navigate("SendsView")}
+                activeOpacity={0.9}
               >
                 <Icon name="sends" width={65} height={65} fillColor="white" />
-                <Text style={styles.buttonRentText}>Sends</Text>
+                <Text style={styles.buttonRentText}>
+                  {t("userProfile.sends")}
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.buttonBase, styles.buttonRent]}
                 onPress={() => navigation.navigate("GetsView")}
+                activeOpacity={0.9}
               >
                 <Icon name="gets" width={65} height={65} fillColor="white" />
-                <Text style={styles.buttonRentText}>Gets</Text>
+                <Text style={styles.buttonRentText}>
+                  {t("userProfile.gets")}
+                </Text>
               </TouchableOpacity>
             </View>
 
             <TouchableOpacity
               style={[styles.buttonBase, styles.buttonLogOut]}
               onPress={handleLogout}
+              activeOpacity={0.9}
             >
               <Icon name="logout" {...iconParams} />
-              <Text style={styles.buttonText}>Log Out</Text>
+              <Text style={styles.buttonText}>{t("userProfile.logout")}</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>

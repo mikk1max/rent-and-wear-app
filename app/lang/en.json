@@ -1,5 +1,9 @@
 {
   "translation": {
+    "languages": {
+      "en": "English",
+      "pl": "Polish / Polski"
+    },
     "brand": {
       "name": "Rent & Wear",
       "subtitle": "Clothing rental"
@@ -21,7 +25,11 @@
       "forgotPass": "Forgot password",
       "loginBtn": "Log in",
       "signUpBtn": "Sign Up",
-      "googleBtn": "Login with Google"
+      "googleBtn": "Login with Google",
+      "modalError": {
+        "title": "Login Failed",
+        "closeBtn": "Try again"
+      }
     },
     "signUp": {
       "title": "Create Account",
@@ -29,7 +37,11 @@
       "surnameLabel": "Surname",
       "emailLabel": "E-mail",
       "passLabel": "Password",
-      "signUpBtn": "Sign Up"
+      "signUpBtn": "Sign Up",
+      "modalError": {
+        "title": "Sign Up Failed",
+        "closeBtn": "Try again"
+      }
     },
     "rentNow": {
       "searchPlaceHolder": "Search",
@@ -46,6 +58,7 @@
         "completed": "Verification completed",
         "uncompleted": "Not verified yet"
       },
+      "language": "Language",
       "settings": "Settings",
       "addresses": "Addresses",
       "sends": "Sends",
