@@ -202,11 +202,13 @@ const styles = StyleSheet.create({
   anotherBtn: {
     backgroundColor: globalStyles.secondaryColor,
     flex: 1,
+    justifyContent: "center",
   },
   mainBtnText: {
     color: globalStyles.textOnPrimaryColor,
     fontSize: 16,
     fontWeight: "bold",
+    textAlign: "center",
   },
 
   // Modal

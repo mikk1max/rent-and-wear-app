@@ -6,29 +6,30 @@ import { styles } from "./app/utils/style";
 import { UserProvider, useUser } from "./app/components/UserProvider";
 import { I18nextProvider } from "react-i18next";
 import i18n from "./app/utils/i18n";
+import ChatView from "./app/partials/ChatView";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 export default function App() {
   return (
-    <I18nextProvider i18n={i18n}>
-      <View
-        style={[
-          styles.whiteBack,
-          {
-            flex: 1,
-            paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-          },
-        ]}
-      >
-        <StatusBar
-          // barStyle={Platform.OS === "ios" ? "dark-content" : "light-content"}
-          backgroundColor="#FFFFFF"
-        />
-        <UserProvider>
-          <NavigationContainer>
-            <NavigationStack />
-          </NavigationContainer>
-        </UserProvider>
-      </View>
-    </I18nextProvider>
+    <SafeAreaProvider>
+      <I18nextProvider i18n={i18n}>
+        <StatusBar />
+        <View
+          style={[
+            styles.whiteBack,
+            {
+              flex: 1,
+            },
+          ]}
+        >
+          <UserProvider>
+            {/* <ChatView /> */}
+            <NavigationContainer>
+              <NavigationStack />
+            </NavigationContainer>
+          </UserProvider>
+        </View>
+      </I18nextProvider>
+    </SafeAreaProvider>
   );
 }

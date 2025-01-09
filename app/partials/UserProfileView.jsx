@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
-import { BackHandler, Alert } from "react-native";
+import { BackHandler, Alert, RefreshControl } from "react-native";
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   ScrollView,
   SafeAreaView,
   Image,
+  Platform
 } from "react-native";
 import { useCustomFonts } from "../utils/fonts";
 import { useNavigation } from "@react-navigation/native";
@@ -42,7 +43,9 @@ const UserProfileView = () => {
         const currentUser = Object.values(data).find(
           (userData) => userData.email === user.email
         );
-        setUser(currentUser || null);
+        if (currentUser?.id !== user?.id) {
+          setUser(currentUser || null);
+        }
       } else {
         setUser(null);
       }
@@ -114,7 +117,7 @@ const UserProfileView = () => {
 
   return (
     <SafeAreaView style={mainStyles.whiteBack} key={i18n.language}>
-      <View style={mainStyles.container}>
+      <View style={[mainStyles.container, {marginTop: Platform.OS === "android" ? 15 : 0,}]}>
         <View style={styles.userCard}>
           <Image
             source={{
@@ -190,6 +193,15 @@ const UserProfileView = () => {
             {isDropdownVisible && (
               <LanguageSwitcher toggleDropdown={toggleDropdown} />
             )}
+
+            <TouchableOpacity
+              style={styles.buttonBase}
+              onPress={() => navigation.navigate("Chat")}
+              activeOpacity={0.9}
+            >
+              <Icon name="settings" {...iconParams} />
+              <Text style={styles.buttonText}>Chat</Text>
+            </TouchableOpacity>
 
             <View style={{ flexDirection: "row", gap: 15 }}>
               <TouchableOpacity
