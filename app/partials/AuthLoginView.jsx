@@ -137,13 +137,17 @@ export default function AuthLoginView() {
           >
             <SafeAreaView style={styles.modalContainer}>
               <View style={styles.modalContent}>
-                <Text style={styles.modalTitle}>Login Failed</Text>
+                <Text style={styles.modalTitle}>
+                  {t("login.modalError.title")}
+                </Text>
                 <Text style={styles.modalMessage}>{errorMessage}</Text>
                 <TouchableOpacity
                   onPress={closeModal}
                   style={styles.modalButton}
                 >
-                  <Text style={styles.modalButtonText}>Try again</Text>
+                  <Text style={styles.modalButtonText}>
+                    {t("login.modalError.closeBtn")}
+                  </Text>
                 </TouchableOpacity>
               </View>
             </SafeAreaView>

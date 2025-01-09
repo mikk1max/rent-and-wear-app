@@ -22,9 +22,11 @@ import { styles } from "../styles/SettingsViewStyles";
 import InputWithLabel from "../components/InputWithLabel";
 
 import { useUser } from "../components/UserProvider";
+import { useTranslation } from "react-i18next";
 
 export default function SettingsView() {
   // const [user, setUser] = useState([]);
+  const { t } = useTranslation();
   const { user, setUser } = useUser();
   const [userProfileImg, setUserProfileImg] = useState(null);
 
@@ -266,7 +268,9 @@ export default function SettingsView() {
                 activeOpacity={0.6}
                 onPress={() => console.log("Edit picture")}
               >
-                <Text style={styles.imageText}>Edit profile picture</Text>
+                <Text style={styles.imageText}>
+                  {t("settings.editPictureText")}
+                </Text>
               </TouchableOpacity>
             </View>
 
@@ -286,7 +290,7 @@ export default function SettingsView() {
                   onCancel={onCancelName}
                   inputStyle={nameTextInputStyle}
                   buttonStyle={nameButtonsStyle}
-                  label={"First Name:"}
+                  label={`${t("settings.nameLabel")}:`}
                   validationRules={{
                     required: "First Name is required",
                     pattern: {
@@ -306,14 +310,18 @@ export default function SettingsView() {
                     activeOpacity={0.8}
                     onPress={handleSubmitName(onSubmitName)}
                   >
-                    <Text style={styles.buttonText}>Save</Text>
+                    <Text style={styles.buttonText}>
+                      {t("universal.saveBtn")}
+                    </Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.buttonCancel}
                     activeOpacity={0.8}
                     onPress={onCancelName}
                   >
-                    <Text style={styles.buttonText}>Cancel</Text>
+                    <Text style={styles.buttonText}>
+                      {t("universal.cancelBtn")}
+                    </Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -331,7 +339,7 @@ export default function SettingsView() {
                   onCancel={onCancelSurname}
                   inputStyle={surnameTextInputStyle}
                   buttonStyle={surnameButtonsStyle}
-                  label={"Last Name:"}
+                  label={`${t("settings.surnameLabel")}:`}
                   validationRules={{
                     required: "Last Name is required",
                     pattern: {
@@ -351,14 +359,18 @@ export default function SettingsView() {
                     activeOpacity={0.8}
                     onPress={handleSubmitSurname(onSubmitSurname)}
                   >
-                    <Text style={styles.buttonText}>Save</Text>
+                    <Text style={styles.buttonText}>
+                      {t("universal.saveBtn")}
+                    </Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.buttonCancel}
                     activeOpacity={0.8}
                     onPress={onCancelSurname}
                   >
-                    <Text style={styles.buttonText}>Cancel</Text>
+                    <Text style={styles.buttonText}>
+                      {t("universal.cancelBtn")}
+                    </Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -376,7 +388,7 @@ export default function SettingsView() {
                   onCancel={onCancelEmail}
                   inputStyle={emailTextInputStyle}
                   buttonStyle={emailButtonsStyle}
-                  label={"E-mail:"}
+                  label={`${t("settings.emailLabel")}:`}
                   validationRules={{
                     required: "E-mail is required",
                     pattern: {
@@ -397,14 +409,18 @@ export default function SettingsView() {
                   activeOpacity={0.8}
                   onPress={handleSubmitEmail(onSubmitEmail)}
                 >
-                  <Text style={styles.buttonText}>Save</Text>
+                  <Text style={styles.buttonText}>
+                    {t("universal.saveBtn")}
+                  </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.buttonCancel}
                   activeOpacity={0.8}
                   onPress={onSubmitEmail}
                 >
-                  <Text style={styles.buttonText}>Cancel</Text>
+                  <Text style={styles.buttonText}>
+                    {t("universal.cancelBtn")}
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>
