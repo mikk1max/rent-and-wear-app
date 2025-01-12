@@ -29,7 +29,9 @@ export const styles = StyleSheet.create({
     flexWrap: "wrap",
     flexDirection: "row",
     justifyContent: "space-between",
-    gap: 15,
+    // gap: 15,
+    rowGap: 35,
+    columnGap: 15,
     marginTop: 15,
   },
 });

@@ -9,7 +9,7 @@ import {
   ScrollView,
   SafeAreaView,
   Platform,
-  RefreshControl
+  RefreshControl,
 } from "react-native";
 import SearchBar from "../components/SearchBar";
 import Swiper from "../components/Swiper";
@@ -20,7 +20,7 @@ import ProductCard from "../components/ProductCard";
 import { styles as mainStyles } from "../utils/style";
 import { styles } from "../styles/RentNowViewStyles";
 
-import { ref, onValue, update, get, set, remove } from "firebase/database";
+import { ref, onValue, update, get, set, remove, push } from "firebase/database";
 import { db } from "../../firebase.config";
 import { useUser } from "../components/UserProvider";
 import { useTranslation } from "react-i18next";
@@ -38,7 +38,6 @@ const RentNowView = () => {
 
   if (!fontsLoaded) return null;
 
-  // Ikonki do kategorii
   const [icons, setIcons] = useState([
     "t-shirt",
     "dress",
@@ -47,9 +46,10 @@ const RentNowView = () => {
     "sneakers",
   ]);
 
-  // Pobieranie bieżącego użytkownika
   const { user, setUser } = useUser();
-  useEffect(() => {
+  console.log(user);
+
+ useEffect(() => {
     if (!user) return;
 
     const usersRef = ref(db, "users");
@@ -59,7 +59,9 @@ const RentNowView = () => {
         const currentUser = Object.values(data).find(
           (userData) => userData.email === user.email
         );
-        setUser(currentUser || null);
+        if (currentUser?.id !== user?.id) {
+          setUser(currentUser || null);
+        }
       } else {
         setUser(null);
       }
@@ -67,29 +69,37 @@ const RentNowView = () => {
 
     return () => unsubscribe();
   }, [user]);
+  
+  
 
   const [announcementPreviews, setAnnouncementPreviews] = useState([[]]);
   useEffect(() => {
     const announcementsRef = ref(db, `announcements`);
-    const unsubscribe = onValue(announcementsRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        const announcementPreviewsArray = Object.keys(data).map((key) => ({
-          id: key,
-          mainImage: data[key].mainImage,
-          title: data[key].title,
-          pricePerDay: data[key].pricePerDay,
-          advertiserId: data[key].advertiserId,
-          // ...data[key],
-        }));
-        setAnnouncementPreviews(announcementPreviewsArray);
-      } else {
-        setAnnouncementPreviews([]);
+    const unsubscribe = onValue(
+      announcementsRef,
+      (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+          const announcementPreviewsArray = Object.keys(data).map((key) => ({
+            id: key,
+            mainImage: data[key].mainImage,
+            title: data[key].title,
+            pricePerDay: data[key].pricePerDay,
+            advertiserId: data[key].advertiserId,
+          }));
+          setAnnouncementPreviews(announcementPreviewsArray);
+        } else {
+          setAnnouncementPreviews([]);
+        }
+      },
+      (error) => {
+        console.error("Firebase error:", error);
       }
-    });
-
+    );
+  
     return () => unsubscribe();
-  });
+  }, []);
+  
 
   const [searchQuery, setSearchQuery] = useState("");
   const [activeIcon, setActiveIcon] = useState(null);
@@ -159,7 +169,7 @@ const RentNowView = () => {
       const announcementsRef = ref(db, `announcements`);
       const snapshot = await get(announcementsRef);
       const data = snapshot.val();
-  
+
       if (data) {
         const announcementPreviewsArray = Object.keys(data).map((key) => ({
           id: key,
@@ -179,11 +189,88 @@ const RentNowView = () => {
       setRefreshing(false);
     }
   };
+
+
+  const onChatPress = (announcementPreview) => {
+    if (!user || !user.uid) {
+      Alert.alert("Login Required", "You need to log in to start a chat.");
+      return;
+    }
+
+    if (user.uid === announcementPreview.advertiserId) {
+      Alert.alert(
+        "Cannot Start Chat",
+        "You cannot start a chat with yourself. Please select another announcement."
+      );
+      return;
+    }
+
+  
+    const { id: announcementId, advertiserId } = announcementPreview;
+    const userId = user.uid;
+  
+    const chatRef = ref(db, "chats");
+  
+    get(chatRef)
+      .then((snapshot) => {
+        const chats = snapshot.val();
+        let chatId = null;
+  
+        if (chats) {
+          for (const key in chats) {
+            const chat = chats[key];
+            
+            if (
+              chat.announcementId === announcementId &&
+              ((chat.advertiserId === advertiserId && chat.userId === userId) || 
+              (chat.advertiserId === userId && chat.userId === advertiserId))
+            ) {
+              chatId = key;
+              break;
+            }
+          }
+        }
+  
+        if (chatId) {
+          console.log(`Navigating to existing chat with ID: ${chatId}`);
+          navigation.navigate("Chat", { chatId });
+        } else {
+          console.log("No existing chat found, creating a new one...");
+  
+          const newChat = {
+            announcementId,
+            advertiserId,
+            userId: null, // No user yet (the user will be assigned once they send the first message)
+            messages: [],
+            timestamp: Date.now(),
+          };
+  
+          const newChatRef = push(chatRef);
+          set(newChatRef, newChat).then(() => {
+            console.log(`New chat created with ID: ${newChatRef.key}`);
+            navigation.navigate("Chat", { chatId: newChatRef.key });
+          });
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching chats:", error);
+      });
+  };
+  
+  
+  
+  
   
 
   return (
     <SafeAreaView style={mainStyles.whiteBack}>
-      <View style={[mainStyles.container, {marginTop: Platform.OS === "android" ? 15 : 0,}]} key={reloadKey}>
+      <View
+        style={[
+          mainStyles.container,
+          { marginTop: Platform.OS === "android" ? 15 : 0 },
+        ]}
+        key={reloadKey}
+      >
         <SearchBar onSearch={handleSearch} />
         <View
           style={[
@@ -194,8 +281,13 @@ const RentNowView = () => {
             },
           ]}
         >
-          <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
-            <Swiper style={{ height: 200 }} />
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+          >
+            <Swiper style={{ height: 180 }} />
 
             <View style={styles.categoryContainer}>
               <Text style={styles.titleCategory}>
@@ -235,16 +327,10 @@ const RentNowView = () => {
                   mainImage={announcementPreview.mainImage}
                   title={announcementPreview.title}
                   pricePerDay={announcementPreview.pricePerDay}
-                  currentUserId={user != null ? user.id : "guest"}
+                  currentUserId={user?.id}
                   advertiserId={announcementPreview.advertiserId}
                   containerWidth={width - 60}
-                  onChatPress={() =>
-                    navigation.navigate("Chat", {
-                      chatId: `${user.id}_${announcementPreview.advertiserId}`, // Generate a unique chat ID
-                      buyerId: user.id,
-                      sellerId: announcementPreview.advertiserId,
-                    })
-                  }
+                  onChatPress={() => onChatPress(announcementPreview)}
                 />
               ))}
             </View>

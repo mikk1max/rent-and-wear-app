@@ -106,14 +106,24 @@ const UserProfileView = () => {
   const hideEmail = (email) => {
     const atIndex = email.indexOf("@");
     if (atIndex === -1) return email;
+    if (email.length <= 20) return email;
     const hiddenPart = "*".repeat(3);
     return (
-      email.slice(0, 3) +
+      email.slice(0, 5) +
       hiddenPart +
       email.slice(atIndex - 3, atIndex) +
       email.slice(atIndex)
     );
   };
+
+  const filterFullName = (name, surname) => {
+    let fullName = name + " " + surname;
+    if (fullName.length <= 20) {
+      return fullName;
+    }
+
+    return fullName.slice(0, 20) + "...";
+  }
 
   return (
     <SafeAreaView style={mainStyles.whiteBack} key={i18n.language}>
@@ -127,7 +137,7 @@ const UserProfileView = () => {
           />
           <View style={styles.userCardINFO}>
             <Text style={styles.fullNameText}>
-              {user.name} {user.surname}
+              {filterFullName(user.name, user.surname)}
             </Text>
             <Text style={styles.emailText}>{hideEmail(user.email)}</Text>
             <TouchableOpacity
@@ -196,11 +206,11 @@ const UserProfileView = () => {
 
             <TouchableOpacity
               style={styles.buttonBase}
-              onPress={() => navigation.navigate("Chat")}
+              onPress={() => navigation.navigate("Chats")}
               activeOpacity={0.9}
             >
-              <Icon name="settings" {...iconParams} />
-              <Text style={styles.buttonText}>Chat</Text>
+              <Icon name="chat" {...iconParams} colorStroke="transparent" />
+              <Text style={styles.buttonText}>Chats</Text>
             </TouchableOpacity>
 
             <View style={{ flexDirection: "row", gap: 15 }}>

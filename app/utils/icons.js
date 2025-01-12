@@ -51,6 +51,8 @@ import CityIcon from "../../assets/icons/city.svg";
 import LocationIcon from "../../assets/icons/location.svg";
 import EnvelopeIcon from "../../assets/icons/envelope.svg";
 import LanguageIcon from "../../assets/icons/language.svg";
+import SendIcon from "../../assets/icons/send.svg"
+import ChatIcon from "../../assets/icons/chat.svg"
 
 export const icons = {
   addresses: AddressesIcon,
@@ -60,6 +62,7 @@ export const icons = {
   building: BuildingIcon,
   cap: CapIcon,
   city: CityIcon,
+  chat: ChatIcon,
   child: ChildIcon,
   "classic-costume": ClassicCostumeIcon,
   close: CloseIcon,
@@ -86,6 +89,7 @@ export const icons = {
   "party-costume": PartyCostumeIcon,
   phone: PhoneIcon,
   search: SearchIcon,
+  send: SendIcon,
   sends: SendsIcon,
   settings: SettingsIcon,
   shoes: ShoesIcon,

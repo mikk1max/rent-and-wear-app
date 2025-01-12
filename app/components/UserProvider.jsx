@@ -19,12 +19,7 @@ export const UserProvider = ({ children }) => {
         const userRef = ref(db, `users/${firebaseUser.uid}`);
         onValue(userRef, (snapshot) => {
           const userData = snapshot.val();
-          if (userData && userData.uid) {
-            setUser({ ...userData, uid: firebaseUser.uid });
-          } else {
-            console.warn("No user data found for UID:", firebaseUser.uid);
-            setUser(null); // Set user to null if no data is found
-          }
+          setUser({ ...userData, uid: firebaseUser.uid });
         });
       } else {
         setUser(null);
