@@ -8,6 +8,11 @@ import { I18nextProvider } from "react-i18next";
 import i18n from "./app/utils/i18n";
 import ChatView from "./app/partials/ChatView";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { getLocales } from "expo-localization";
+
+i18n.changeLanguage(getLocales()[0].languageCode ?? "pl");
+console.log("Język urządzenia:", getLocales()[0].languageCode);
+
 
 export default function App() {
   return (
@@ -23,7 +28,6 @@ export default function App() {
           ]}
         >
           <UserProvider>
-            {/* <ChatView /> */}
             <NavigationContainer>
               <NavigationStack />
             </NavigationContainer>

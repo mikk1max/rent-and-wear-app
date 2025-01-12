@@ -14,6 +14,7 @@ import AnnouncementView from "../partials/AnnouncementView";
 import { useUser } from "./UserProvider";
 import AllCategories from "./AllCategories";
 import ChatView from "../partials/ChatView";
+import AllChatsView from "../partials/AllChatsView";
 
 const Stack = createStackNavigator();
 
@@ -105,6 +106,11 @@ export default function Navigation() {
       <Stack.Screen
         name="Categories"
         component={AllCategories}
+        options={{ ...stackOptions }}
+      />
+      <Stack.Screen
+        name="Chats"
+        component={AllChatsView}
         options={{ ...stackOptions }}
       />
       <Stack.Screen

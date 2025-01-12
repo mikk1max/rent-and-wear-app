@@ -30,16 +30,14 @@ export const styles = StyleSheet.create({
     padding: 0,
     backgroundColor: globalStyles.secondaryColor,
     borderRadius: 15,
-    // borderTopRightRadius: 15,
-    // borderBottomRightRadius: 15,
-    gap: 20,
+    justifyContent: "space-evenly",
     paddingHorizontal: 15,
-    // paddingVertical: 15,
   },
   fullNameText: {
     fontFamily: "WorkSans_900Black",
     fontSize: 28,
     color: globalStyles.textOnSecondaryColor,
+
   },
   emailText: {
     fontFamily: "Poppins_500Medium",

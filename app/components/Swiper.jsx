@@ -45,7 +45,7 @@ const SwiperComponent = () => {
 
 const styles = StyleSheet.create({
   swiperContainer: {
-    height: 200,
+    height: 180,
     width: "100%",
     marginBottom: 15,
 
