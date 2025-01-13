@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { useCustomFonts } from "../utils/fonts";
 import { useNavigation } from "@react-navigation/native";
-import { ref, onValue } from "firebase/database";
+import { ref, onValue, off, get } from "firebase/database";
 import { db } from "../../firebase.config";
 import { fetchImgURL, getRandomAvatarUrl } from "../utils/fetchSVG";
 import { globalStyles, styles as mainStyles } from "../utils/style";
@@ -34,7 +34,6 @@ const UserProfileView = () => {
   const toggleDropdown = () => setDropdownVisible(!isDropdownVisible);
 
   useEffect(() => {
-    if (!user) return;
 
     const usersRef = ref(db, "users");
     const unsubscribe = onValue(usersRef, (snapshot) => {
@@ -52,7 +51,7 @@ const UserProfileView = () => {
     });
 
     return () => unsubscribe();
-  }, [user]);
+  }, []);
 
   useEffect(() => {
     const fetchProfileImg = async () => {
@@ -91,17 +90,43 @@ const UserProfileView = () => {
     }, [])
   );
 
+  const checkPermissions = async () => {
+    try {
+      const snapshot = await get(ref(db, "announcements"));
+      if (snapshot.exists()) {
+        console.log("Access confirmed:", snapshot.val());
+      } else {
+        console.log("No data or access denied.");
+      }
+    } catch (error) {
+      console.error("Permission error:", error.message);
+    }
+  };
+
+  useEffect(() => {
+    checkPermissions();
+  }, []);
+
   if (!fontsLoaded || !user) {
     return null;
   }
 
   const handleLogout = () => {
+    // Unsubscribe from Firebase listeners
+    off(ref(db, "announcements"));
+    
     onLogout()
       .then(() => {
         navigation.navigate("Welcome");
       })
       .catch((error) => console.error("Logout failed:", error.message));
   };
+
+
+  
+ 
+  
+  
 
   const hideEmail = (email) => {
     const atIndex = email.indexOf("@");
@@ -183,7 +208,7 @@ const UserProfileView = () => {
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={styles.buttonBase}
+              style={[styles.buttonBase]}
               onPress={() => navigation.navigate("SettingsView")}
               activeOpacity={0.9}
             >
@@ -205,7 +230,7 @@ const UserProfileView = () => {
             )}
 
             <TouchableOpacity
-              style={styles.buttonBase}
+              style={[styles.buttonBase]}
               onPress={() => navigation.navigate("Chats")}
               activeOpacity={0.9}
             >

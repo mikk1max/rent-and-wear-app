@@ -1,6 +1,12 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, SafeAreaView, Text, Alert, TouchableOpacity } from "react-native";
-import { GiftedChat, Bubble, InputToolbar } from "react-native-gifted-chat";
+import {
+  View,
+  SafeAreaView,
+  Text,
+  Alert,
+  TouchableOpacity,
+} from "react-native";
+import { GiftedChat, Bubble, InputToolbar, Send } from "react-native-gifted-chat";
 import { ref, onValue, push, set, remove } from "firebase/database";
 import { db } from "../../firebase.config";
 import { useRoute } from "@react-navigation/native";
@@ -22,7 +28,9 @@ export default function ChatView() {
   if (loading) {
     return (
       <SafeAreaView style={mainStyles.whiteBack}>
-        <View><Text>Loading...</Text></View>
+        <View>
+          <Text>Loading...</Text>
+        </View>
       </SafeAreaView>
     );
   }
@@ -66,7 +74,9 @@ export default function ChatView() {
     // Handle typing status
     const unsubscribeTyping = onValue(typingRef, (snapshot) => {
       const data = snapshot.val();
-      const otherTypingUsers = data ? Object.keys(data).filter((uid) => uid !== user.uid) : [];
+      const otherTypingUsers = data
+        ? Object.keys(data).filter((uid) => uid !== user.uid)
+        : [];
       setTypingUsers(otherTypingUsers);
     });
 
@@ -93,7 +103,10 @@ export default function ChatView() {
           createdAt: new Date(data[key].timestamp),
           user: {
             _id: senderId,
-            name: senderId === user.uid ? user.name || "You" : advertiserName || "Advertiser",
+            name:
+              senderId === user.uid
+                ? user.name || "You"
+                : advertiserName || "Advertiser",
             avatar,
           },
         };
@@ -104,7 +117,9 @@ export default function ChatView() {
 
   const fetchUserAvatar = async (senderId) => {
     try {
-      const avatar = await fetchImgURL(`user-avatars/${senderId}/${senderId}.jpg`);
+      const avatar = await fetchImgURL(
+        `user-avatars/${senderId}/${senderId}.jpg`
+      );
       setUserAvatars((prev) => ({ ...prev, [senderId]: avatar }));
       return avatar;
     } catch {
@@ -123,83 +138,93 @@ export default function ChatView() {
     }
   };
 
-  const onSend = useCallback((newMessages = []) => {
-    if (!user?.uid) {
-      console.error("User ID is undefined");
-      return;
-    }
+  const onSend = useCallback(
+    (newMessages = []) => {
+      if (!user?.uid) {
+        console.error("User ID is undefined");
+        return;
+      }
 
-    const chatRef = ref(db, `chats/${chatId}/messages`);
-    newMessages.forEach((message) => {
-      push(chatRef, {
-        text: message.text,
-        senderId: user.uid,
-        timestamp: Date.now(),
-      }).catch((error) =>
-        console.error("Failed to push message to Firebase:", error)
+      const chatRef = ref(db, `chats/${chatId}/messages`);
+      newMessages.forEach((message) => {
+        push(chatRef, {
+          text: message.text,
+          senderId: user.uid,
+          timestamp: Date.now(),
+        }).catch((error) =>
+          console.error("Failed to push message to Firebase:", error)
+        );
+      });
+
+      setMessages((previousMessages) =>
+        GiftedChat.append(previousMessages, newMessages)
       );
-    });
 
-    setMessages((previousMessages) =>
-      GiftedChat.append(previousMessages, newMessages)
-    );
-
-    handleTyping(false);
-  }, [chatId, user?.uid]);
+      handleTyping(false);
+    },
+    [chatId, user?.uid]
+  );
 
   return (
     <SafeAreaView style={[mainStyles.whiteBack]}>
-{/* <View style={[mainStyles.container, {alignItems: "stretch", paddingHorizontal: 10}]}> */}
-        <GiftedChat
-          messages={messages}
-          onSend={(newMessages) => onSend(newMessages)}
-          onInputTextChanged={(text) => handleTyping(!!text)}
-          user={{
-            _id: user.uid,
-            name: user.name || "Anonymous",
-            avatar: userAvatars[user.uid] || null,
-          }}
-          showAvatarForEveryMessage={true}
-          renderAvatarOnTop={true}
-          placeholder="Type a message..."
-          scrollToBottom
-          scrollToBottomComponent={() => (
-            <View style={{ borderRadius: 20 }}>
-              <Text style={{ color: "white", fontSize: 20 }}>↓</Text>
-            </View>
-          )}
-          scrollToBottomStyle={{ backgroundColor: globalStyles.primaryColor }}
-          renderBubble={(props) => (
-            <Bubble
-              {...props}
-              wrapperStyle={{
-                left: { backgroundColor: globalStyles.secondaryColor },
-                right: { backgroundColor: globalStyles.accentColor },
-              }}
-              textStyle={{
-                left: { color: globalStyles.textOnSecondaryColor },
-                right: { color: globalStyles.textOnAccentColor },
-              }}
-            />
-          )}
-          isTyping={typingUsers.length > 0}
-          maxInputLength={1000}
-          renderSend={() => (
-            <TouchableOpacity activeOpacity={0.5}><Icon name="send" width={40} height={40} fillColor={globalStyles.accentColor} colorStroke="white"/></TouchableOpacity>
-          )}
-          renderInputToolbar={(props) => (
-            <InputToolbar
-              {...props}
-              containerStyle={{
-                // backgroundColor: globalStyles.secondaryColor,
-                // borderRadius: globalStyles.BORDER_RADIUS,
-                paddingHorizontal: 10,
-                paddingVertical: 5,
-              }}
-            />
-          )}
-        />
-{/* </View> */}
+      {/* <View style={[mainStyles.container, {alignItems: "stretch", paddingHorizontal: 10}]}> */}
+      <GiftedChat
+        messages={messages}
+        onSend={(newMessages) => onSend(newMessages)}
+        onInputTextChanged={(text) => handleTyping(!!text)}
+        user={{
+          _id: user.uid,
+          name: user.name || "Anonymous",
+          avatar: userAvatars[user.uid] || null,
+        }}
+        showAvatarForEveryMessage={true}
+        renderAvatarOnTop={true}
+        placeholder="Type a message..."
+        scrollToBottom
+        scrollToBottomComponent={() => (
+          <View style={{ borderRadius: 20 }}>
+            <Text style={{ color: "white", fontSize: 20 }}>↓</Text>
+          </View>
+        )}
+        scrollToBottomStyle={{ backgroundColor: globalStyles.primaryColor }}
+        renderBubble={(props) => (
+          <Bubble
+            {...props}
+            wrapperStyle={{
+              left: { backgroundColor: globalStyles.secondaryColor },
+              right: { backgroundColor: globalStyles.textOnSecondaryColor },
+            }}
+            textStyle={{
+              left: { color: globalStyles.accentColor },
+              right: { color: globalStyles.textOnAccentColor },
+            }}
+          />
+        )}
+        isTyping={typingUsers.length > 0}
+        maxInputLength={1000}
+        alwaysShowSend
+        renderSend={(props) => (
+          <Send {...props}>
+              <Icon
+                name="send"
+                width={40}
+                height={40}
+                fillColor={globalStyles.accentColor}
+                colorStroke="white"
+              />
+          </Send>
+        )}
+        renderInputToolbar={(props) => (
+          <InputToolbar
+            {...props}
+            containerStyle={{
+              paddingHorizontal: 10,
+              paddingVertical: 5,
+            }}
+          />
+        )}
+      />
+      {/* </View> */}
     </SafeAreaView>
   );
 }

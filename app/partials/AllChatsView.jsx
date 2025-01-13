@@ -59,15 +59,17 @@ const AllChatsView = () => {
   }, [fetchChats]);
 
   useEffect(() => {
-    // Fetch user data when the user ID changes
     const fetchUserData = async () => {
-      if (user?.uid) {
-        const userInfo = await getUserById(chats.map((chat) => chat.advertiserId));
-        setUserData(userInfo); // Store user data in state
+      if (user?.uid && chats.length > 0) {
+        const uniqueAdvertiserIds = [...new Set(chats.map((chat) => chat.advertiserId))];
+        const userInfo = await getUserById(uniqueAdvertiserIds);
+        setUserData(userInfo);
       }
     };
+  
     fetchUserData();
-  }, [user]);
+  }, [user, chats]);
+  
 
   const handleChatPress = (chatId) => {
     console.log("Navigating to Chat with ID:", chatId);
@@ -101,8 +103,7 @@ const AllChatsView = () => {
       ? Object.values(chat.messages)[Object.values(chat.messages).length - 1]?.text || ""
       : "";
 
-    const advertiserName = userData.name || "Unknown";
-
+    const advertiserName = userData.name + " " + userData.surname || "Unknown";
     return (
       <TouchableOpacity
         key={chat.id}
@@ -111,7 +112,7 @@ const AllChatsView = () => {
         activeOpacity={0.7}
       >
         <Text style={styles.chatTitle}>
-          Conversation with {advertiserName}
+          {advertiserName}
         </Text>
         <Text style={styles.chatPreview}>{firstMessage}</Text>
       </TouchableOpacity>

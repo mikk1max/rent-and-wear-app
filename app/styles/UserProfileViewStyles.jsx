@@ -70,7 +70,7 @@ export const styles = StyleSheet.create({
   buttonBase: {
     backgroundColor: globalStyles.primaryColor,
     width: width - 2 * 25,
-    height: 65,
+    height: 60,
     borderRadius: globalStyles.BORDER_RADIUS,
     alignItems: "center",
     justifyContent: "flex-start",
@@ -84,7 +84,7 @@ export const styles = StyleSheet.create({
   buttonRent: {
     width: (width - 2 * 25 - 15) / 2,
     flexDirection: "column",
-    height: (width - 2 * 25 - 15) / 2 - 30,
+    height: (width - 2 * 25 - 15) / 2 - 40,
     gap: 0,
     justifyContent: "center",
   },

@@ -21,7 +21,7 @@ const renderIcon = (route, focused, t) => {
   let iconName = "user-stroke";
   if (route.name === "UserProfile") {
     iconName = focused ? "user-fill" : "user-stroke";
-    return <Icon name={iconName} width={32} height={32} fillColor="white" />;
+    return <Icon name={iconName} width={32} height={32} fillColor={globalStyles.backgroundColor} colorStroke="#2A4366" />;
   }
 
   switch (route.name) {
@@ -104,6 +104,7 @@ const styles = StyleSheet.create({
     shadowColor: "transparent",
     height: 50,
     paddingBottom: 0,
+    backgroundColor: globalStyles.backgroundColor,
   },
   tabBarItemStyle: {
     borderRightWidth: 1,

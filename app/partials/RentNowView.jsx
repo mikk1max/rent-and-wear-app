@@ -182,6 +182,7 @@ const RentNowView = () => {
       } else {
         setAnnouncementPreviews([]);
       }
+      setSearchQuery("");
       setReloadKey((prevKey) => prevKey + 1);
     } catch (error) {
       console.error("Error refreshing data:", error);

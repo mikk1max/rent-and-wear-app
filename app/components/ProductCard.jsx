@@ -68,7 +68,7 @@ const ProductCard = ({
           <Text style={styles.textOnButtonName}>{title}</Text>
           <Text style={styles.textOnButtonPrice}>${pricePerDay} / day</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={{backgroundColor: "yellow", padding: 10, height: 40}} onPress={() => onChatPress()}><Text>Chat</Text></TouchableOpacity>
+        {/* <TouchableOpacity style={{backgroundColor: "yellow", padding: 10, height: 40}} onPress={() => onChatPress()}><Text>Chat</Text></TouchableOpacity> */}
       </Card>
     </View>
   );
