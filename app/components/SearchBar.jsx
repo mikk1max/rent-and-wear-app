@@ -19,6 +19,7 @@ const SearchBarComp = ({ onSearch, ...props }) => {
   return (
     <SearchBar
       placeholder="Search"
+      placeholderTextColor={"#3B6592"}
       onChangeText={updateSearch}
       value={search}
       round

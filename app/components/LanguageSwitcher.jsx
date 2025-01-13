@@ -54,7 +54,7 @@ export default function LanguageSwitcher({ toggleDropdown }) {
 
 const styles = StyleSheet.create({
   dropdown: {
-    backgroundColor: "lightgrey",
+    backgroundColor: globalStyles.secondaryColor,
     marginTop: -30,
     paddingTop: 20,
     zIndex: -1,
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
   },
   dropdownText: {
     fontSize: 16,
-    color: globalStyles.textOnSecondaryColor,
+    color: globalStyles.primaryColor,
     textAlign: "center",
   },
   currentLangText: {

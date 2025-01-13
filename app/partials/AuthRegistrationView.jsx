@@ -55,7 +55,7 @@ export default function AuthRegistrationView() {
         keyboardShouldPersistTaps="handled"
       >
         <Image
-          source={require("../../assets/images/loginBackRegClothes.png")}
+          source={require("../../assets/images/loginBackRegClothes.jpg")}
           style={styles.imgStyles}
         />
         <View style={mainStyles.container}>
@@ -194,6 +194,7 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: "bold",
     marginVertical: 20,
+    color: globalStyles.primaryColor,
   },
   inputStyle: {
     backgroundColor: globalStyles.secondaryColor,

@@ -16,25 +16,19 @@ const SwiperComponent = () => {
       >
         <View style={styles.slide}>
           <Image
-            source={{
-              uri: "https://thumbor.forbes.com/thumbor/fit-in/x/https://www.forbes.com/advisor/in/wp-content/uploads/2024/07/shutterstock_2167953203-1.jpg",
-            }}
+            source={require("../../assets/images/swiper-1.jpg")}
             style={styles.image}
           />
         </View>
         <View style={styles.slide}>
           <Image
-            source={{
-              uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzIAAL0G3hnpSDFi-8FY8mZfyCYNszGRNx8g&s",
-            }}
+            source={require("../../assets/images/swiper-2.jpg")}
             style={styles.image}
           />
         </View>
         <View style={styles.slide}>
           <Image
-            source={{
-              uri: "https://shopftt.com/cdn/shop/files/IMG_5881_1024x536.jpg?v=1614338812",
-            }}
+            source={require("../../assets/images/swiper-3.jpg")}
             style={styles.image}
           />
         </View>

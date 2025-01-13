@@ -59,7 +59,7 @@ export default function AuthLoginView() {
         keyboardShouldPersistTaps="handled"
       >
         <Image
-          source={require("../../assets/images/loginBackClothes.png")}
+          source={require("../../assets/images/loginBackClothes.jpg")}
           style={styles.imgStyles}
         />
 
@@ -120,11 +120,11 @@ export default function AuthLoginView() {
                 style={[styles.mainBtns, styles.anotherBtn]}
                 onPress={() => navigation.navigate("Registration")}
               >
-                <Text style={styles.mainBtnText}>{t("login.signUpBtn")}</Text>
+                <Text style={[styles.mainBtnText, {color: globalStyles.accentColor}]}>{t("login.signUpBtn")}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={[styles.mainBtns, styles.anotherBtn]}>
-                <Text style={styles.mainBtnText}>{t("login.googleBtn")}</Text>
+                <Text style={[styles.mainBtnText, {color: globalStyles.accentColor}]}>{t("login.googleBtn")}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -172,6 +172,7 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: "bold",
     marginVertical: 20,
+    color: globalStyles.primaryColor,
   },
   inputStyle: {
     backgroundColor: globalStyles.secondaryColor,
@@ -190,6 +191,7 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins_500Medium",
     alignSelf: "center",
     fontWeight: "bold",
+    color: globalStyles.primaryColor,
   },
   mainBtns: {
     paddingVertical: 15,

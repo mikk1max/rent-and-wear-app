@@ -22,6 +22,7 @@ export const styles = StyleSheet.create({
     flex: 1,
     resizeMode: "cover",
     justifyContent: "center",
+    // opacity: 0.9,
   },
   logo: {
     width: "100%",
@@ -35,7 +36,13 @@ export const styles = StyleSheet.create({
     width: "100%",
     color: globalStyles.textOnPrimaryColor,
     textDecorationLine: "line-through",
+    paddingLeft: 5,
+    paddingRight: 5,
+    textShadowColor: "black",
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 7,
   },
+  
   logoTextAdditional: {
     width: "100%",
     fontFamily: "Poppins_500Medium",
@@ -43,6 +50,11 @@ export const styles = StyleSheet.create({
     letterSpacing: 4,
     color: globalStyles.textOnAccentColor,
     textTransform: "uppercase",
+    paddingLeft: 5,
+    paddingRight: 5,
+    textShadowColor: "black",
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 7,
   },
   logoAndBtns: {
     flex: 1,
@@ -59,7 +71,8 @@ export const styles = StyleSheet.create({
   guestBtn: {
     ...buttonBase,
     backgroundColor: globalStyles.secondaryColor,
-    borderColor: globalStyles.primaryColor,
+    borderColor: globalStyles.textOnSecondaryColor,
+    borderStyle: "dashed"
   },
   logBtn: {
     ...buttonBase,
