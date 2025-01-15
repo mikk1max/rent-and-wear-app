@@ -12,7 +12,7 @@ import {
 import { useCustomFonts } from "../utils/fonts";
 import { useNavigation } from "@react-navigation/native";
 
-import fetchSVG, { fetchImgURL } from "../utils/fetchSVG";
+// import fetchSVG, { fetchImgURL } from "../utils/fetchSVG";
 import { G, SvgUri } from "react-native-svg";
 
 import { globalStyles, styles as mainStyles } from "../utils/style";
@@ -26,6 +26,14 @@ import { ref, onValue, update, get, set, remove } from "firebase/database";
 import { db } from "../../firebase.config";
 import { useUser } from "../components/UserProvider";
 
+import {
+  fetchSvgURL,
+  fetchImgURL,
+  getRandomAvatarUrl,
+} from "../utils/fetchSVG";
+
+import EditPencilSVG from "../../assets/icons/edit-pencil.svg";
+
 const AnnouncementView = ({ route }) => {
   const navigation = useNavigation();
 
@@ -37,7 +45,10 @@ const AnnouncementView = ({ route }) => {
   const [announcement, setAnnouncement] = useState([]);
   const [isVisible, setIsVisible] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
-  // const [advertiser, setAdvertiser] = useState([]);
+  const [advertiser, setAdvertiser] = useState([]);
+  const [advertiserAvatar, setAdvertiserAvatar] = useState();
+  // const [visibleOpinions, setVisibleOpinions] = useState(2);
+  // const [opinionsToDisplay, setOpinionsToDisplay] = useState([]);
 
   const { id } = route.params;
 
@@ -49,10 +60,16 @@ const AnnouncementView = ({ route }) => {
     const unsubscribe = onValue(usersRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
-        const currentUser = Object.values(data).find(
-          (userData) => userData.email === user.email
+        const currentUserEntry = Object.entries(data).find(
+          ([key, userData]) => userData.email === user.email
         );
-        setUser(currentUser || null);
+
+        if (currentUserEntry) {
+          const [key, userData] = currentUserEntry;
+          setUser({ ...userData, id: key }); // Dodaj klucz jako "id"
+        } else {
+          setUser(null);
+        }
       } else {
         setUser(null);
       }
@@ -61,6 +78,7 @@ const AnnouncementView = ({ route }) => {
     return () => unsubscribe();
   }, [user]);
 
+  // Pobieranie ogłoszenia z bazy
   useEffect(() => {
     const announcementsRef = ref(db, `announcements/${id}`);
     const unsubscribe = onValue(
@@ -82,6 +100,70 @@ const AnnouncementView = ({ route }) => {
 
     return () => unsubscribe();
   }, [id]);
+
+  const advertiserId = announcement.advertiserId;
+
+  // Pobieranie ogłoszeniodawcy z bazy
+  useEffect(() => {
+    const advertiserRef = ref(db, `users/${advertiserId}`);
+    const unsubscribe = onValue(
+      advertiserRef,
+      (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+          setAdvertiser({ advertiserId, ...data });
+        } else {
+          setAdvertiser(null);
+        }
+        setLoading(false); // Ustawienie ładowania na false po zakończeniu pobierania
+      },
+      (error) => {
+        console.error("Błąd podczas pobierania danych:", error);
+        setLoading(false); // Nawet w przypadku błędu przerywamy ładowanie
+      }
+    );
+
+    return () => unsubscribe();
+  }, [advertiserId]);
+
+  // Pobieranie zdjęcia profilowego Ogłoszeniodawcy
+  useEffect(() => {
+    const fetchProfileImg = async () => {
+      try {
+        const url = await fetchImgURL(`user-avatars/${advertiserId}.jpg`);
+        setAdvertiserAvatar(url);
+      } catch {
+        const randomUrl = await getRandomAvatarUrl();
+        setAdvertiserAvatar(randomUrl);
+      }
+    };
+
+    if (advertiserId) {
+      fetchProfileImg();
+    }
+  }, [advertiserId]);
+
+  // Renderowanie opinii
+  // useEffect(() => {
+  //   // if (visibleOpinions > announcement.opinions.length)
+  //   //   setVisibleOpinions(announcement.opinions.length);
+  //   let opinions = opinionsToDisplay;
+  //   for (let i = 0; i < visibleOpinions; i++) {
+  //     opinions.push(
+  //       <OpinionCard
+  //         key={"OpinionCard" + announcement.opinions[i].id}
+  //         id={announcement.opinions[i].id}
+  //         authorId={announcement.opinions[i].authorId}
+  //         userId={user.id}
+  //         rate={announcement.opinions[i].rate}
+  //         publicationDate={announcement.opinions[i].date}
+  //         text={announcement.opinions[i].text}
+  //         moderationStatus={announcement.opinions[i].moderationStatus}
+  //       />
+  //     );
+  //   }
+  //   setOpinionsToDisplay(opinions);
+  // }, [visibleOpinions]);
 
   if (isLoading) {
     // Komponent ładowania
@@ -106,6 +188,17 @@ const AnnouncementView = ({ route }) => {
     );
   }
 
+  if (!advertiser) {
+    // Obsługa braku danych
+    return (
+      <SafeAreaView style={mainStyles.whiteBack}>
+        <View style={styles.noDataContainer}>
+          <Text style={styles.noDataText}>Brak danych do wyświetlenia</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   const displayedPublicationDate = new Date(
     announcement.publicationDate
   ).toLocaleDateString(undefined, {
@@ -115,37 +208,15 @@ const AnnouncementView = ({ route }) => {
     day: "numeric",
   });
 
-  // useEffect(() => {
-  //   const advertiserRef = ref(db, `users/${announcement.advertiserId}`);
-  //   const unsubscribe = onValue(
-  //     advertiserRef,
-  //     (snapshot) => {
-  //       const data = snapshot.val();
-  //       if (data) {
-  //         setAnnouncement({ id, ...data });
-  //       } else {
-  //         setAnnouncement(null);
-  //       }
-  //       setLoading(false); // Ustawienie ładowania na false po zakończeniu pobierania
-  //     },
-  //     (error) => {
-  //       console.error("Błąd podczas pobierania danych:", error);
-  //       setLoading(false); // Nawet w przypadku błędu przerywamy ładowanie
-  //     }
-  //   );
-
-  //   return () => unsubscribe();
-  // }, [announcement.advertiserId]);
-
-  const advertiser = {
-    id: "222",
-    image:
-      "https://static01.nyt.com/images/2012/05/01/business/SMITH-obit/SMITH-obit-superJumbo.jpg",
-    firstName: "Michał",
-    lastName: "Zakrzewski",
-    rating: 2.65,
-    registrationDate: 1732209087178,
-  };
+  // const advertiser0 = {
+  //   id: "222",
+  //   image:
+  //     "https://static01.nyt.com/images/2012/05/01/business/SMITH-obit/SMITH-obit-superJumbo.jpg",
+  //   firstName: "Michał",
+  //   lastName: "Zakrzewski",
+  //   rating: 2.65,
+  //   registrationDate: 1732209087178,
+  // };
 
   const displayedAdvertiserRegistrationDate = new Date(
     advertiser.registrationDate
@@ -155,23 +226,23 @@ const AnnouncementView = ({ route }) => {
     day: "numeric",
   });
 
-  const opinion = {
-    id: "333",
-    authorId: "3333",
-    authorFirstName: "Bob",
-    authorLastName: "Smith",
-    rate: 4,
-    date: 1732292072263,
-    text: "Good panties! I wore them on my first date.",
-  };
+  // const opinion = {
+  //   id: "333",
+  //   authorId: "3333",
+  //   authorFirstName: "Bob",
+  //   authorLastName: "Smith",
+  //   rate: 4,
+  //   date: 1732292072263,
+  //   text: "Good panties! I wore them on my first date.",
+  // };
 
-  const displayedOpinionPublicationDate = new Date(
-    opinion.date
-  ).toLocaleDateString(undefined, {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  // const displayedOpinionPublicationDate = new Date(
+  //   opinion.date
+  // ).toLocaleDateString(undefined, {
+  //   year: "numeric",
+  //   month: "long",
+  //   day: "numeric",
+  // });
 
   const openImage = (index) => {
     setCurrentIndex(index); // Ustaw aktualny indeks
@@ -183,9 +254,17 @@ const AnnouncementView = ({ route }) => {
     uri: "https://img.freepik.com/free-vector/low-poly-abstract-gray-background_1017-33833.jpg",
   };
 
+  // console.log(opinionsToDisplay);
+
   return (
     <SafeAreaView style={mainStyles.whiteBack}>
       <View style={[mainStyles.container, mainStyles.scrollBase]}>
+        <TouchableOpacity
+          style={styles.goBackButton}
+          onPress={() => navigation.goBack()}
+        >
+          <Text style={styles.goBackText}>◄ Go Back</Text>
+        </TouchableOpacity>
         <ScrollView
           showsVerticalScrollIndicator={false}
           // style={mainStyles.scrollBase}
@@ -223,6 +302,11 @@ const AnnouncementView = ({ route }) => {
           </View>
 
           <View style={styles.annDateWithTitle}>
+            {announcement.advertiserId === user.id && (
+              <Text style={styles.annYourAnnouncementPlate}>
+                Your announcement
+              </Text>
+            )}
             <Text style={styles.annPublicationDateAndCategory}>
               {displayedPublicationDate}
             </Text>
@@ -246,9 +330,9 @@ const AnnouncementView = ({ route }) => {
             />
           </View>
           <View style={styles.annSizeWithCondition}>
-            <View style={styles.annSizes}>
-              <Text style={styles.annSizesLabel}>Size:</Text>
-              <Text style={styles.annSize}>{announcement.size}</Text>
+            <View style={styles.annSize}>
+              <Text style={styles.annSizeLabel}>Size:</Text>
+              <Text style={styles.annSizeValue}>{announcement.size}</Text>
             </View>
             <View style={styles.annCondition}>
               <Text style={styles.annConditionLabel}>Condition:</Text>
@@ -269,7 +353,7 @@ const AnnouncementView = ({ route }) => {
             <Text style={styles.advLabel}>Advertiser:</Text>
             <View style={styles.advImageWithData}>
               <Image
-                source={{ uri: advertiser.image }}
+                source={{ uri: advertiserAvatar }}
                 style={styles.advImage}
               />
               <View style={styles.advData}>
@@ -277,12 +361,12 @@ const AnnouncementView = ({ route }) => {
                   activeOpacity={0.8}
                   onPress={() =>
                     console.log(
-                      `Write to ${advertiser.firstName} ${advertiser.lastName}`
+                      `Write to ${advertiser.name} ${advertiser.surname}`
                     )
                   }
                 >
                   <Text style={styles.advName}>
-                    {advertiser.firstName} {advertiser.lastName}
+                    {advertiser.name} {advertiser.surname}
                   </Text>
                 </TouchableOpacity>
 
@@ -311,44 +395,23 @@ const AnnouncementView = ({ route }) => {
               <Text style={styles.opinWriteOpinionButtonText}>
                 Write your opinion
               </Text>
-              <Text style={styles.opinWriteOpinionButtonIcon}>▲</Text>
+              <EditPencilSVG {...iconParams} />
+              {/* <Text style={styles.opinWriteOpinionButtonIcon}>▲</Text> */}
             </TouchableOpacity>
             <View style={styles.opinList}>
-              <OpinionCard
-                id="1"
-                authorId="111"
-                userId="111"
-                authorFirstName="Maksym"
-                authorLastName="Shepeta"
-                rate={4.77}
-                publicationDate={1632209087178}
-                text="Very good underpants!!!"
-                isOnModeration={true}
-              />
-
-              <OpinionCard
-                id="2"
-                authorId="111"
-                userId="111"
-                authorFirstName="Maksym"
-                authorLastName="Shepeta"
-                rate={4.77}
-                publicationDate={1632209087178}
-                text="Very good underpants!!!"
-                isOnModeration={false}
-              />
-
-              <OpinionCard
-                id="3"
-                authorId="222"
-                userId="333"
-                authorFirstName={opinion.authorFirstName}
-                authorLastName={opinion.authorLastName}
-                rate={opinion.rate}
-                publicationDate={opinion.date}
-                text={opinion.text}
-                isOnModeration={false}
-              />
+              {announcement.opinions.map((opinion) => (
+                <OpinionCard
+                  key={"OpinionCard_" + opinion.id}
+                  id={opinion.id}
+                  authorId={opinion.authorId}
+                  userId={user.id}
+                  rate={opinion.rate}
+                  publicationDate={opinion.date}
+                  text={opinion.text}
+                  moderationStatus={opinion.moderationStatus}
+                />
+              ))}
+              {/* {opinionsToDisplay} */}
             </View>
           </View>
         </ScrollView>

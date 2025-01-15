@@ -25,13 +25,36 @@ const OpinionCard = ({
   id,
   authorId,
   userId,
-  authorFirstName,
-  authorLastName,
   rate,
   publicationDate,
   text,
-  isOnModeration,
+  moderationStatus,
 }) => {
+  const [author, setAuthor] = useState([]);
+
+  // Pobieranie autora opinii z bazy
+  useEffect(() => {
+    const authorRef = ref(db, `users/${authorId}`);
+    const unsubscribe = onValue(
+      authorRef,
+      (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+          setAuthor({ authorId, ...data });
+        } else {
+          setAuthor(null);
+        }
+        // setLoading(false); // Ustawienie ładowania na false po zakończeniu pobierania
+      },
+      (error) => {
+        console.error("Błąd podczas pobierania danych:", error);
+        // setLoading(false); // Nawet w przypadku błędu przerywamy ładowanie
+      }
+    );
+
+    return () => unsubscribe();
+  }, [authorId]);
+
   //////////////////////
   const displayedOpinionPublicationDate = new Date(
     publicationDate
@@ -44,13 +67,46 @@ const OpinionCard = ({
   let isAuthor = false;
   if (authorId === userId) isAuthor = true;
 
-  return isOnModeration ? (
-    <View style={styles.opinOnModeration}>
-      <Text style={styles.opinOnModerationText}>On Moderation...</Text>
+  let opinOnModerationStyle = styles.opinOnModeration;
+  let opinOnModerationTextStyle = styles.opinOnModerationText;
+  if (moderationStatus.code == 2) {
+    opinOnModerationStyle = [styles.opinOnModeration, styles.opinBlocked];
+    opinOnModerationTextStyle = [
+      styles.opinOnModerationText,
+      styles.opinBlockedText,
+    ];
+  }
+
+  return moderationStatus.code == 1 ? (
+    <View style={styles.opinion}>
+      <View style={styles.opinAuthorNameWithPlate}>
+        <Text style={styles.opinAuthorName}>
+          {author.name} {author.surname}
+        </Text>
+        {isAuthor && <Text style={styles.opinPlate}>Your opinion</Text>}
+      </View>
+      <View style={styles.opinRateWithDate}>
+        <Rating
+          type={"custom"}
+          style={styles.opinRate}
+          imageSize={20}
+          ratingColor={globalStyles.redColor}
+          tintColor={globalStyles.secondaryColor}
+          ratingBackgroundColor={globalStyles.primaryColor}
+          startingValue={rate}
+          readonly
+        />
+        <Text style={styles.opinDate}>{displayedOpinionPublicationDate}</Text>
+      </View>
+      <Text style={styles.opinText}>{text}</Text>
+    </View>
+  ) : moderationStatus.code != 1 && isAuthor ? (
+    <View style={opinOnModerationStyle}>
+      <Text style={opinOnModerationTextStyle}>{moderationStatus.messege}</Text>
       <View style={styles.opinion}>
         <View style={styles.opinAuthorNameWithPlate}>
           <Text style={styles.opinAuthorName}>
-            {authorFirstName} {authorLastName}
+            {author.name} {author.surname}
           </Text>
           {isAuthor && <Text style={styles.opinPlate}>Your opinion</Text>}
         </View>
@@ -71,28 +127,7 @@ const OpinionCard = ({
       </View>
     </View>
   ) : (
-    <View style={styles.opinion}>
-      <View style={styles.opinAuthorNameWithPlate}>
-        <Text style={styles.opinAuthorName}>
-          {authorFirstName} {authorLastName}
-        </Text>
-        {isAuthor && <Text style={styles.opinPlate}>Your opinion</Text>}
-      </View>
-      <View style={styles.opinRateWithDate}>
-        <Rating
-          type={"custom"}
-          style={styles.opinRate}
-          imageSize={20}
-          ratingColor={globalStyles.redColor}
-          tintColor={globalStyles.secondaryColor}
-          ratingBackgroundColor={globalStyles.primaryColor}
-          startingValue={rate}
-          readonly
-        />
-        <Text style={styles.opinDate}>{displayedOpinionPublicationDate}</Text>
-      </View>
-      <Text style={styles.opinText}>{text}</Text>
-    </View>
+    <></>
   );
 };
 
@@ -109,11 +144,19 @@ const styles = StyleSheet.create({
     backgroundColor: "lightblue",
   },
 
+  opinBlocked: {
+    backgroundColor: "lightpink",
+  },
+
   opinOnModerationText: {
     fontFamily: "Poppins_500Medium",
     fontSize: 15,
     color: "blue",
     marginLeft: 10,
+  },
+
+  opinBlockedText: {
+    color: "red",
   },
 
   opinion: {
@@ -130,12 +173,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "100%",
     height: "auto",
-    gap: 20,
+    // gap: 10,
     justifyContent: "flex-start",
     alignItems: "center",
   },
 
   opinAuthorName: {
+    flexDirection: "column",
+    flexWrap: "wrap",
+    width: "70%",
     fontFamily: "WorkSans_900Black",
     fontSize: 18,
     color: globalStyles.accentColor,
