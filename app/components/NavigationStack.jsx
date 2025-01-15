@@ -11,6 +11,7 @@ import AddressesView from "../partials/AddressesView";
 import AuthLoginView from "../partials/AuthLoginView";
 import AuthRegistrationView from "../partials/AuthRegistrationView";
 import AnnouncementView from "../partials/AnnouncementView";
+import CreateAnnouncementView from "../partials/CreateAnnouncementView";
 import { useUser } from "./UserProvider";
 
 const Stack = createStackNavigator();
@@ -95,10 +96,15 @@ export default function Navigation() {
         component={RentNowView}
         // options={{ title: "Settings", ...stackOptions }}
       />
-      <Stack.Screen 
+      <Stack.Screen
         name="AnnouncementView"
         component={AnnouncementView}
         options={{ ...stackOptions, headerShown: false }}
+      />
+      <Stack.Screen
+        name="CreateAnnouncementView"
+        component={CreateAnnouncementView}
+        options={{ title: "Create Announcement", ...stackOptions }}
       />
     </Stack.Navigator>
   );
