@@ -11,6 +11,7 @@ import AddressesView from "../partials/AddressesView";
 import AuthLoginView from "../partials/AuthLoginView";
 import AuthRegistrationView from "../partials/AuthRegistrationView";
 import AnnouncementView from "../partials/AnnouncementView";
+import CreateAnnouncementView from "../partials/CreateAnnouncementView";
 import { useUser } from "./UserProvider";
 import AllCategories from "./AllCategories";
 import ChatView from "../partials/ChatView";
@@ -117,6 +118,11 @@ export default function Navigation() {
         name="Chat"
         component={ChatView}
         options={{ ...stackOptions }}
+      />
+      <Stack.Screen
+        name="CreateAnnouncementView"
+        component={CreateAnnouncementView}
+        options={{ title: "Create Announcement", ...stackOptions }}
       />
     </Stack.Navigator>
   );

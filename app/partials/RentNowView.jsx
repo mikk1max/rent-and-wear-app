@@ -56,11 +56,15 @@ const RentNowView = () => {
     const unsubscribe = onValue(usersRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
-        const currentUser = Object.values(data).find(
-          (userData) => userData.email === user.email
+        const currentUserEntry = Object.entries(data).find(
+          ([key, userData]) => userData.email === user.email
         );
-        if (currentUser?.id !== user?.id) {
-          setUser(currentUser || null);
+
+        if (currentUserEntry) {
+          const [key, userData] = currentUserEntry;
+          setUser({ ...userData, id: key }); // Dodaj klucz jako "id"
+        } else {
+          setUser(null);
         }
       } else {
         setUser(null);
@@ -259,9 +263,7 @@ const RentNowView = () => {
   };
   
   
-  
-  
-  
+
 
   return (
     <SafeAreaView style={mainStyles.whiteBack}>
@@ -323,7 +325,7 @@ const RentNowView = () => {
             <View style={styles.announcementsContainer}>
               {filteredAnnouncements.map((announcementPreview) => (
                 <ProductCard
-                  key={"ProductCard_" + announcementPreview.id}
+                  key={"RentNowView_ProductCard_" + announcementPreview.id}
                   id={announcementPreview.id}
                   mainImage={announcementPreview.mainImage}
                   title={announcementPreview.title}
