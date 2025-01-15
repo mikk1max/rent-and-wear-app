@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { BackHandler, Alert } from "react-native";
 import {
   View,
@@ -9,6 +9,7 @@ import {
   ScrollView,
   SafeAreaView,
   Platform,
+  RefreshControl,
 } from "react-native";
 import SearchBar from "../components/SearchBar";
 import Swiper from "../components/Swiper";
@@ -19,23 +20,36 @@ import ProductCard from "../components/ProductCard";
 import { styles as mainStyles } from "../utils/style";
 import { styles } from "../styles/RentNowViewStyles";
 
-import { ref, onValue, update, get, set, remove } from "firebase/database";
+import { ref, onValue, update, get, set, remove, push } from "firebase/database";
 import { db } from "../../firebase.config";
 import { useUser } from "../components/UserProvider";
+import { useTranslation } from "react-i18next";
 
 // Get the screen dimensions
 const { width } = Dimensions.get("window");
 
 const RentNowView = () => {
+  const { t } = useTranslation();
   const fontsLoaded = useCustomFonts();
+  const navigation = useNavigation();
+  const [refreshing, setRefreshing] = useState(false);
+
+  const [reloadKey, setReloadKey] = useState(0);
+
   if (!fontsLoaded) return null;
 
-  // Ikonki do kategorii
-  const icons = ["t-shirt", "dress", "shorts", "coat", "sneakers"];
+  const [icons, setIcons] = useState([
+    "t-shirt",
+    "dress",
+    "shorts",
+    "coat",
+    "sneakers",
+  ]);
 
-  // Pobieranie bieżącego użytkownika
   const { user, setUser } = useUser();
-  useEffect(() => {
+  console.log(user);
+
+ useEffect(() => {
     if (!user) return;
 
     const usersRef = ref(db, "users");
@@ -59,29 +73,37 @@ const RentNowView = () => {
 
     return () => unsubscribe();
   }, [user]);
+  
+  
 
   const [announcementPreviews, setAnnouncementPreviews] = useState([[]]);
   useEffect(() => {
     const announcementsRef = ref(db, `announcements`);
-    const unsubscribe = onValue(announcementsRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        const announcementPreviewsArray = Object.keys(data).map((key) => ({
-          id: key,
-          mainImage: data[key].mainImage,
-          title: data[key].title,
-          pricePerDay: data[key].pricePerDay,
-          advertiserId: data[key].advertiserId,
-          // ...data[key],
-        }));
-        setAnnouncementPreviews(announcementPreviewsArray);
-      } else {
-        setAnnouncementPreviews([]);
+    const unsubscribe = onValue(
+      announcementsRef,
+      (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+          const announcementPreviewsArray = Object.keys(data).map((key) => ({
+            id: key,
+            mainImage: data[key].mainImage,
+            title: data[key].title,
+            pricePerDay: data[key].pricePerDay,
+            advertiserId: data[key].advertiserId,
+          }));
+          setAnnouncementPreviews(announcementPreviewsArray);
+        } else {
+          setAnnouncementPreviews([]);
+        }
+      },
+      (error) => {
+        console.error("Firebase error:", error);
       }
-    });
-
+    );
+  
     return () => unsubscribe();
   }, []);
+  
 
   const [searchQuery, setSearchQuery] = useState("");
   const [activeIcon, setActiveIcon] = useState(null);
@@ -125,7 +147,7 @@ const RentNowView = () => {
           },
           { text: "YES", onPress: () => BackHandler.exitApp() },
         ]);
-        return true; // Предотвращает стандартное действие
+        return true;
       };
 
       const backHandler = BackHandler.addEventListener(
@@ -133,16 +155,125 @@ const RentNowView = () => {
         backAction
       );
 
-      // Удаляем обработчик при выходе с экрана
       return () => backHandler.remove();
     }, [])
   );
 
-  // console.log(user)
+  const changeIcon = (icon) => {
+    console.log(icons);
+    if (!icon) return;
+    const updatedIcons = [icon, ...icons.slice(0, -1)];
+    setIcons(updatedIcons);
+    handleButtonPress(icon);
+  };
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      const announcementsRef = ref(db, `announcements`);
+      const snapshot = await get(announcementsRef);
+      const data = snapshot.val();
+
+      if (data) {
+        const announcementPreviewsArray = Object.keys(data).map((key) => ({
+          id: key,
+          mainImage: data[key].mainImage,
+          title: data[key].title,
+          pricePerDay: data[key].pricePerDay,
+          advertiserId: data[key].advertiserId,
+        }));
+        setAnnouncementPreviews(announcementPreviewsArray);
+      } else {
+        setAnnouncementPreviews([]);
+      }
+      setSearchQuery("");
+      setReloadKey((prevKey) => prevKey + 1);
+    } catch (error) {
+      console.error("Error refreshing data:", error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+
+  const onChatPress = (announcementPreview) => {
+    if (!user || !user.uid) {
+      Alert.alert("Login Required", "You need to log in to start a chat.");
+      return;
+    }
+
+    if (user.uid === announcementPreview.advertiserId) {
+      Alert.alert(
+        "Cannot Start Chat",
+        "You cannot start a chat with yourself. Please select another announcement."
+      );
+      return;
+    }
+
+  
+    const { id: announcementId, advertiserId } = announcementPreview;
+    const userId = user.uid;
+  
+    const chatRef = ref(db, "chats");
+  
+    get(chatRef)
+      .then((snapshot) => {
+        const chats = snapshot.val();
+        let chatId = null;
+  
+        if (chats) {
+          for (const key in chats) {
+            const chat = chats[key];
+            
+            if (
+              chat.announcementId === announcementId &&
+              ((chat.advertiserId === advertiserId && chat.userId === userId) || 
+              (chat.advertiserId === userId && chat.userId === advertiserId))
+            ) {
+              chatId = key;
+              break;
+            }
+          }
+        }
+  
+        if (chatId) {
+          console.log(`Navigating to existing chat with ID: ${chatId}`);
+          navigation.navigate("Chat", { chatId });
+        } else {
+          console.log("No existing chat found, creating a new one...");
+  
+          const newChat = {
+            announcementId,
+            advertiserId,
+            userId: null, // No user yet (the user will be assigned once they send the first message)
+            messages: [],
+            timestamp: Date.now(),
+          };
+  
+          const newChatRef = push(chatRef);
+          set(newChatRef, newChat).then(() => {
+            console.log(`New chat created with ID: ${newChatRef.key}`);
+            navigation.navigate("Chat", { chatId: newChatRef.key });
+          });
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching chats:", error);
+      });
+  };
+  
+  
+
 
   return (
     <SafeAreaView style={mainStyles.whiteBack}>
-      <View style={mainStyles.container}>
+      <View
+        style={[
+          mainStyles.container,
+          { marginTop: Platform.OS === "android" ? 15 : 0 },
+        ]}
+        key={reloadKey}
+      >
         <SearchBar onSearch={handleSearch} />
         <View
           style={[
@@ -153,20 +284,36 @@ const RentNowView = () => {
             },
           ]}
         >
-          <ScrollView showsVerticalScrollIndicator={false}>
-            <Swiper style={{ height: 200 }} />
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+          >
+            <Swiper style={{ height: 180 }} />
 
             <View style={styles.categoryContainer}>
-              <Text style={styles.titleCategory}>Category</Text>
-              <TouchableOpacity>
-                <Text style={styles.allCategoriesTextBtn}>See all</Text>
+              <Text style={styles.titleCategory}>
+                {t("rentNow.categoryTitle")}
+              </Text>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate("Categories", {
+                    recentIcons: icons,
+                    changeIcon: changeIcon,
+                    changeActiveIcon: setActiveIcon,
+                  })
+                }
+              >
+                <Text style={styles.allCategoriesTextBtn}>
+                  {t("rentNow.allCategoriesBtn")}
+                </Text>
               </TouchableOpacity>
             </View>
             <View style={styles.buttonContainer}>
               {icons.map((iconName) => (
                 <IconButton
                   key={iconName}
-                  filePath={`app-icons/${iconName}.svg`}
                   iconName={iconName}
                   onPress={() => handleButtonPress(iconName)}
                   containerWidth={width - 60}
@@ -183,9 +330,10 @@ const RentNowView = () => {
                   mainImage={announcementPreview.mainImage}
                   title={announcementPreview.title}
                   pricePerDay={announcementPreview.pricePerDay}
-                  currentUserId={user != null ? user.id : "guest"}
+                  currentUserId={user?.id}
                   advertiserId={announcementPreview.advertiserId}
                   containerWidth={width - 60}
+                  onChatPress={() => onChatPress(announcementPreview)}
                 />
               ))}
             </View>

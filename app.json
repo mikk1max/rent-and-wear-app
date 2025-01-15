@@ -46,7 +46,8 @@
           }
         }
       ],
-      "expo-asset"
+      "expo-asset",
+      "expo-localization"
     ],
     "owner": "mikki_max"
   }

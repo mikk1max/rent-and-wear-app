@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Card, Divider } from "react-native-elements";
 import { globalStyles } from "../utils/style";
 import { useCustomFonts } from "../utils/fonts";
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import Icon from "./Icon";
 
 const AddressCard = ({
   id,
@@ -28,10 +28,10 @@ const AddressCard = ({
 
   // Default address
   let cardStyle = styles.backgroundView;
-  let star = "star";
+  let star = "star-stroke";
   if (isDefault) {
     cardStyle = [styles.backgroundView, styles.backgroundViewDefault];
-    star = "star-half-stroke";
+    star = "star-fill";
   }
 
   // Flat and floor numbers
@@ -83,7 +83,7 @@ const AddressCard = ({
 
   let emailStyle = styles.displayNone;
   if (email != "") {
-    emailStyle = styles.textWithIcon
+    emailStyle = styles.textWithIcon;
   }
 
   let phoneNumberStyle = styles.displayNone;
@@ -105,21 +105,18 @@ const AddressCard = ({
               style={styles.button}
               activeOpacity={0.8}
             >
-              <FontAwesome6
-                name={star}
-                size={20}
-                color={globalStyles.textOnAccentColor}
-              />
+              <Icon name={star} width={20} height={20} fillColor="white" />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => openAddressForm(id)}
               style={styles.button}
               activeOpacity={0.8}
             >
-              <FontAwesome6
-                name="edit"
-                size={20}
-                color={globalStyles.textOnAccentColor}
+              <Icon
+                name="edit-pencil"
+                width={20}
+                height={20}
+                fillColor="white"
               />
             </TouchableOpacity>
             <TouchableOpacity
@@ -127,11 +124,7 @@ const AddressCard = ({
               style={[styles.button, styles.buttonDelete]}
               activeOpacity={0.8}
             >
-              <FontAwesome6
-                name="trash-can"
-                size={20}
-                color={globalStyles.textOnAccentColor}
-              />
+              <Icon name="trash" width={20} height={20} fillColor="white" />
             </TouchableOpacity>
           </View>
         </View>
@@ -140,34 +133,19 @@ const AddressCard = ({
 
         {/* Phone number */}
         <View style={phoneNumberStyle}>
-          <FontAwesome6
-            name="phone"
-            size={15}
-            color={globalStyles.textOnSecondaryColor}
-            width="7%"
-          />
+          <Icon name="phone" width={15} height={15} colorStroke="black" />
           <Text style={styles.text}>{phoneNumber}</Text>
         </View>
 
         {/* E-mail */}
         <View style={emailStyle}>
-          <FontAwesome6
-            name="at"
-            size={15}
-            color={globalStyles.textOnSecondaryColor}
-            width="7%"
-          />
+          <Icon name="envelope" width={15} height={15} fillColor="black" />
           <Text style={styles.text}>{email}</Text>
         </View>
 
         {/* Street + Building bumber */}
         <View style={styles.textWithIcon}>
-          <FontAwesome6
-            name="building"
-            size={15}
-            color={globalStyles.textOnSecondaryColor}
-            width="7%"
-          />
+          <Icon name="location" width={15} height={15} colorStroke="black" />
           <Text style={styles.text}>
             {street} {buildingNumber}
           </Text>
@@ -175,23 +153,13 @@ const AddressCard = ({
 
         {/* Flat number + Floor number */}
         <View style={flatAndFloorNumberStyle}>
-          <FontAwesome6
-            name="door-open"
-            size={15}
-            color={globalStyles.textOnSecondaryColor}
-            width="7%"
-          />
+          <Icon name="door" width={15} height={15} colorStroke="black" />
           <Text style={styles.text}>{flatAndFloorNumber}</Text>
         </View>
 
         {/* Postal code + City + Country */}
         <View style={styles.textWithIcon}>
-          <FontAwesome6
-            name="city"
-            size={15}
-            color={globalStyles.textOnSecondaryColor}
-            width="7%"
-          />
+          <Icon name="city" width={15} height={15} fillColor="black" />
           <Text style={styles.text}>{postalCodeCityCountry}</Text>
         </View>
       </View>

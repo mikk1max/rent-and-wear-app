@@ -1,57 +1,38 @@
-import React, { useState, useEffect } from "react";
-import {
-  Text,
-  View,
-  StyleSheet,
-  Platform,
-  SafeAreaView,
-  StatusBar,
-} from "react-native";
+import React, { useState, useEffect, useMemo } from "react";
+import { Text, View, StyleSheet, Platform, SafeAreaView } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-
 import RentNowView from "../partials/RentNowView";
 import RentOutView from "../partials/RentOutView";
 import { useCustomFonts } from "../utils/fonts";
 import { globalStyles, styles as mainStyles } from "../utils/style";
-import { fetchSvgURL } from "../utils/fetchSVG";
-import { SvgUri } from "react-native-svg";
 import UserProfileView from "../partials/UserProfileView";
+import Icon from "./Icon";
+import { useTranslation } from "react-i18next";
 
 const Tab = createBottomTabNavigator();
 
-const renderIcon = (route, focused) => {
-  const [svgUrl, setSvgUrl] = useState(null);
-
-  useEffect(() => {
-    async function loadSvg() {
-      const url = await fetchSvgURL(
-        focused ? `app-icons/user-fill.svg` : `app-icons/user-stroke.svg`
-      );
-      setSvgUrl(url);
-    }
-    loadSvg();
-  }, [focused]);
-
+const renderIcon = (route, focused, t) => {
   const textAndIconStyle = {
     fontFamily: "WorkSans_900Black",
     fontSize: 18,
     color: focused ? globalStyles.textOnAccentColor : globalStyles.accentColor,
   };
 
+  let iconName = "user-stroke";
+  if (route.name === "UserProfile") {
+    iconName = focused ? "user-fill" : "user-stroke";
+    return <Icon name={iconName} width={32} height={32} fillColor={globalStyles.backgroundColor} colorStroke="#2A4366" />;
+  }
+
   switch (route.name) {
-    case "UserProfile":
-      return (
-        <SvgUri
-          uri={svgUrl}
-          width={32}
-          height={32}
-          style={{ fill: textAndIconStyle.color }}
-        />
-      );
     case "RentOut":
-      return <Text style={textAndIconStyle}>Rent out</Text>;
+      return (
+        <Text style={textAndIconStyle}>{t("navigationBar.rentOutBtn")}</Text>
+      );
     case "RentNow":
-      return <Text style={textAndIconStyle}>Rent now</Text>;
+      return (
+        <Text style={textAndIconStyle}>{t("navigationBar.rentNowBtn")}</Text>
+      );
     default:
       return null;
   }
@@ -60,10 +41,11 @@ const renderIcon = (route, focused) => {
 const NavigationBar = (route) => {
   const fontsLoaded = useCustomFonts();
 
+  const { t } = useTranslation();
+
   if (!fontsLoaded) return null;
 
   return (
-    // <NavigationContainer>
     <SafeAreaView
       style={[
         mainStyles.whiteBack,
@@ -75,7 +57,7 @@ const NavigationBar = (route) => {
       <View style={styles.navbarContainer}>
         <Tab.Navigator
           screenOptions={({ route }) => ({
-            tabBarIcon: ({ focused }) => renderIcon(route, focused),
+            tabBarIcon: ({ focused }) => renderIcon(route, focused, t),
             headerShown: false,
             tabBarShowLabel: false,
             tabBarActiveBackgroundColor: globalStyles.accentColor,
@@ -100,7 +82,6 @@ const NavigationBar = (route) => {
         </Tab.Navigator>
       </View>
     </SafeAreaView>
-    // </NavigationContainer>
   );
 };
 
@@ -123,6 +104,7 @@ const styles = StyleSheet.create({
     shadowColor: "transparent",
     height: 50,
     paddingBottom: 0,
+    backgroundColor: globalStyles.backgroundColor,
   },
   tabBarItemStyle: {
     borderRightWidth: 1,

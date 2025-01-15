@@ -4,12 +4,12 @@ import { StyleSheet } from "react-native";
 import { useCustomFonts } from "../utils/fonts";
 import { globalStyles } from "../utils/style";
 
-const SearchBarComp = ({ onSearch }) => {
+const SearchBarComp = ({ onSearch, ...props }) => {
   const [search, setSearch] = useState("");
 
   const updateSearch = (search) => {
     setSearch(search);
-    onSearch(search); // Trigger search function from parent
+    onSearch(search);
   };
 
   const fontsLoaded = useCustomFonts();
@@ -19,14 +19,16 @@ const SearchBarComp = ({ onSearch }) => {
   return (
     <SearchBar
       placeholder="Search"
+      placeholderTextColor={"#3B6592"}
       onChangeText={updateSearch}
       value={search}
-      round={true}
+      round
       containerStyle={styles.container}
       inputContainerStyle={styles.inputContainer}
       inputStyle={styles.input}
       searchIcon={{ size: 25, color: globalStyles.accentColor }}
       clearIcon={{ size: 25, color: globalStyles.accentColor }}
+      {...props}
     />
   );
 };
@@ -37,22 +39,23 @@ const styles = StyleSheet.create({
     borderTopColor: "transparent",
     borderBottomColor: "transparent",
     paddingHorizontal: 0,
-    // height: 45,
     padding: 0,
     margin: 0,
-    // marginBottom: 10,
+    height: 45,
   },
   inputContainer: {
     width: "100%",
-    height: 45,
+    // height: 45,
     backgroundColor: globalStyles.secondaryColor,
     paddingHorizontal: 10,
     justifyContent: "center",
+    textAlignVertical: "bottom",
   },
   input: {
     fontFamily: "Poppins_500Medium",
     fontSize: 16,
     color: globalStyles.textOnSecondaryColor,
+    // textAlignVertical: "center",
   },
 });
 
