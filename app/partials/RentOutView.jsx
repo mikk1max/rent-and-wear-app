@@ -4,85 +4,102 @@ import { BackHandler, Alert } from "react-native";
 import {
   View,
   Dimensions,
+  Text,
+  TouchableOpacity,
   ScrollView,
   SafeAreaView,
   Platform,
+  StyleSheet,
 } from "react-native";
 import SearchBar from "../components/SearchBar";
+import Swiper from "../components/Swiper";
+import IconButton from "../components/IconButton";
 import { useCustomFonts } from "../utils/fonts";
 import ProductCard from "../components/ProductCard";
 
-import { styles as mainStyles } from "../utils/style";
+import { globalStyles, styles as mainStyles } from "../utils/style";
+import { styles } from "../styles/RentNowViewStyles";
+
+import { ref, onValue, update, get, set, remove } from "firebase/database";
+import { db } from "../../firebase.config";
+import { useUser } from "../components/UserProvider";
+import { useNavigation } from "@react-navigation/native";
 
 // Get the screen dimensions
 const { width } = Dimensions.get("window");
 
 export default function RentOutView() {
+  const navigation = useNavigation();
+
+  const fontsLoaded = useCustomFonts();
+  if (!fontsLoaded) return null;
+
+  // Pobieranie bieżącego użytkownika
+  const { user, setUser } = useUser();
+  useEffect(() => {
+    if (!user) return;
+
+    const usersRef = ref(db, "users");
+    const unsubscribe = onValue(usersRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const currentUserEntry = Object.entries(data).find(
+          ([key, userData]) => userData.email === user.email
+        );
+
+        if (currentUserEntry) {
+          const [key, userData] = currentUserEntry;
+          setUser({ ...userData, id: key }); // Dodaj klucz jako "id"
+        } else {
+          setUser(null);
+        }
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => unsubscribe();
+  }, [user]);
+
+  const [announcementPreviews, setAnnouncementPreviews] = useState([[]]);
+  useEffect(() => {
+    const announcementsRef = ref(db, `announcements`);
+    const unsubscribe = onValue(announcementsRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const announcementPreviewsArray = Object.keys(data)
+          .filter((key) => data[key].advertiserId === user.id)
+          .map((key) => ({
+            id: key,
+            mainImage: data[key].mainImage,
+            title: data[key].title,
+            pricePerDay: data[key].pricePerDay,
+            advertiserId: data[key].advertiserId,
+          }));
+        setAnnouncementPreviews(announcementPreviewsArray);
+      } else {
+        setAnnouncementPreviews([]);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleSearch = (text) => {
     setSearchQuery(text);
   };
 
-  const fontsLoaded = useCustomFonts();
+  const getFilteredAnnouncements = (searchQuery) => {
+    return announcementPreviews.filter((announcementPreview) =>
+      String(announcementPreview.title)
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase())
+    );
+  };
 
-  if (!fontsLoaded) return null;
-
-  // Product Cards
-  const products = [
-    {
-      id: 1,
-      link: "link to holey underpants",
-      name: "Holey underpants",
-      price: 5.25,
-      isOwner: true,
-    },
-    {
-      id: 2,
-      link: "link to black shoes",
-      name: "Black shoes",
-      price: 1256987.99,
-      isOwner: true,
-    },
-    {
-      id: 3,
-      link: "link to red hat",
-      name: "Red hat",
-      price: 0.1,
-      isOwner: true,
-    },
-    {
-      id: 4,
-      link: "link to blue jeans",
-      name: "Blue jeans",
-      price: 40.0,
-      isOwner: true,
-    },
-    {
-      id: 5,
-      link: "link to sweter",
-      name: "Sweter",
-      price: 8.99,
-      isOwner: true,
-    },
-    {
-      id: 6,
-      link: "link to pink socks",
-      name: "Pink socks",
-      price: 1.27,
-      isOwner: true,
-    },
-    {
-      id: 7,
-      link: "link to spider-man suit",
-      name: "Spider-man suit",
-      price: 70.89,
-      isOwner: true,
-    },
-  ];
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredAnnouncements = getFilteredAnnouncements(searchQuery);
 
   useFocusEffect(
     useCallback(() => {
@@ -116,41 +133,55 @@ export default function RentOutView() {
           style={[
             mainStyles.scrollBase,
             {
-              flex: 1,
               marginTop: Platform.OS === "android" ? 15 : 20,
               marginVertical: Platform.OS === "ios" ? 20 : 0,
             },
           ]}
         >
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            style={mainStyles.scrollBase}
-          >
-            {/* Product Cards start */}
-            <View
-              style={{
-                flex: 0,
-                flexWrap: "wrap",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                gap: 15,
-                // overflow: "hidden"
-              }}
-            >
-              {filteredProducts.map((product) => (
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <View style={styles.announcementsContainer}>
+              {filteredAnnouncements.map((announcementPreview) => (
                 <ProductCard
-                  key={product.name}
-                  productName={product.name}
-                  productPrice={product.price}
-                  productLink={product.link}
+                  key={"RentOutView_ProductCard_" + announcementPreview.id}
+                  id={announcementPreview.id}
+                  mainImage={announcementPreview.mainImage}
+                  title={announcementPreview.title}
+                  pricePerDay={announcementPreview.pricePerDay}
+                  currentUserId={user != null ? user.id : "guest"}
+                  advertiserId={announcementPreview.advertiserId}
                   containerWidth={width - 60}
-                  isOwner={product.isOwner}
                 />
               ))}
             </View>
           </ScrollView>
         </View>
+        <TouchableOpacity
+          style={stylesTmp.createAnnouncementButton}
+          onPress={() => navigation.navigate("CreateAnnouncementView")}
+        >
+          <Text style={stylesTmp.createAnnouncementText}>
+            Create announcement
+          </Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
 }
+
+const stylesTmp = StyleSheet.create({
+  createAnnouncementButton: {
+    position: "absolute",
+    bottom: 25,
+    right: 25,
+    zIndex: 10,
+    padding: 5,
+    alignItems: "center",
+    borderRadius: globalStyles.BORDER_RADIUS,
+    backgroundColor: globalStyles.accentColor,
+  },
+  createAnnouncementText: {
+    fontFamily: "WorkSans_900Black",
+    fontSize: 20,
+    color: globalStyles.textOnAccentColor,
+  },
+});

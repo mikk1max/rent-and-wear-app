@@ -1,6 +1,13 @@
 import { StyleSheet } from "react-native";
 import { globalStyles } from "../utils/style";
 
+export const iconParams = {
+  width: 35,
+  height: 35,
+  stroke: globalStyles.textOnAccentColor,
+  strokeWidth: 2,
+};
+
 export const styles = StyleSheet.create({
   mainSection: {
     flex: 1,
@@ -24,6 +31,23 @@ export const styles = StyleSheet.create({
   //   borderTopLeftRadius: globalStyles.BORDER_RADIUS,
   //   borderTopRightRadius: globalStyles.BORDER_RADIUS,
   // },
+
+  goBackButton: {
+    position: 'absolute',
+    top: 0,
+    left: 10,
+    zIndex: 10,
+    paddingHorizontal: 10,
+    alignItems: "center",
+    borderRadius: globalStyles.BORDER_RADIUS,
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
+  },
+
+  goBackText: {
+    fontFamily: "WorkSans_900Black",
+    fontSize: 18,
+    color: "rgba(255, 255, 255, 0.7)",
+  },
 
   annSwiperContainer: {
     width: "100%",
@@ -72,6 +96,19 @@ export const styles = StyleSheet.create({
     backgroundColor: globalStyles.secondaryColor,
   },
 
+  annYourAnnouncementPlate: {
+    fontFamily: "WorkSans_900Black",
+    fontSize: 15,
+    color: globalStyles.textOnAccentColor,
+    backgroundColor: globalStyles.blueColor,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    marginTop: -10,
+    marginHorizontal: -10,
+    borderTopLeftRadius: globalStyles.BORDER_RADIUS,
+    borderTopRightRadius: globalStyles.BORDER_RADIUS,
+  },
+
   annTitle: {
     fontFamily: "WorkSans_900Black",
     fontSize: 22,
@@ -114,27 +151,26 @@ export const styles = StyleSheet.create({
     gap: 10,
   },
 
-  annSizes: {
+  annSize: {
     flexDirection: "row",
     flexWrap: "wrap",
     alignItems: "center",
     gap: 10,
   },
 
-  annSizesLabel: {
+  annSizeLabel: {
     fontFamily: "Poppins_500Medium",
     fontSize: 17,
     color: globalStyles.textOnSecondaryColor,
   },
 
-  annSize: {
+  annSizeValue: {
     fontFamily: "WorkSans_900Black",
     fontSize: 17,
     color: globalStyles.textOnPrimaryColor,
     backgroundColor: globalStyles.primaryColor,
     padding: 5,
     borderRadius: globalStyles.BORDER_RADIUS,
-    width: 45,
     textAlign: "center",
   },
 
@@ -201,19 +237,19 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     width: "100%",
     height: "auto",
-    justifyContent: "flex-start",
-    gap: 20,
+    justifyContent: "space-between",
+    // gap: 20,
   },
 
   advImage: {
-    width: 100,
+    width: "30%",
     height: 100,
     borderRadius: globalStyles.BORDER_RADIUS,
   },
 
   advData: {
     flexDirection: "column",
-    width: "auto",
+    width: "65%",
     height: "auto",
     justifyContent: "center",
     alignItems: "flex-start",
@@ -259,6 +295,7 @@ export const styles = StyleSheet.create({
     width: "100%",
     height: "auto",
     justifyContent: "space-around",
+    alignItems: "center",
     padding: 5,
     borderRadius: globalStyles.BORDER_RADIUS,
     backgroundColor: globalStyles.accentColor,
@@ -271,8 +308,7 @@ export const styles = StyleSheet.create({
   },
 
   opinWriteOpinionButtonIcon: {
-    fontFamily: "WorkSans_900Black",
-    fontSize: 18,
+    size: 5,
     color: globalStyles.textOnAccentColor,
   },
 
