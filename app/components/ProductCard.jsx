@@ -25,16 +25,8 @@ const ProductCard = ({
   // Width of card
   const cardWidth = (containerWidth - 1 * 5) / 2;
 
-  // Styles
-  var plateStyle = null;
-  var imageStyle = null;
-  if (currentUserId === advertiserId) {
-    plateStyle = styles.cardPlateWithPlate;
-    imageStyle = [styles.cardImageNoPlate, styles.cardImageWithPlate];
-  } else {
-    plateStyle = styles.cardPlateNoPlate;
-    imageStyle = styles.cardImageNoPlate;
-  }
+  let isAuthor = false;
+  if (currentUserId === advertiserId) isAuthor = true;
 
   return (
     <View>
@@ -47,15 +39,27 @@ const ProductCard = ({
           borderRadius: 15,
         }}
       >
-        <View style={plateStyle}>
-          <Text style={styles.textOnPlate}>Your announcement</Text>
-        </View>
-        <Card.Image
-          style={imageStyle}
-          source={{
-            uri: mainImage,
-          }}
-        />
+        {isAuthor && (
+          <View style={styles.cardPlate}>
+            <Text style={styles.textOnPlate}>Your announcement</Text>
+          </View>
+        )}
+        {isAuthor && (
+          <Card.Image
+            style={[styles.cardImageNoPlate, styles.cardImageWithPlate]}
+            source={{
+              uri: mainImage,
+            }}
+          />
+        )}
+        {!isAuthor && (
+          <Card.Image
+            style={styles.cardImageNoPlate}
+            source={{
+              uri: mainImage,
+            }}
+          />
+        )}
 
         <TouchableOpacity
           onPress={() =>
@@ -77,10 +81,6 @@ const ProductCard = ({
 export default ProductCard;
 
 const styles = StyleSheet.create({
-  cardPlateNoPlate: {
-    display: "none",
-  },
-
   cardImageNoPlate: {
     height: 150,
     width: "100%",
@@ -103,14 +103,15 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: globalStyles.textOnPrimaryColor,
   },
+  
   textOnButtonPrice: {
     fontFamily: "Poppins_500Medium",
     fontSize: 13,
     color: globalStyles.textOnPrimaryColor,
   },
-
-  cardPlateWithPlate: {
-    // display: "flex",
+  
+  cardPlate: {
+    display: "flex",
     height: 25,
     width: "100%",
     borderTopLeftRadius: 15,
