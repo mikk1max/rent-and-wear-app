@@ -1,13 +1,13 @@
 import { StyleSheet, Platform, StatusBar } from "react-native";
 
 export const globalStyles = {
-  primaryColor: "#525252",
-  textOnPrimaryColor: "white",
-  secondaryColor: "#D3D3D3",
-  textOnSecondaryColor: "#323f4b",
-  accentColor: "black",
-  textOnAccentColor: "#f4fbf8",
-  backgroundColor: "white",
+  primaryColor: "#083D77",
+  textOnPrimaryColor: "#F1F5F2",
+  secondaryColor: "#D2DDE1",
+  textOnSecondaryColor: "#1098F7",
+  accentColor: "#083D77",
+  textOnAccentColor: "#F1F5F2",
+  backgroundColor: "#F1F5F2",
 
   redColor: "#DC143C",
   blueColor: "#1338BE",

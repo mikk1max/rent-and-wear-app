@@ -9,6 +9,7 @@ import {
   ScrollView,
   SafeAreaView,
   Platform,
+  RefreshControl
   StyleSheet,
 } from "react-native";
 import SearchBar from "../components/SearchBar";
@@ -86,6 +87,8 @@ export default function RentOutView() {
   }, []);
 
   const [searchQuery, setSearchQuery] = useState("");
+  const [refreshing, setRefreshing] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
 
   const handleSearch = (text) => {
     setSearchQuery(text);
@@ -125,9 +128,21 @@ export default function RentOutView() {
     }, [])
   );
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      // Refresh data
+      setReloadKey((prevKey) => prevKey + 1);
+    } catch (error) {
+      console.error("Error refreshing data:", error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   return (
     <SafeAreaView style={mainStyles.whiteBack}>
-      <View style={mainStyles.container}>
+      <View style={[mainStyles.container, {marginTop: Platform.OS === "android" ? 15 : 0,}]} key={reloadKey}>
         <SearchBar onSearch={handleSearch} />
         <View
           style={[
@@ -138,7 +153,11 @@ export default function RentOutView() {
             },
           ]}
         >
-          <ScrollView showsVerticalScrollIndicator={false}>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            style={mainStyles.scrollBase}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+          >
             <View style={styles.announcementsContainer}>
               {filteredAnnouncements.map((announcementPreview) => (
                 <ProductCard

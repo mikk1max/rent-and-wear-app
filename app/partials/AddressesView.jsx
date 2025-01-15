@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useTransition } from "react";
 import {
   View,
   Text,
@@ -11,23 +11,21 @@ import {
 import { useCustomFonts } from "../utils/fonts";
 import { useForm, Controller } from "react-hook-form";
 import { Divider } from "react-native-elements";
-
 import { ref, onValue, update, get, set, remove } from "firebase/database";
 import { db } from "../../firebase.config";
 import AddressCard from "../components/AddressCard";
-
 import { globalStyles, styles as mainStyles } from "../utils/style";
 import { styles } from "../styles/AddressesViewStyles";
-
 import { useUser } from "../components/UserProvider";
+import { useTranslation } from "react-i18next";
 
 const AddressesView = () => {
+  const { t } = useTranslation();
   const fontsLoaded = useCustomFonts();
   if (!fontsLoaded) return null;
 
   const { user, setUser } = useUser();
 
-  // Addresses
   const [addresses, setAddresses] = useState([[]]);
   const userId = 0;
   useEffect(() => {
@@ -325,7 +323,9 @@ const AddressesView = () => {
                 style={styles.newAddressButton}
                 activeOpacity={0.8}
               >
-                <Text style={styles.newAddressButtonText}>New address</Text>
+                <Text style={styles.newAddressButtonText}>
+                  {t("addresses.newAddressBtn")}
+                </Text>
               </TouchableOpacity>
             </View>
           </ScrollView>
@@ -353,7 +353,8 @@ const AddressesView = () => {
               {/* Adresse */}
               <View style={styles.modalInputContainer}>
                 <Text style={styles.modalLabel}>
-                  Adresse: <Text style={{ color: "red" }}>*</Text>
+                  {`${t("addresses.modalAddEdit.addresseeLabel")}: `}
+                  <Text style={{ color: "red" }}>*</Text>
                 </Text>
                 {errors.adresse && (
                   <Text style={styles.modalTextError}>
@@ -363,7 +364,7 @@ const AddressesView = () => {
                 <Controller
                   control={control}
                   rules={{
-                    required: "Adresse is required",
+                    required: "Addressee is required",
                   }}
                   render={({ field: { onChange, onBlur, value } }) => (
                     <TextInput

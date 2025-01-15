@@ -1,0 +1,106 @@
+{
+  "translation": {
+    "languages": {
+      "en": "English",
+      "pl": "Polish / Polski"
+    },
+    "brand": {
+      "name": "Rent & Wear",
+      "subtitle": "Wypożyczalnia odzieży"
+    },
+    "universal": {
+      "editBtn": "Edytuj",
+      "saveBtn": "Zapisz",
+      "cancelBtn": "Anuluj",
+      "deleteBtn": "Usuń"
+    },
+    "welcome": {
+      "guestBtn": "Kontynuuj jako gość",
+      "loginBtn": "Zaloguj się / Zarejestruj się"
+    },
+    "login": {
+      "title": "Witaj ponownie",
+      "emailLabel": "E-mail",
+      "passLabel": "Hasło",
+      "forgotPass": "Zapomniałeś hasła",
+      "loginBtn": "Zaloguj się",
+      "signUpBtn": "Zarejestruj się",
+      "googleBtn": "Zaloguj się przez Google",
+      "modalError": {
+        "title": "Błąd logowania",
+        "closeBtn": "Spróbuj ponownie"
+      }
+    },
+    "signUp": {
+      "title": "Utwórz konto",
+      "nameLabel": "Imię",
+      "surnameLabel": "Nazwisko",
+      "emailLabel": "E-mail",
+      "passLabel": "Hasło",
+      "signUpBtn": "Zarejestruj się",
+      "modalError": {
+        "title": "Błąd rejestracji",
+        "closeBtn": "Spróbuj ponownie"
+      }
+    },
+    "rentNow": {
+      "searchPlaceHolder": "Szukaj",
+      "categoryTitle": "Kategoria",
+      "allCategoriesBtn": "Zobacz wszystkie",
+      "yourAnnouncementLabel": "Twoje ogłoszenie"
+    },
+    "navigationBar": {
+      "rentNowBtn": "Wynajem",
+      "rentOutBtn": "Najem"
+    },
+    "userProfile": {
+      "verificationInfo": {
+        "completed": "Zweryfikowano",
+        "uncompleted": "Nie zweryfikowano"
+      },
+      "language": "Język",
+      "settings": "Ustawienia",
+      "addresses": "Adresy",
+      "sends": "Wysyłki",
+      "gets": "Odbiory",
+      "logout": "Wyloguj się"
+    },
+    "settings": {
+      "titleLabel": "Ustawienia",
+      "editPictureText": "Edytuj zdjęcie profilowe",
+      "nameLabel": "Imię",
+      "surnameLabel": "Nazwisko",
+      "emailLabel": "E-mail"
+    },
+    "addresses": {
+      "titleLabel": "Adresy",
+      "newAddressBtn": "Nowy adres",
+      "modalAddEdit": {
+        "addresseeLabel": "Odbiorca",
+        "phoneLabel": "Numer telefonu",
+        "emailLabel": "E-mail",
+        "streetLabel": "Ulica",
+        "buildingLabel": "Numer budynku",
+        "apartmentLabel": "Numer mieszkania",
+        "floorLabel": "Numer piętra",
+        "postalCodeLabel": "Kod pocztowy",
+        "cityLabel": "Miasto",
+        "countryLabel": "Kraj"
+      }
+    },
+    "announcement": {
+      "categoryLabel": "Kategoria",
+      "price": ["$", "dzień"],
+      "sizeLabel": "Rozmiar",
+      "conditionLabel": "Stan",
+      "descLabel": "Opis",
+      "ownerLabel": "Ogłaszający",
+      "opinionsLabel": "Opinie",
+      "writeYourOpinionBtn": "Napisz swoją opinię",
+      "onModerationText": "Na moderacji",
+      "yourOpinionLabel": "Twoja opinia",
+      "bookItBtn": "Zarezerwuj",
+      "rentItNow": "Wypożycz teraz"
+    }
+  }
+}

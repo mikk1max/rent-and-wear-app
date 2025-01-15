@@ -14,8 +14,11 @@ import { useCustomFonts } from "../utils/fonts";
 import { globalStyles, styles as mainStyles } from "../utils/style";
 import { styles } from "../styles/WelcomeViewStyles";
 import { onLogin } from "../utils/auth";
+import { useTranslation } from "react-i18next";
 
 export default function WelcomeView({ navigation }) {
+  const { t } = useTranslation();
+
   const fontsLoaded = useCustomFonts();
   if (!fontsLoaded) return null;
 
@@ -23,10 +26,12 @@ export default function WelcomeView({ navigation }) {
     console.log("Zainicjalizowano użytkownika:", user);
   };
 
+  // console.log(t("brand.name"));
+
   return (
     <View style={{ flex: 1 }}>
       <>{Platform.OS === "ios" && <StatusBar barStyle="dark-content" />}</>
-      <>{Platform.OS === "android" && <StatusBar barStyle="dark-content" />}</>
+      <>{Platform.OS === "android" && <StatusBar barStyle="light-content" />}</>
       <ImageBackground
         source={require("../../assets/images/welcomeBack.jpg")}
         style={styles.backImage}
@@ -36,8 +41,10 @@ export default function WelcomeView({ navigation }) {
         >
           <View style={styles.logoAndBtns}>
             <View style={styles.logo}>
-              <Text style={styles.logoText}>Rent & Wear</Text>
-              <Text style={styles.logoTextAdditional}>clothing rental</Text>
+              <Text style={styles.logoText}>{t("brand.name")}</Text>
+              <Text style={styles.logoTextAdditional}>
+                {t("brand.subtitle")}
+              </Text>
             </View>
             <View style={styles.moveButtons}>
               <TouchableOpacity
@@ -53,13 +60,13 @@ export default function WelcomeView({ navigation }) {
                   navigation.navigate("MainApp");
                 }}
               >
-                <Text style={styles.guestBtnText}>Continue as a Guest</Text>
+                <Text style={styles.guestBtnText}>{t("welcome.guestBtn")}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.logBtn}
                 onPress={() => navigation.navigate("LogIn")}
               >
-                <Text style={styles.logBtnText}>Log in / Sign up</Text>
+                <Text style={styles.logBtnText}>{t("welcome.loginBtn")}</Text>
               </TouchableOpacity>
             </View>
           </View>

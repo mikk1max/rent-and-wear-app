@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
-import { BackHandler, Alert } from "react-native";
+import { BackHandler, Alert, RefreshControl } from "react-native";
 import {
   View,
   Text,
@@ -8,54 +8,32 @@ import {
   ScrollView,
   SafeAreaView,
   Image,
+  Platform
 } from "react-native";
 import { useCustomFonts } from "../utils/fonts";
 import { useNavigation } from "@react-navigation/native";
-import { ref, onValue } from "firebase/database";
+import { ref, onValue, off, get } from "firebase/database";
 import { db } from "../../firebase.config";
-import {
-  fetchSvgURL,
-  fetchImgURL,
-  getRandomAvatarUrl,
-} from "../utils/fetchSVG";
-import { SvgUri } from "react-native-svg";
+import { fetchImgURL, getRandomAvatarUrl } from "../utils/fetchSVG";
 import { globalStyles, styles as mainStyles } from "../utils/style";
 import { iconParams, styles } from "../styles/UserProfileViewStyles";
 import { useUser } from "../components/UserProvider";
-import { onLogin, onLogout } from "../utils/auth";
-
-import Addresses from "../../assets/icons/addresses.svg";
-import { Svg, Path, SvgProps } from "react-native-svg";
+import { onConfirmEmail, onLogin, onLogout } from "../utils/auth";
+import Icon from "../components/Icon";
+import { useTranslation } from "react-i18next";
+import LanguageSwitcher from "../components/LanguageSwitcher";
 
 const UserProfileView = () => {
-  const [svgs, setSvgs] = useState({});
   const [userProfileImg, setUserProfileImg] = useState(null);
   const { user, setUser } = useUser();
   const navigation = useNavigation();
+  const { t, i18n } = useTranslation();
   const fontsLoaded = useCustomFonts();
+  const [isDropdownVisible, setDropdownVisible] = useState(false);
+
+  const toggleDropdown = () => setDropdownVisible(!isDropdownVisible);
 
   useEffect(() => {
-    async function loadSvgs() {
-      const icons = [
-        "settings",
-        "addresses",
-        "sends",
-        "gets",
-        "logout",
-        "verification",
-        "not-verified",
-      ];
-      const svgPromises = icons.map((icon) =>
-        fetchSvgURL(`app-icons/${icon}.svg`).then((svg) => ({ [icon]: svg }))
-      );
-      const svgs = await Promise.all(svgPromises);
-      setSvgs(Object.assign({}, ...svgs));
-    }
-    loadSvgs();
-  }, []);
-
-  useEffect(() => {
-    if (!user) return;
 
     const usersRef = ref(db, "users");
     const unsubscribe = onValue(usersRef, (snapshot) => {
@@ -64,19 +42,21 @@ const UserProfileView = () => {
         const currentUser = Object.values(data).find(
           (userData) => userData.email === user.email
         );
-        setUser(currentUser || null);
+        if (currentUser?.id !== user?.id) {
+          setUser(currentUser || null);
+        }
       } else {
         setUser(null);
       }
     });
 
     return () => unsubscribe();
-  }, [user]);
+  }, []);
 
   useEffect(() => {
     const fetchProfileImg = async () => {
       try {
-        const url = await fetchImgURL(`user-avatars/${user.id}.jpg`);
+        const url = await fetchImgURL(`user-avatars/${user.id}/${user.id}.jpg`);
         setUserProfileImg(url);
       } catch {
         const randomUrl = await getRandomAvatarUrl();
@@ -84,9 +64,7 @@ const UserProfileView = () => {
       }
     };
 
-    if (user?.id) {
-      fetchProfileImg();
-    }
+    fetchProfileImg();
   }, [user?.id]);
 
   useFocusEffect(
@@ -112,11 +90,31 @@ const UserProfileView = () => {
     }, [])
   );
 
+  const checkPermissions = async () => {
+    try {
+      const snapshot = await get(ref(db, "announcements"));
+      if (snapshot.exists()) {
+        console.log("Access confirmed:", snapshot.val());
+      } else {
+        console.log("No data or access denied.");
+      }
+    } catch (error) {
+      console.error("Permission error:", error.message);
+    }
+  };
+
+  useEffect(() => {
+    checkPermissions();
+  }, []);
+
   if (!fontsLoaded || !user) {
     return null;
   }
 
   const handleLogout = () => {
+    // Unsubscribe from Firebase listeners
+    off(ref(db, "announcements"));
+    
     onLogout()
       .then(() => {
         navigation.navigate("Welcome");
@@ -124,9 +122,37 @@ const UserProfileView = () => {
       .catch((error) => console.error("Logout failed:", error.message));
   };
 
+
+  
+ 
+  
+  
+
+  const hideEmail = (email) => {
+    const atIndex = email.indexOf("@");
+    if (atIndex === -1) return email;
+    if (email.length <= 20) return email;
+    const hiddenPart = "*".repeat(3);
+    return (
+      email.slice(0, 5) +
+      hiddenPart +
+      email.slice(atIndex - 3, atIndex) +
+      email.slice(atIndex)
+    );
+  };
+
+  const filterFullName = (name, surname) => {
+    let fullName = name + " " + surname;
+    if (fullName.length <= 20) {
+      return fullName;
+    }
+
+    return fullName.slice(0, 20) + "...";
+  }
+
   return (
-    <SafeAreaView style={mainStyles.whiteBack}>
-      <View style={mainStyles.container}>
+    <SafeAreaView style={mainStyles.whiteBack} key={i18n.language}>
+      <View style={[mainStyles.container, {marginTop: Platform.OS === "android" ? 15 : 0,}]}>
         <View style={styles.userCard}>
           <Image
             source={{
@@ -136,27 +162,29 @@ const UserProfileView = () => {
           />
           <View style={styles.userCardINFO}>
             <Text style={styles.fullNameText}>
-              {user.name} {user.surname}
+              {filterFullName(user.name, user.surname)}
             </Text>
-            <Text style={styles.emailText}>{user.email}</Text>
-            <TouchableOpacity style={styles.verificationOpacity}>
+            <Text style={styles.emailText}>{hideEmail(user.email)}</Text>
+            <TouchableOpacity
+              style={styles.verificationOpacity}
+              onPress={!user.isVerified && (() => onConfirmEmail())}
+              activeOpacity={0.9}
+              disabled={user.isVerified && true}
+            >
               <View style={styles.verificationContent}>
                 {user.isVerified !== undefined && user.isVerified !== null && (
-                  <SvgUri
-                    uri={
-                      user.isVerified
-                        ? svgs["verification"]
-                        : svgs["not-verified"]
-                    }
+                  <Icon
+                    name={user.isVerified ? "verification" : "not-verified"}
                     width={15}
                     height={15}
-                    style={styles.verificationIcon}
+                    fillColor="white"
+                    styles={{ marginRight: 5 }}
                   />
                 )}
                 <Text style={styles.verificationText}>
                   {user.isVerified
-                    ? " Verification completed"
-                    : " Not verified yet"}
+                    ? ` ${t("userProfile.verificationInfo.completed")}`
+                    : ` ${t("userProfile.verificationInfo.uncompleted")}`}
                 </Text>
               </View>
             </TouchableOpacity>
@@ -170,54 +198,76 @@ const UserProfileView = () => {
           <View style={{ gap: 15 }}>
             <TouchableOpacity
               style={styles.buttonBase}
-              onPress={() => navigation.navigate("SettingsView")}
+              onPress={() => navigation.navigate("AddressesView")}
+              activeOpacity={0.9}
             >
-              <SvgUri uri={svgs.settings} {...iconParams} />
-              <Text style={styles.buttonText}>Settings</Text>
+              <Icon name="addresses" {...iconParams} />
+              <Text style={styles.buttonText}>
+                {t("userProfile.addresses")}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.buttonBase]}
+              onPress={() => navigation.navigate("SettingsView")}
+              activeOpacity={0.9}
+            >
+              <Icon name="settings" {...iconParams} />
+              <Text style={styles.buttonText}>{t("userProfile.settings")}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={styles.buttonBase}
-              onPress={() => navigation.navigate("AddressesView")}
+              onPress={toggleDropdown}
+              activeOpacity={0.9}
             >
-              {/* <SvgUri uri={svgs.addresses} {...iconParams} /> */}
-              <Addresses {...iconParams} />
-              <Text style={styles.buttonText}>Addresses</Text>
+              <Icon name="language" {...iconParams} />
+              <Text style={styles.buttonText}>{t("userProfile.language")}</Text>
+            </TouchableOpacity>
+
+            {isDropdownVisible && (
+              <LanguageSwitcher toggleDropdown={toggleDropdown} />
+            )}
+
+            <TouchableOpacity
+              style={[styles.buttonBase]}
+              onPress={() => navigation.navigate("Chats")}
+              activeOpacity={0.9}
+            >
+              <Icon name="chat" {...iconParams} colorStroke="transparent" />
+              <Text style={styles.buttonText}>Chats</Text>
             </TouchableOpacity>
 
             <View style={{ flexDirection: "row", gap: 15 }}>
               <TouchableOpacity
                 style={[styles.buttonBase, styles.buttonRent]}
                 onPress={() => navigation.navigate("SendsView")}
+                activeOpacity={0.9}
               >
-                <SvgUri
-                  uri={svgs.sends}
-                  width={65}
-                  height={65}
-                  style={{ fill: "white" }}
-                />
-                <Text style={styles.buttonRentText}>Sends</Text>
+                <Icon name="sends" width={65} height={65} fillColor="white" />
+                <Text style={styles.buttonRentText}>
+                  {t("userProfile.sends")}
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.buttonBase, styles.buttonRent]}
                 onPress={() => navigation.navigate("GetsView")}
+                activeOpacity={0.9}
               >
-                <SvgUri
-                  uri={svgs.gets}
-                  width={65}
-                  height={65}
-                  style={{ fill: "white" }}
-                />
-                <Text style={styles.buttonRentText}>Gets</Text>
+                <Icon name="gets" width={65} height={65} fillColor="white" />
+                <Text style={styles.buttonRentText}>
+                  {t("userProfile.gets")}
+                </Text>
               </TouchableOpacity>
             </View>
 
             <TouchableOpacity
               style={[styles.buttonBase, styles.buttonLogOut]}
               onPress={handleLogout}
+              activeOpacity={0.9}
             >
-              <SvgUri uri={svgs.logout} {...iconParams} />
-              <Text style={styles.buttonText}>Log Out</Text>
+              <Icon name="logout" {...iconParams} />
+              <Text style={styles.buttonText}>{t("userProfile.logout")}</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>

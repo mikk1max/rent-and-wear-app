@@ -7,7 +7,7 @@ const dataCardWidth = width - 50 - 100 - 15;
 export const iconParams = {
   width: 30,
   height: 30,
-  style: { fill: globalStyles.textOnPrimaryColor },
+  fillColor: "white",
 };
 
 export const styles = StyleSheet.create({
@@ -30,16 +30,14 @@ export const styles = StyleSheet.create({
     padding: 0,
     backgroundColor: globalStyles.secondaryColor,
     borderRadius: 15,
-    // borderTopRightRadius: 15,
-    // borderBottomRightRadius: 15,
-    gap: 20,
+    justifyContent: "space-evenly",
     paddingHorizontal: 15,
-    // paddingVertical: 15,
   },
   fullNameText: {
     fontFamily: "WorkSans_900Black",
     fontSize: 28,
     color: globalStyles.textOnSecondaryColor,
+
   },
   emailText: {
     fontFamily: "Poppins_500Medium",
@@ -51,10 +49,6 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-  },
-  verificationIcon: {
-    fill: "white",
-    marginRight: 5,
   },
   verificationText: {
     fontFamily: "Poppins_500Medium",
@@ -76,7 +70,7 @@ export const styles = StyleSheet.create({
   buttonBase: {
     backgroundColor: globalStyles.primaryColor,
     width: width - 2 * 25,
-    height: 65,
+    height: 60,
     borderRadius: globalStyles.BORDER_RADIUS,
     alignItems: "center",
     justifyContent: "flex-start",
@@ -90,7 +84,7 @@ export const styles = StyleSheet.create({
   buttonRent: {
     width: (width - 2 * 25 - 15) / 2,
     flexDirection: "column",
-    height: (width - 2 * 25 - 15) / 2 - 30,
+    height: (width - 2 * 25 - 15) / 2 - 40,
     gap: 0,
     justifyContent: "center",
   },
