@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
+  Dimensions,
   View,
   Text,
   TouchableOpacity,
@@ -23,9 +24,19 @@ import OpinionCard from "../components/OpinionCard";
 import Swiper from "react-native-swiper";
 import ImageViewing from "react-native-image-viewing";
 
-import { ref, onValue, update, get, set, remove } from "firebase/database";
-import { db } from "../../firebase.config";
+import {
+  ref,
+  onValue,
+  update,
+  get,
+  set,
+  remove,
+  goOnline,
+} from "firebase/database";
+import { db, storage } from "../../firebase.config";
 import { useUser } from "../components/UserProvider";
+import { getStorage, ref as storageRef, uploadBytes } from "firebase/storage";
+import { getDownloadURL } from "firebase/storage";
 
 import {
   fetchSvgURL,
@@ -35,8 +46,8 @@ import {
 
 import * as ImagePicker from "expo-image-picker";
 import { useForm, Controller } from "react-hook-form";
-import AddImageSVG from "../../assets/icons/not-verified.svg";
 import { SelectList } from "react-native-dropdown-select-list";
+import Icon from "../components/Icon";
 
 const CreateAnnouncementView = () => {
   const navigation = useNavigation();
@@ -45,10 +56,11 @@ const CreateAnnouncementView = () => {
   const [currentAnnouncement, setCurrentAnnouncement] = useState();
   const [image, setImage] = useState();
   const [images, setImages] = useState([]);
+  const [squashedSubcategories, setSquashedSubcategories] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [category, setCategory] = useState("");
   const [categoryError, setCategoryError] = useState();
-
-  const categories = ["Hats", "Shoes shoes shoes", "Pants"];
+  const [isCategoryListVisible, setCategoryListVisible] = useState(false);
 
   // Formularz
   const {
@@ -86,6 +98,40 @@ const CreateAnnouncementView = () => {
     return () => unsubscribe();
   }, [user]);
 
+  // Pobieranie kategorii
+  useEffect(() => {
+    const fetchSubcategories = async () => {
+      try {
+        const categoriesRef = ref(db, "categories");
+        const snapshot = await get(categoriesRef);
+
+        if (snapshot.exists()) {
+          const rawData = snapshot.val();
+
+          // Преобразование данных в плоский массив подкатегорий
+          const allSubcategories = Object.values(rawData).flatMap((category) =>
+            Object.values(category.subcategories).map((subcategory) => ({
+              subcategoryName: subcategory.subcategoryName,
+              subcategoryIcon: subcategory.subcategoryIcon,
+            }))
+          );
+
+          setSquashedSubcategories(allSubcategories);
+        } else {
+          console.error("No data available.");
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSubcategories();
+  }, []);
+
+  // console.log(squashedSubcategories);
+
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -108,7 +154,35 @@ const CreateAnnouncementView = () => {
     setImages(images.filter((item) => item != img));
   };
 
-  const onSubmit = (data) => {
+  const uploadImagesToStorage = async (announcementId, images) => {
+    const storage = getStorage();
+    const imageUrls = [];
+
+    for (let i = 0; i < images.length; i++) {
+      const imageUri = images[i];
+      const fileName = `${announcementId}/${i}.jpg`; // Название файла с индексом
+      const imageRef = storageRef(storage, `announcement-images/${fileName}`);
+
+      // Загружаем изображение
+      const response = await fetch(imageUri);
+      const blob = await response.blob();
+      await uploadBytes(imageRef, blob);
+
+      // Получаем URL после загрузки
+      const imageUrl = await getDownloadURL(imageRef);
+      imageUrls.push(imageUrl);
+    }
+
+    return imageUrls; // Возвращаем массив URL-ов изображений
+  };
+
+  // Функция для добавления объявления в Realtime Database
+  const createAnnouncementInDatabase = async (announcementId, announcement) => {
+    const announcementRef = ref(db, "announcements/" + announcementId);
+    await set(announcementRef, announcement);
+  };
+
+  const onSubmit = async (data) => {
     if (category === "") setCategoryError("Category is required!");
     else {
       setCategoryError(null);
@@ -136,9 +210,36 @@ const CreateAnnouncementView = () => {
         opinions: [],
       };
       let announcementId = announcement.publicationDate;
+
+      // 1. Создание записи в Realtime Database
+      await createAnnouncementInDatabase(announcementId, announcement);
+
+      // 2. Загрузка изображений в Storage и получение их URL
+      const imageUrls = await uploadImagesToStorage(announcementId, images);
+
+      // Обновляем объект объявления с URL-ами изображений
+      announcement.images = imageUrls;
+
+      // 3. Обновляем запись в базе данных с добавленными изображениями
+      await createAnnouncementInDatabase(announcementId, announcement);
+
       console.log(announcement);
       navigation.goBack();
     }
+  };
+
+  const toggleCategoryList = () =>
+    setCategoryListVisible(!isCategoryListVisible);
+
+  const selectCategory = (chosenCategory) => {
+    setCategory(chosenCategory);
+    toggleCategoryList();
+  };
+
+  const iconOptions = {
+    width: 22,
+    height: 22,
+    fillColor: globalStyles.primaryColor,
   };
 
   return (
@@ -146,10 +247,10 @@ const CreateAnnouncementView = () => {
       <View style={[mainStyles.container, mainStyles.scrollBase]}>
         <ScrollView
           showsVerticalScrollIndicator={false}
+          nestedScrollEnabled={true}
           // style={mainStyles.scrollBase}
         >
           <View style={styles.imagesContainer}>
-            <Text style={styles.imagesLabel}>Add images of your product:</Text>
             <View style={styles.imagesList}>
               {images &&
                 images.map((img) => (
@@ -170,15 +271,13 @@ const CreateAnnouncementView = () => {
                   style={styles.addImageButton}
                   onPress={() => pickImage()}
                 >
-                  <AddImageSVG
-                    height={70}
-                    width={70}
-                    fill={globalStyles.textOnAccentColor}
-                    style={styles.addImageIcon}
-                  />
+                  <Icon name="plus" width={80} height={80} />
                 </TouchableOpacity>
               )}
             </View>
+            {images.length == 0 && (
+              <Text style={styles.imagesLabel}>Add images of your product</Text>
+            )}
           </View>
           <View style={styles.inputs}>
             {/* Title */}
@@ -223,19 +322,61 @@ const CreateAnnouncementView = () => {
               {categoryError && (
                 <Text style={styles.textInputError}>{categoryError}</Text>
               )}
-              <SelectList
-                setSelected={(val) => setCategory(val)}
-                data={categories}
-                save="value"
-                // maxHeight={5}
-                search={false}
-                placeholder="Choose a category"
-                boxStyles={styles.selectListBox}
-                inputStyles={styles.selectListInput}
-                dropdownStyles={styles.selectListDropdown}
-                dropdownItemStyles={styles.selectListDropdownItem}
-                dropdownTextStyles={styles.selectListDropdownText}
-              />
+              <TouchableOpacity
+                style={styles.categoryListButton}
+                onPress={toggleCategoryList}
+              >
+                <View style={styles.categoryListButtonTextWithIcon}>
+                  {category && (
+                    <Icon
+                      name={category.subcategoryIcon}
+                      {...iconOptions}
+                      fillColor={globalStyles.textOnPrimaryColor}
+                    />
+                  )}
+                  <Text style={styles.categoryListButtonText}>
+                    {category ? category.subcategoryName : "Choose a category"}
+                  </Text>
+                </View>
+
+                <Icon
+                  name={isCategoryListVisible ? "arrow-up" : "arrow-down"}
+                  width={22}
+                  height={22}
+                />
+              </TouchableOpacity>
+
+              {isCategoryListVisible && (
+                <View style={styles.categoryList}>
+                  <ScrollView
+                    nestedScrollEnabled={true}
+                    style={styles.categoryListScroll}
+                    showsVerticalScrollIndicator={true}
+                  >
+                    {squashedSubcategories.map((subcategoryItem) => (
+                      <TouchableOpacity
+                        style={
+                          subcategoryItem ===
+                          squashedSubcategories[
+                            squashedSubcategories.length - 1
+                          ]
+                            ? styles.categoryListItemWithoutBorder
+                            : styles.categoryListItemWithBorder
+                        }
+                        onPress={() => selectCategory(subcategoryItem)}
+                      >
+                        <Icon
+                          name={subcategoryItem.subcategoryIcon}
+                          {...iconOptions}
+                        />
+                        <Text style={styles.categoryListItemText}>
+                          {subcategoryItem.subcategoryName}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </ScrollView>
+                </View>
+              )}
             </View>
 
             {/* Size */}
@@ -363,7 +504,7 @@ const CreateAnnouncementView = () => {
                 }}
                 render={({ field: { onChange, onBlur, value } }) => (
                   <TextInput
-                    style={[styles.textInput, {height: "auto"}]}
+                    style={[styles.textInput, { height: "auto" }]}
                     onBlur={onBlur}
                     onChangeText={onChange}
                     placeholder="Description of your announcement"
@@ -428,10 +569,12 @@ const styles = StyleSheet.create({
   },
 
   imagesLabel: {
+    width: "50%",
+    alignSelf: "center",
+    textAlign: "center",
     fontFamily: "WorkSans_900Black",
     fontSize: 18,
     color: globalStyles.textOnSecondaryColor,
-    marginBottom: 10,
   },
 
   imagesList: {
@@ -521,39 +664,71 @@ const styles = StyleSheet.create({
     backgroundColor: globalStyles.secondaryColor,
   },
 
-  selectListBox: {
-    // marginLeft: "5%",
+  categoryListButton: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    height: 50,
     padding: 10,
+    marginLeft: 1, // ?????????????
+    backgroundColor: globalStyles.primaryColor,
     borderRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.secondaryColor,
-    borderColor: "transparent",
   },
 
-  selectListInput: {
+  categoryListButtonTextWithIcon: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    gap: 10,
+  },
+
+  categoryListButtonText: {
     fontFamily: "Poppins_500Medium",
     fontSize: 14,
-    color: globalStyles.textOnSecondaryColor,
+    color: globalStyles.textOnPrimaryColor,
   },
 
-  selectListDropdown: {
-    // marginLeft: "5%",
-    padding: 5,
-    borderRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.secondaryColor,
-    borderColor: "transparent",
+  categoryListScroll: {
+    // height: "25%",
+    // flex: 1,
+    // overflow: "hidden",
   },
 
-  selectListDropdownItem: {
+  categoryList: {
+    zIndex: -1,
+    marginTop: -20,
     padding: 10,
-    marginBottom: 5,
-    borderRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.textOnSecondaryColor,
+    paddingTop: 20,
+    // gap: 5,
+    height: 200,
+    // flex: 1,
+    // overflow: "hidden",
+    backgroundColor: globalStyles.secondaryColor,
+    borderBottomLeftRadius: globalStyles.BORDER_RADIUS,
+    borderBottomRightRadius: globalStyles.BORDER_RADIUS,
   },
 
-  selectListDropdownText: {
+  categoryListItemWithBorder: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignContent: "center",
+    gap: 10,
+    paddingBottom: 5,
+    marginBottom: 7,
+    borderBottomWidth: 1,
+    borderBottomColor: globalStyles.textOnSecondaryColor,
+  },
+
+  categoryListItemWithoutBorder: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignContent: "center",
+    gap: 10,
+  },
+
+  categoryListItemText: {
     fontFamily: "Poppins_500Medium",
     fontSize: 14,
-    color: globalStyles.secondaryColor,
+    color: globalStyles.primaryColor,
   },
 
   buttonsContainer: {

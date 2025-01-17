@@ -102,7 +102,10 @@ export default function Navigation() {
       <Stack.Screen
         name="AnnouncementView"
         component={AnnouncementView}
-        options={{ ...stackOptions, headerShown: false }}
+        options={({ route }) => ({
+          ...stackOptions, // Ваши стандартные опции
+          title: route.params.title, // Переопределение title с параметра маршрута
+        })}
       />
       <Stack.Screen
         name="Categories"
