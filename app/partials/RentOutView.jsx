@@ -26,6 +26,8 @@ import { db } from "../../firebase.config";
 import { useUser } from "../components/UserProvider";
 import { useNavigation } from "@react-navigation/native";
 
+import Icon from "../components/Icon";
+
 // Get the screen dimensions
 const { width } = Dimensions.get("window");
 
@@ -65,23 +67,28 @@ export default function RentOutView() {
   const [announcementPreviews, setAnnouncementPreviews] = useState([[]]);
   useEffect(() => {
     const announcementsRef = ref(db, `announcements`);
-    const unsubscribe = onValue(announcementsRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        const announcementPreviewsArray = Object.keys(data)
-          .filter((key) => data[key].advertiserId === user.id)
-          .map((key) => ({
+    const unsubscribe = onValue(
+      announcementsRef,
+      (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+          const announcementPreviewsArray = Object.keys(data).map((key) => ({
             id: key,
-            mainImage: data[key].mainImage,
+            mainImage: data[key].images[0],
             title: data[key].title,
+            category: data[key].category,
             pricePerDay: data[key].pricePerDay,
             advertiserId: data[key].advertiserId,
           }));
-        setAnnouncementPreviews(announcementPreviewsArray);
-      } else {
-        setAnnouncementPreviews([]);
+          setAnnouncementPreviews(announcementPreviewsArray);
+        } else {
+          setAnnouncementPreviews([]);
+        }
+      },
+      (error) => {
+        console.error("Firebase error:", error);
       }
-    });
+    );
 
     return () => unsubscribe();
   }, []);
@@ -142,7 +149,13 @@ export default function RentOutView() {
 
   return (
     <SafeAreaView style={mainStyles.whiteBack}>
-      <View style={[mainStyles.container, {marginTop: Platform.OS === "android" ? 15 : 0,}]} key={reloadKey}>
+      <View
+        style={[
+          mainStyles.container,
+          { marginTop: Platform.OS === "android" ? 15 : 0 },
+        ]}
+        key={reloadKey}
+      >
         <SearchBar onSearch={handleSearch} />
         <View
           style={[
@@ -156,7 +169,9 @@ export default function RentOutView() {
           <ScrollView
             showsVerticalScrollIndicator={false}
             style={mainStyles.scrollBase}
-            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
           >
             <View style={styles.announcementsContainer}>
               {filteredAnnouncements.map((announcementPreview) => (
@@ -165,8 +180,10 @@ export default function RentOutView() {
                   id={announcementPreview.id}
                   mainImage={announcementPreview.mainImage}
                   title={announcementPreview.title}
+                  categoryName={announcementPreview?.category?.subcategoryName}
+                  categoryIcon={announcementPreview?.category?.subcategoryIcon}
                   pricePerDay={announcementPreview.pricePerDay}
-                  currentUserId={user != null ? user.id : "guest"}
+                  currentUserId={user?.id}
                   advertiserId={announcementPreview.advertiserId}
                   containerWidth={width - 60}
                 />
@@ -178,9 +195,7 @@ export default function RentOutView() {
           style={stylesTmp.createAnnouncementButton}
           onPress={() => navigation.navigate("CreateAnnouncementView")}
         >
-          <Text style={stylesTmp.createAnnouncementText}>
-            Create announcement
-          </Text>
+          <Icon name="plus" height={50} width={50}/>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -197,10 +212,5 @@ const stylesTmp = StyleSheet.create({
     alignItems: "center",
     borderRadius: globalStyles.BORDER_RADIUS,
     backgroundColor: globalStyles.accentColor,
-  },
-  createAnnouncementText: {
-    fontFamily: "WorkSans_900Black",
-    fontSize: 20,
-    color: globalStyles.textOnAccentColor,
   },
 });

@@ -32,7 +32,7 @@ import {
   getRandomAvatarUrl,
 } from "../utils/fetchSVG";
 
-import EditPencilSVG from "../../assets/icons/edit-pencil.svg";
+import Icon from "../components/Icon";
 
 const AnnouncementView = ({ route }) => {
   const navigation = useNavigation();
@@ -101,6 +101,8 @@ const AnnouncementView = ({ route }) => {
     return () => unsubscribe();
   }, [id]);
 
+  // console.log("Announcement: " + announcement);
+
   const advertiserId = announcement.advertiserId;
 
   // Pobieranie ogłoszeniodawcy z bazy
@@ -125,6 +127,8 @@ const AnnouncementView = ({ route }) => {
 
     return () => unsubscribe();
   }, [advertiserId]);
+
+  // console.log("Advertiser: " + advertiser);
 
   // Pobieranie zdjęcia profilowego Ogłoszeniodawcy
   useEffect(() => {
@@ -208,16 +212,6 @@ const AnnouncementView = ({ route }) => {
     day: "numeric",
   });
 
-  // const advertiser0 = {
-  //   id: "222",
-  //   image:
-  //     "https://static01.nyt.com/images/2012/05/01/business/SMITH-obit/SMITH-obit-superJumbo.jpg",
-  //   firstName: "Michał",
-  //   lastName: "Zakrzewski",
-  //   rating: 2.65,
-  //   registrationDate: 1732209087178,
-  // };
-
   const displayedAdvertiserRegistrationDate = new Date(
     advertiser.registrationDate
   ).toLocaleDateString(undefined, {
@@ -226,69 +220,45 @@ const AnnouncementView = ({ route }) => {
     day: "numeric",
   });
 
-  // const opinion = {
-  //   id: "333",
-  //   authorId: "3333",
-  //   authorFirstName: "Bob",
-  //   authorLastName: "Smith",
-  //   rate: 4,
-  //   date: 1732292072263,
-  //   text: "Good panties! I wore them on my first date.",
-  // };
-
-  // const displayedOpinionPublicationDate = new Date(
-  //   opinion.date
-  // ).toLocaleDateString(undefined, {
-  //   year: "numeric",
-  //   month: "long",
-  //   day: "numeric",
-  // });
-
   const openImage = (index) => {
     setCurrentIndex(index); // Ustaw aktualny indeks
     setIsVisible(true); // Pokaż pełnoekranowy obraz
     console.log(`Open ${index}`);
   };
 
-  const imagePlaceholder = {
-    uri: "https://img.freepik.com/free-vector/low-poly-abstract-gray-background_1017-33833.jpg",
-  };
+  const imagePlaceholder =
+    "https://img.freepik.com/free-vector/low-poly-abstract-gray-background_1017-33833.jpg";
 
   // console.log(opinionsToDisplay);
 
   return (
     <SafeAreaView style={mainStyles.whiteBack}>
       <View style={[mainStyles.container, mainStyles.scrollBase]}>
-        <TouchableOpacity
-          style={styles.goBackButton}
-          onPress={() => navigation.goBack()}
-        >
-          <Text style={styles.goBackText}>◄ Go Back</Text>
-        </TouchableOpacity>
         <ScrollView
           showsVerticalScrollIndicator={false}
           // style={mainStyles.scrollBase}
         >
           <View style={styles.annSwiperContainer}>
             <Swiper style={styles.annSwiper} showsButtons={false}>
-              {announcement.images.map((image, index) => (
-                <TouchableOpacity
-                  key={"SwiperImage_" + index}
-                  style={styles.annSlide}
-                  onPress={() => openImage(index)}
-                >
-                  <Image
-                    source={{ uri: image.uri }}
-                    defaultSource={{ uri: imagePlaceholder.uri }}
-                    style={styles.annSlideImage}
-                  />
-                </TouchableOpacity>
-              ))}
+              {announcement &&
+                announcement?.images?.map((image, index) => (
+                  <TouchableOpacity
+                    key={"SwiperImage_" + index}
+                    style={styles.annSlide}
+                    onPress={() => openImage(index)}
+                  >
+                    <Image
+                      source={{ uri: image }}
+                      // defaultSource={{ uri: imagePlaceholder }}
+                      style={styles.annSlideImage}
+                    />
+                  </TouchableOpacity>
+                ))}
             </Swiper>
 
             {/* ImageViewing - pełnoekranowe wyświetlanie */}
             <ImageViewing
-              images={announcement.images}
+              images={announcement.images.map((image) => ({ uri: image }))}
               imageIndex={currentIndex} // Zaczyna od wybranego obrazu
               visible={isVisible}
               presentationStyle="overFullScreen"
@@ -303,17 +273,54 @@ const AnnouncementView = ({ route }) => {
 
           <View style={styles.annDateWithTitle}>
             {announcement.advertiserId === user.id && (
-              <Text style={styles.annYourAnnouncementPlate}>
-                Your announcement
-              </Text>
+              <View style={styles.annOwnerPlate}>
+                <Text style={styles.annOwnerText}>Your announcement</Text>
+                <View style={styles.annOwnerButtons}>
+                  <TouchableOpacity
+                    style={styles.annOwnerEditButton}
+                    onPress={() => console.log("Edit announcement")}
+                  >
+                    <Icon
+                      name="edit-pencil"
+                      height={22}
+                      width={22}
+                      fillColor={globalStyles.textOnPrimaryColor}
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.annOwnerDeleteButton}
+                    onPress={() => console.log("Delete announcement")}
+                  >
+                    <Icon
+                      name="trash"
+                      height={22}
+                      width={22}
+                      fillColor={globalStyles.textOnPrimaryColor}
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View>
             )}
             <Text style={styles.annPublicationDateAndCategory}>
               {displayedPublicationDate}
             </Text>
             <Text style={styles.annTitle}>{announcement.title}</Text>
-            <Text style={styles.annPublicationDateAndCategory}>
-              Category: {announcement.category}
-            </Text>
+            <View style={styles.annCategoryContainer}>
+              <Text style={styles.annPublicationDateAndCategory}>
+                Category:
+              </Text>
+              <View style={styles.annCategory}>
+                <Icon
+                  name={announcement.category.subcategoryIcon}
+                  height={22}
+                  width={22}
+                  fillColor={globalStyles.textOnPrimaryColor}
+                />
+                <Text style={styles.annCategoryText}>
+                  {announcement.category.subcategoryName}
+                </Text>
+              </View>
+            </View>
           </View>
           <View style={styles.annPriceWithRating}>
             <Text style={styles.annPrice}>
@@ -323,8 +330,9 @@ const AnnouncementView = ({ route }) => {
               type={"custom"}
               style={styles.annRating}
               imageSize={25}
-              // ratingColor="red"
-              ratingBackgroundColor="transparent"
+              ratingColor={globalStyles.accentColor}
+              tintColor={globalStyles.backgroundColor}
+              ratingBackgroundColor={globalStyles.secondaryColor}
               startingValue={announcement.rating}
               readonly
             />
@@ -374,6 +382,9 @@ const AnnouncementView = ({ route }) => {
                   type={"custom"}
                   style={styles.advRating}
                   imageSize={20}
+                  ratingColor={globalStyles.accentColor}
+                  tintColor={globalStyles.backgroundColor}
+                  ratingBackgroundColor={globalStyles.secondaryColor}
                   startingValue={advertiser.rating}
                   readonly
                 />
@@ -395,22 +406,23 @@ const AnnouncementView = ({ route }) => {
               <Text style={styles.opinWriteOpinionButtonText}>
                 Write your opinion
               </Text>
-              <EditPencilSVG {...iconParams} />
+              <Icon name="plus-with-border" {...iconParams} />
               {/* <Text style={styles.opinWriteOpinionButtonIcon}>▲</Text> */}
             </TouchableOpacity>
             <View style={styles.opinList}>
-              {announcement.opinions.map((opinion) => (
-                <OpinionCard
-                  key={"OpinionCard_" + opinion.id}
-                  id={opinion.id}
-                  authorId={opinion.authorId}
-                  userId={user.id}
-                  rate={opinion.rate}
-                  publicationDate={opinion.date}
-                  text={opinion.text}
-                  moderationStatus={opinion.moderationStatus}
-                />
-              ))}
+              {announcement &&
+                announcement?.opinions?.map((opinion) => (
+                  <OpinionCard
+                    key={"OpinionCard_" + opinion.id}
+                    id={opinion.id}
+                    authorId={opinion.authorId}
+                    userId={user.id}
+                    rate={opinion.rate}
+                    publicationDate={opinion.date}
+                    text={opinion.text}
+                    moderationStatus={opinion.moderationStatus}
+                  />
+                ))}
               {/* {opinionsToDisplay} */}
             </View>
           </View>

@@ -20,7 +20,15 @@ import ProductCard from "../components/ProductCard";
 import { styles as mainStyles } from "../utils/style";
 import { styles } from "../styles/RentNowViewStyles";
 
-import { ref, onValue, update, get, set, remove, push } from "firebase/database";
+import {
+  ref,
+  onValue,
+  update,
+  get,
+  set,
+  remove,
+  push,
+} from "firebase/database";
 import { db } from "../../firebase.config";
 import { useUser } from "../components/UserProvider";
 import { useTranslation } from "react-i18next";
@@ -49,7 +57,7 @@ const RentNowView = () => {
   const { user, setUser } = useUser();
   // console.log(user);
 
- useEffect(() => {
+  useEffect(() => {
     if (!user) return;
 
     const usersRef = ref(db, "users");
@@ -73,8 +81,6 @@ const RentNowView = () => {
 
     return () => unsubscribe();
   }, [user]);
-  
-  
 
   const [announcementPreviews, setAnnouncementPreviews] = useState([[]]);
   useEffect(() => {
@@ -86,8 +92,9 @@ const RentNowView = () => {
         if (data) {
           const announcementPreviewsArray = Object.keys(data).map((key) => ({
             id: key,
-            mainImage: data[key].mainImage,
+            mainImage: data[key].images[0],
             title: data[key].title,
+            category: data[key].category,
             pricePerDay: data[key].pricePerDay,
             advertiserId: data[key].advertiserId,
           }));
@@ -100,10 +107,11 @@ const RentNowView = () => {
         console.error("Firebase error:", error);
       }
     );
-  
+
     return () => unsubscribe();
   }, []);
-  
+
+  // console.log(announcementPreviews);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [activeIcon, setActiveIcon] = useState(null);
@@ -177,8 +185,9 @@ const RentNowView = () => {
       if (data) {
         const announcementPreviewsArray = Object.keys(data).map((key) => ({
           id: key,
-          mainImage: data[key].mainImage,
+          mainImage: data[key].images[0],
           title: data[key].title,
+          category: data[key].category,
           pricePerDay: data[key].pricePerDay,
           advertiserId: data[key].advertiserId,
         }));
@@ -195,7 +204,6 @@ const RentNowView = () => {
     }
   };
 
-
   const onChatPress = (announcementPreview) => {
     if (!user || !user.uid) {
       Alert.alert("Login Required", "You need to log in to start a chat.");
@@ -210,38 +218,37 @@ const RentNowView = () => {
       return;
     }
 
-  
     const { id: announcementId, advertiserId } = announcementPreview;
     const userId = user.uid;
-  
+
     const chatRef = ref(db, "chats");
-  
+
     get(chatRef)
       .then((snapshot) => {
         const chats = snapshot.val();
         let chatId = null;
-  
+
         if (chats) {
           for (const key in chats) {
             const chat = chats[key];
-            
+
             if (
               chat.announcementId === announcementId &&
-              ((chat.advertiserId === advertiserId && chat.userId === userId) || 
-              (chat.advertiserId === userId && chat.userId === advertiserId))
+              ((chat.advertiserId === advertiserId && chat.userId === userId) ||
+                (chat.advertiserId === userId && chat.userId === advertiserId))
             ) {
               chatId = key;
               break;
             }
           }
         }
-  
+
         if (chatId) {
           console.log(`Navigating to existing chat with ID: ${chatId}`);
           navigation.navigate("Chat", { chatId });
         } else {
           console.log("No existing chat found, creating a new one...");
-  
+
           const newChat = {
             announcementId,
             advertiserId,
@@ -249,7 +256,7 @@ const RentNowView = () => {
             messages: [],
             timestamp: Date.now(),
           };
-  
+
           const newChatRef = push(chatRef);
           set(newChatRef, newChat).then(() => {
             console.log(`New chat created with ID: ${newChatRef.key}`);
@@ -261,9 +268,6 @@ const RentNowView = () => {
         console.error("Error fetching chats:", error);
       });
   };
-  
-  
-
 
   return (
     <SafeAreaView style={mainStyles.whiteBack}>
@@ -323,19 +327,22 @@ const RentNowView = () => {
             </View>
 
             <View style={styles.announcementsContainer}>
-              {filteredAnnouncements.map((announcementPreview) => (
-                <ProductCard
-                  key={"RentNowView_ProductCard_" + announcementPreview.id}
-                  id={announcementPreview.id}
-                  mainImage={announcementPreview.mainImage}
-                  title={announcementPreview.title}
-                  pricePerDay={announcementPreview.pricePerDay}
-                  currentUserId={user?.id}
-                  advertiserId={announcementPreview.advertiserId}
-                  containerWidth={width - 60}
-                  onChatPress={() => onChatPress(announcementPreview)}
-                />
-              ))}
+              {filteredAnnouncements &&
+                filteredAnnouncements.map((announcementPreview) => (
+                  <ProductCard
+                    key={"RentNowView_ProductCard_" + announcementPreview.id}
+                    id={announcementPreview.id}
+                    mainImage={announcementPreview.mainImage}
+                    title={announcementPreview.title}
+                    categoryName={announcementPreview?.category?.subcategoryName}
+                    categoryIcon={announcementPreview?.category?.subcategoryIcon}
+                    pricePerDay={announcementPreview.pricePerDay}
+                    currentUserId={user?.id}
+                    advertiserId={announcementPreview.advertiserId}
+                    containerWidth={width - 60}
+                    onChatPress={() => onChatPress(announcementPreview)}
+                  />
+                ))}
             </View>
           </ScrollView>
         </View>
