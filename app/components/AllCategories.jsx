@@ -86,7 +86,7 @@ const AllCategories = ({ route, navigation }) => {
   const iconOptions = {
     width: 50,
     height: 50,
-    fillColor: "black",
+    fillColor: globalStyles.primaryColor,
   };
 
   const { changeIcon } = route.params;
@@ -152,9 +152,10 @@ const styles = StyleSheet.create({
   iconsTitle: {
     fontFamily: "Poppins_500Medium",
     fontSize: 20,
+    color: globalStyles.primaryColor,
   },
   iconBtn: {
-    backgroundColor: "lightgrey",
+    backgroundColor: globalStyles.secondaryColor,
     padding: 10,
     borderRadius: globalStyles.BORDER_RADIUS,
     marginHorizontal: 5,

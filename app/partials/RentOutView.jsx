@@ -67,12 +67,12 @@ export default function RentOutView() {
   const [announcementPreviews, setAnnouncementPreviews] = useState([[]]);
   useEffect(() => {
     const announcementsRef = ref(db, `announcements`);
-    const unsubscribe = onValue(
-      announcementsRef,
-      (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-          const announcementPreviewsArray = Object.keys(data).map((key) => ({
+    const unsubscribe = onValue(announcementsRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const announcementPreviewsArray = Object.keys(data)
+          .filter((key) => data[key].advertiserId === user.id)
+          .map((key) => ({
             id: key,
             mainImage: data[key].images[0],
             title: data[key].title,
@@ -80,15 +80,11 @@ export default function RentOutView() {
             pricePerDay: data[key].pricePerDay,
             advertiserId: data[key].advertiserId,
           }));
-          setAnnouncementPreviews(announcementPreviewsArray);
-        } else {
-          setAnnouncementPreviews([]);
-        }
-      },
-      (error) => {
-        console.error("Firebase error:", error);
+        setAnnouncementPreviews(announcementPreviewsArray);
+      } else {
+        setAnnouncementPreviews([]);
       }
-    );
+    });
 
     return () => unsubscribe();
   }, []);
