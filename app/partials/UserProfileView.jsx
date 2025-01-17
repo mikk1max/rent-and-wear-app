@@ -34,24 +34,29 @@ const UserProfileView = () => {
   const toggleDropdown = () => setDropdownVisible(!isDropdownVisible);
 
   useEffect(() => {
-
-    const usersRef = ref(db, "users");
-    const unsubscribe = onValue(usersRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        const currentUser = Object.values(data).find(
-          (userData) => userData.email === user.email
-        );
-        if (currentUser?.id !== user?.id) {
-          setUser(currentUser || null);
+      if (!user) return;
+  
+      const usersRef = ref(db, "users");
+      const unsubscribe = onValue(usersRef, (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+          const currentUserEntry = Object.entries(data).find(
+            ([key, userData]) => userData.email === user.email
+          );
+  
+          if (currentUserEntry) {
+            const [key, userData] = currentUserEntry;
+            setUser({ ...userData, id: key }); // Dodaj klucz jako "id"
+          } else {
+            setUser(null);
+          }
+        } else {
+          setUser(null);
         }
-      } else {
-        setUser(null);
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);
+      });
+  
+      return () => unsubscribe();
+    }, [user]);
 
   useEffect(() => {
     const fetchProfileImg = async () => {
@@ -121,12 +126,6 @@ const UserProfileView = () => {
       })
       .catch((error) => console.error("Logout failed:", error.message));
   };
-
-
-  
- 
-  
-  
 
   const hideEmail = (email) => {
     const atIndex = email.indexOf("@");

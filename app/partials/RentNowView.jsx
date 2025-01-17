@@ -47,7 +47,7 @@ const RentNowView = () => {
   ]);
 
   const { user, setUser } = useUser();
-  console.log(user);
+  // console.log(user);
 
  useEffect(() => {
     if (!user) return;
