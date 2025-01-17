@@ -9,7 +9,7 @@ import {
   ScrollView,
   SafeAreaView,
   Platform,
-  RefreshControl
+  RefreshControl,
   StyleSheet,
 } from "react-native";
 import SearchBar from "../components/SearchBar";
