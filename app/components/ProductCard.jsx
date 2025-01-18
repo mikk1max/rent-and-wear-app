@@ -4,11 +4,14 @@ import { Card } from "react-native-elements";
 import { globalStyles } from "../utils/style";
 import { useCustomFonts } from "../utils/fonts";
 import { useNavigation } from "@react-navigation/native";
+import Icon from "../components/Icon";
 
 const ProductCard = ({
   id,
   mainImage,
   title,
+  categoryName,
+  categoryIcon,
   pricePerDay,
   currentUserId,
   advertiserId,
@@ -28,6 +31,12 @@ const ProductCard = ({
   let isAuthor = false;
   if (currentUserId === advertiserId) isAuthor = true;
 
+  const iconOptions = {
+    width: 22,
+    height: 22,
+    fillColor: globalStyles.textOnPrimaryColor,
+  };
+
   return (
     <View>
       <Card
@@ -39,32 +48,30 @@ const ProductCard = ({
           borderRadius: 15,
         }}
       >
-        {isAuthor && (
-          <View style={styles.cardPlate}>
-            <Text style={styles.textOnPlate}>Your announcement</Text>
+        <View style={styles.icons}>
+          <View style={styles.categoryIcon}>
+            {categoryIcon && <Icon name={categoryIcon} {...iconOptions} />}
           </View>
-        )}
-        {isAuthor && (
-          <Card.Image
-            style={[styles.cardImageNoPlate, styles.cardImageWithPlate]}
-            source={{
-              uri: mainImage,
-            }}
-          />
-        )}
-        {!isAuthor && (
-          <Card.Image
-            style={styles.cardImageNoPlate}
-            source={{
-              uri: mainImage,
-            }}
-          />
-        )}
+          <View style={styles.spacer}></View>
+          {isAuthor && (
+            <View style={styles.authorIcon}>
+              <Icon name="user-fill" {...iconOptions} />
+            </View>
+          )}
+        </View>
+
+        <Card.Image
+          style={styles.cardImage}
+          source={{
+            uri: mainImage,
+          }}
+        />
 
         <TouchableOpacity
           onPress={() =>
             navigation.navigate("AnnouncementView", {
               id: id,
+              title: title,
             })
           }
           style={styles.cardButton}
@@ -81,7 +88,36 @@ const ProductCard = ({
 export default ProductCard;
 
 const styles = StyleSheet.create({
-  cardImageNoPlate: {
+  icons: {
+    zIndex: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    height: 36,
+    marginBottom: -36,
+  },
+
+  spacer: {
+    width: "50%",
+    backgroundColor: "transparent",
+  },
+
+  categoryIcon: {
+    padding: 7,
+    // margin: 5,
+    backgroundColor: globalStyles.primaryColor,
+    borderTopLeftRadius: globalStyles.BORDER_RADIUS,
+    borderBottomRightRadius: globalStyles.BORDER_RADIUS,
+  },
+
+  authorIcon: {
+    padding: 7,
+    // margin: 5,
+    backgroundColor: "green",
+    borderTopRightRadius: globalStyles.BORDER_RADIUS,
+    borderBottomLeftRadius: globalStyles.BORDER_RADIUS,
+  },
+
+  cardImage: {
     height: 150,
     width: "100%",
     borderTopLeftRadius: 15,
@@ -103,33 +139,10 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: globalStyles.textOnPrimaryColor,
   },
-  
+
   textOnButtonPrice: {
     fontFamily: "Poppins_500Medium",
     fontSize: 13,
     color: globalStyles.textOnPrimaryColor,
-  },
-  
-  cardPlate: {
-    display: "flex",
-    height: 25,
-    width: "100%",
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: globalStyles.blueColor,
-  },
-
-  textOnPlate: {
-    fontFamily: "Poppins_500Medium",
-    fontSize: 12,
-    color: globalStyles.textOnPrimaryColor,
-  },
-
-  cardImageWithPlate: {
-    height: 125,
-    borderTopLeftRadius: 0,
-    borderTopRightRadius: 0,
   },
 });

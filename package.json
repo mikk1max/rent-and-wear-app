@@ -37,6 +37,7 @@
     "react-i18next": "^15.4.0",
     "react-native": "0.76.2",
     "react-native-app": "file:",
+    "react-native-calendar-picker": "^8.0.5",
     "react-native-dotenv": "^3.4.11",
     "react-native-dropdown-select-list": "^2.0.5",
     "react-native-elements": "^3.4.3",

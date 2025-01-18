@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   SafeAreaView,
   StyleSheet,
@@ -12,8 +12,56 @@ import { globalStyles } from "../utils/style";
 import { styles as mainStyles } from "../utils/style";
 import { useCustomFonts } from "../utils/fonts";
 
+import {
+  ref,
+  onValue,
+  update,
+  get,
+  set,
+  remove,
+  goOnline,
+} from "firebase/database";
+import { db } from "../../firebase.config";
+
 const AllCategories = ({ route, navigation }) => {
   const fontsLoaded = useCustomFonts();
+
+  const [categories, setCategories] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const categoriesRef = ref(db, 'categories');
+        const snapshot = await get(categoriesRef);
+
+        if (snapshot.exists()) {
+          const rawData = snapshot.val();
+
+          // Преобразование данных обратно в массив
+          const formattedCategories = Object.values(rawData).map((category) => ({
+            categoryName: category.categoryName,
+            subcategories: Object.values(category.subcategories).map((subcategory) => ({
+              subcategoryName: subcategory.subcategoryName,
+              subcategoryIcon: subcategory.subcategoryIcon,
+            })),
+          }));
+
+          setCategories(formattedCategories);
+        } else {
+          console.error('No data available.');
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  // console.log(categories);
 
   const headwear = ["beanie", "cap", "hat"];
   const outerwear = ["coat", "vest"];
@@ -38,7 +86,7 @@ const AllCategories = ({ route, navigation }) => {
   const iconOptions = {
     width: 50,
     height: 50,
-    fillColor: "black",
+    fillColor: globalStyles.primaryColor,
   };
 
   const { changeIcon } = route.params;
@@ -62,138 +110,27 @@ const AllCategories = ({ route, navigation }) => {
           style={[mainStyles.scrollBase, { paddingVertical: 20 }]}
           showsVerticalScrollIndicator={false}
         >
-          <View style={styles.iconsItemBox}>
-            <Text style={styles.iconsTitle}>Headwear</Text>
-            <ScrollView
-              style={[mainStyles.scrollBase, styles.iconsScrollContainer]}
-              showsHorizontalScrollIndicator={false}
-              horizontal
-            >
-              {headwear.map((item) => (
-                <TouchableOpacity
-                  key={item}
-                  style={styles.iconBtn}
-                  onPress={() => handleCategoryPress(item)}
+          {categories &&
+            categories.map((categoryItem) => (
+              <View style={styles.iconsItemBox}>
+                <Text style={styles.iconsTitle}>{categoryItem.categoryName}</Text>
+                <ScrollView
+                  style={[mainStyles.scrollBase, styles.iconsScrollContainer]}
+                  showsHorizontalScrollIndicator={false}
+                  horizontal
                 >
-                  <Icon name={item} {...iconOptions} />
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-          </View>
-
-          <View style={styles.iconsItemBox}>
-            <Text style={styles.iconsTitle}>Outerwear</Text>
-            <ScrollView
-              style={[mainStyles.scrollBase, styles.iconsScrollContainer]}
-              showsHorizontalScrollIndicator={false}
-              horizontal
-            >
-              {outerwear.map((item) => (
-                <TouchableOpacity
-                  key={item}
-                  style={styles.iconBtn}
-                  onPress={() => handleCategoryPress(item)}
-                >
-                  <Icon name={item} {...iconOptions} />
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-          </View>
-
-          <View style={styles.iconsItemBox}>
-            <Text style={styles.iconsTitle}>Dresses</Text>
-            <ScrollView
-              style={[mainStyles.scrollBase, styles.iconsScrollContainer]}
-              showsHorizontalScrollIndicator={false}
-              horizontal
-            >
-              {dresses.map((item) => (
-                <TouchableOpacity
-                  key={item}
-                  style={styles.iconBtn}
-                  onPress={() => handleCategoryPress(item)}
-                >
-                  <Icon name={item} {...iconOptions} />
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-          </View>
-
-          <View style={styles.iconsItemBox}>
-            <Text style={styles.iconsTitle}>Tops</Text>
-            <ScrollView
-              style={[mainStyles.scrollBase, styles.iconsScrollContainer]}
-              showsHorizontalScrollIndicator={false}
-              horizontal
-            >
-              {tops.map((item) => (
-                <TouchableOpacity
-                  key={item}
-                  style={styles.iconBtn}
-                  onPress={() => handleCategoryPress(item)}
-                >
-                  <Icon name={item} {...iconOptions} />
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-          </View>
-
-          <View style={styles.iconsItemBox}>
-            <Text style={styles.iconsTitle}>Bottoms</Text>
-            <ScrollView
-              style={[mainStyles.scrollBase, styles.iconsScrollContainer]}
-              showsHorizontalScrollIndicator={false}
-              horizontal
-            >
-              {bottoms.map((item) => (
-                <TouchableOpacity
-                  key={item}
-                  style={styles.iconBtn}
-                  onPress={() => handleCategoryPress(item)}
-                >
-                  <Icon name={item} {...iconOptions} />
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-          </View>
-
-          <View style={styles.iconsItemBox}>
-            <Text style={styles.iconsTitle}>Footwear</Text>
-            <ScrollView
-              style={[mainStyles.scrollBase, styles.iconsScrollContainer]}
-              showsHorizontalScrollIndicator={false}
-              horizontal
-            >
-              {footwear.map((item) => (
-                <TouchableOpacity
-                  key={item}
-                  style={styles.iconBtn}
-                  onPress={() => handleCategoryPress(item)}
-                >
-                  <Icon name={item} {...iconOptions} />
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-          </View>
-
-          <View style={styles.iconsItemBox}>
-            <Text style={styles.iconsTitle}>Accessories</Text>
-            <ScrollView
-              style={[mainStyles.scrollBase, styles.iconsScrollContainer]}
-              showsHorizontalScrollIndicator={false}
-              horizontal
-            >
-              {accessories.map((item) => (
-                <TouchableOpacity
-                  key={item}
-                  style={styles.iconBtn}
-                  onPress={() => handleCategoryPress(item)}
-                >
-                  <Icon name={item} {...iconOptions} />
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-          </View>
+                  {categoryItem.subcategories.map((subcategoryItem) => (
+                    <TouchableOpacity
+                      key={subcategoryItem.subcategoryIcon}
+                      style={styles.iconBtn}
+                      onPress={() => handleCategoryPress(subcategoryItem.subcategoryIcon)}
+                    >
+                      <Icon name={subcategoryItem.subcategoryIcon} {...iconOptions} />
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+              </View>
+            ))}
         </ScrollView>
       </View>
     </SafeAreaView>
@@ -215,9 +152,10 @@ const styles = StyleSheet.create({
   iconsTitle: {
     fontFamily: "Poppins_500Medium",
     fontSize: 20,
+    color: globalStyles.primaryColor,
   },
   iconBtn: {
-    backgroundColor: "lightgrey",
+    backgroundColor: globalStyles.secondaryColor,
     padding: 10,
     borderRadius: globalStyles.BORDER_RADIUS,
     marginHorizontal: 5,

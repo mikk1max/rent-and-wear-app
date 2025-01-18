@@ -32,23 +32,6 @@ export const styles = StyleSheet.create({
   //   borderTopRightRadius: globalStyles.BORDER_RADIUS,
   // },
 
-  goBackButton: {
-    position: 'absolute',
-    top: 0,
-    left: 10,
-    zIndex: 10,
-    paddingHorizontal: 10,
-    alignItems: "center",
-    borderRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
-  },
-
-  goBackText: {
-    fontFamily: "WorkSans_900Black",
-    fontSize: 18,
-    color: "rgba(255, 255, 255, 0.7)",
-  },
-
   annSwiperContainer: {
     width: "100%",
     height: 200,
@@ -96,17 +79,41 @@ export const styles = StyleSheet.create({
     backgroundColor: globalStyles.secondaryColor,
   },
 
-  annYourAnnouncementPlate: {
-    fontFamily: "WorkSans_900Black",
-    fontSize: 15,
-    color: globalStyles.textOnPrimaryColor,
-    backgroundColor: globalStyles.blueColor,
+  annOwnerPlate: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "green",
     paddingVertical: 5,
     paddingHorizontal: 10,
     marginTop: -10,
     marginHorizontal: -10,
+    // marginRight: -9, // ??????????
     borderTopLeftRadius: globalStyles.BORDER_RADIUS,
     borderTopRightRadius: globalStyles.BORDER_RADIUS,
+  },
+
+  annOwnerText: {
+    fontFamily: "WorkSans_900Black",
+    fontSize: 15,
+    color: globalStyles.textOnAccentColor,
+  },
+
+  annOwnerButtons: {
+    flexDirection: "row",
+    gap: 10,
+  },
+
+  annOwnerEditButton: {
+    padding: 5,
+    borderRadius: globalStyles.BORDER_RADIUS,
+    backgroundColor: globalStyles.primaryColor,
+  },
+
+  annOwnerDeleteButton: {
+    padding: 5,
+    borderRadius: globalStyles.BORDER_RADIUS,
+    backgroundColor: globalStyles.redColor,
   },
 
   annTitle: {
@@ -119,6 +126,30 @@ export const styles = StyleSheet.create({
     fontFamily: "WorkSans_900Black",
     fontSize: 15,
     color: globalStyles.textOnSecondaryColor,
+  },
+
+  annCategoryContainer: {
+    flexDirection: "row",
+    // alignContent: "center",
+    alignItems: "center",
+    gap: 10,
+    // marginRight: 1, // ??????????????
+    // backgroundColor: "red"
+  },
+
+  annCategory: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 7,
+    gap: 5,
+    borderRadius: globalStyles.BORDER_RADIUS,
+    backgroundColor: globalStyles.primaryColor,
+  },
+
+  annCategoryText: {
+    fontFamily: "WorkSans_900Black",
+    fontSize: 15,
+    color: globalStyles.textOnPrimaryColor,
   },
 
   annPriceWithRating: {
