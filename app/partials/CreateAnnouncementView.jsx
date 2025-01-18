@@ -567,7 +567,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 2,
     borderRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.accentColor,
+    backgroundColor: globalStyles.primaryColor,
   },
 
   imagesContainer: {
@@ -613,7 +613,7 @@ const styles = StyleSheet.create({
   addImageButton: {
     width: 100,
     height: 100,
-    backgroundColor: globalStyles.accentColor,
+    backgroundColor: globalStyles.primaryColor,
     borderRadius: globalStyles.BORDER_RADIUS,
     justifyContent: "center",
     alignItems: "center",

@@ -166,7 +166,7 @@ const SendsGetsView = () => {
                       uri={boxSvg}
                       width={100}
                       height={100}
-                      style={{ fill: globalStyles.accentColor }}
+                      style={{ fill: globalStyles.primaryColor }}
                     />
                     <Text style={styles.noItemsBtn}>No items found</Text>
                   </TouchableOpacity>

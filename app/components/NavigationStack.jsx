@@ -24,7 +24,7 @@ const stackOptions = {
   headerShown: true,
   headerBackTitle: " ",
   headerTitleStyle: { fontSize: 24 },
-  headerTintColor: globalStyles.accentColor,
+  headerTintColor: globalStyles.primaryColor,
   headerLeftContainerStyle: {
     paddingLeft: 10,
   },

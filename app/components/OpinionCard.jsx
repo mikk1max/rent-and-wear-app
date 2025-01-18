@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
     width: "70%",
     fontFamily: "WorkSans_900Black",
     fontSize: 18,
-    color: globalStyles.accentColor,
+    color: globalStyles.primaryColor,
   },
 
   opinPlate: {

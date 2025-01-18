@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
 
   adresse: {
     width: "60%",
-    color: globalStyles.accentColor,
+    color: globalStyles.primaryColor,
     fontFamily: "WorkSans_900Black",
     fontSize: 18,
   },
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
   },
 
   button: {
-    backgroundColor: globalStyles.accentColor,
+    backgroundColor: globalStyles.primaryColor,
     borderRadius: 15,
     padding: 7,
   },
@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
   divider: {
     marginVertical: 10,
     height: 2,
-    backgroundColor: globalStyles.accentColor,
+    backgroundColor: globalStyles.primaryColor,
   },
 
   textWithIcon: {

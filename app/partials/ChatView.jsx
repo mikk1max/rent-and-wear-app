@@ -195,8 +195,8 @@ export default function ChatView() {
               right: { backgroundColor: globalStyles.textOnSecondaryColor },
             }}
             textStyle={{
-              left: { color: globalStyles.accentColor },
-              right: { color: globalStyles.textOnAccentColor },
+              left: { color: globalStyles.primaryColor },
+              right: { color: globalStyles.textOnPrimaryColor },
             }}
           />
         )}
@@ -209,7 +209,7 @@ export default function ChatView() {
                 name="send"
                 width={40}
                 height={40}
-                fillColor={globalStyles.accentColor}
+                fillColor={globalStyles.primaryColor}
                 colorStroke="white"
               />
           </Send>

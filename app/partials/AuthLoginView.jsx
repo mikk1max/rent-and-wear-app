@@ -120,11 +120,11 @@ export default function AuthLoginView() {
                 style={[styles.mainBtns, styles.anotherBtn]}
                 onPress={() => navigation.navigate("Registration")}
               >
-                <Text style={[styles.mainBtnText, {color: globalStyles.accentColor}]}>{t("login.signUpBtn")}</Text>
+                <Text style={[styles.mainBtnText, {color: globalStyles.primaryColor}]}>{t("login.signUpBtn")}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={[styles.mainBtns, styles.anotherBtn]}>
-                <Text style={[styles.mainBtnText, {color: globalStyles.accentColor}]}>{t("login.googleBtn")}</Text>
+                <Text style={[styles.mainBtnText, {color: globalStyles.primaryColor}]}>{t("login.googleBtn")}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   loginBtn: {
-    backgroundColor: globalStyles.accentColor,
+    backgroundColor: globalStyles.primaryColor,
   },
   anotherBtn: {
     backgroundColor: globalStyles.secondaryColor,
@@ -237,7 +237,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   modalButton: {
-    backgroundColor: globalStyles.accentColor,
+    backgroundColor: globalStyles.primaryColor,
     padding: 10,
     borderRadius: globalStyles.BORDER_RADIUS,
   },

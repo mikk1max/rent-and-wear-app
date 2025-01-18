@@ -25,10 +25,10 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
   },
   activeStatusBtn: {
-    backgroundColor: globalStyles.accentColor,
+    backgroundColor: globalStyles.primaryColor,
   },
   activeStatusText: {
-    color: globalStyles.textOnAccentColor,
+    color: globalStyles.textOnPrimaryColor,
   },
   inactiveStatusText: {
     color: "white",
@@ -58,7 +58,7 @@ export const styles = StyleSheet.create({
   },
   noItemsBtn: {
     padding: 10,
-    color: globalStyles.accentColor,
+    color: globalStyles.primaryColor,
     borderRadius: globalStyles.BORDER_RADIUS,
     overflow: "hidden",
     fontFamily: "Poppins_500Medium",
