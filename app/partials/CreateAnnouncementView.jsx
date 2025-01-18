@@ -111,8 +111,8 @@ const CreateAnnouncementView = () => {
           // Преобразование данных в плоский массив подкатегорий
           const allSubcategories = Object.values(rawData).flatMap((category) =>
             Object.values(category.subcategories).map((subcategory) => ({
-              subcategoryName: subcategory.subcategoryName,
-              subcategoryIcon: subcategory.subcategoryIcon,
+              subcategoryName: subcategory?.subcategoryName,
+              subcategoryIcon: subcategory?.subcategoryIcon,
             }))
           );
 
@@ -193,7 +193,7 @@ const CreateAnnouncementView = () => {
         category: category,
         description: data.description,
         publicationDate: Date.now(),
-        pricePerDay: data.price,
+        pricePerDay: +data.price,
         size: data.price,
         condition: data.condition,
         status: {
@@ -202,11 +202,20 @@ const CreateAnnouncementView = () => {
         },
         rentalData: {
           borrowerId: "",
-          dateFrom: -1,
-          dateTo: -1,
+          startDate: -1,
+          endDate: -1,
           daysInRent: -1,
           amount: -1,
         },
+        reservationData: [
+          {
+            borrowerId: "",
+            startDate: -1,
+            endDate: -1,
+            daysInRent: -1,
+            amount: -1,
+          },
+        ],
         opinions: [],
       };
       let announcementId = announcement.publicationDate;
@@ -248,22 +257,19 @@ const CreateAnnouncementView = () => {
         <ScrollView
           showsVerticalScrollIndicator={false}
           nestedScrollEnabled={true}
-          // style={mainStyles.scrollBase}
+          style={mainStyles.scrollBase}
         >
           <View style={styles.imagesContainer}>
             <View style={styles.imagesList}>
               {images &&
                 images.map((img) => (
                   <TouchableOpacity
+                    key={"CreateAnnouncement_Image_" + img}
                     style={styles.deleteImageButton}
                     // onPress={() => console.log("Delete " + img)}
                     onPress={() => deleteImage(img)}
                   >
-                    <Image
-                      key={"CreateAnnouncement_Image_" + img}
-                      source={{ uri: img }}
-                      style={styles.image}
-                    />
+                    <Image source={{ uri: img }} style={styles.image} />
                   </TouchableOpacity>
                 ))}
               {images.length < 6 && (
@@ -303,7 +309,7 @@ const CreateAnnouncementView = () => {
                     onBlur={onBlur}
                     onChangeText={onChange}
                     placeholder="e.g. Black underpants with good price"
-                    // placeholderTextColor={globalStyles.textOnAccentColor}
+                    placeholderTextColor={"gray"}
                     value={value}
                     maxLength={70}
                     autoCapitalize="sentences"
@@ -329,13 +335,13 @@ const CreateAnnouncementView = () => {
                 <View style={styles.categoryListButtonTextWithIcon}>
                   {category && (
                     <Icon
-                      name={category.subcategoryIcon}
+                      name={category?.subcategoryIcon}
                       {...iconOptions}
                       fillColor={globalStyles.textOnPrimaryColor}
                     />
                   )}
                   <Text style={styles.categoryListButtonText}>
-                    {category ? category.subcategoryName : "Choose a category"}
+                    {category ? category?.subcategoryName : "Choose a category"}
                   </Text>
                 </View>
 
@@ -355,6 +361,10 @@ const CreateAnnouncementView = () => {
                   >
                     {squashedSubcategories.map((subcategoryItem) => (
                       <TouchableOpacity
+                        key={
+                          "CreateAnnouncementView_CategoryList_" +
+                          subcategoryItem?.subcategoryIcon
+                        }
                         style={
                           subcategoryItem ===
                           squashedSubcategories[
@@ -366,11 +376,11 @@ const CreateAnnouncementView = () => {
                         onPress={() => selectCategory(subcategoryItem)}
                       >
                         <Icon
-                          name={subcategoryItem.subcategoryIcon}
+                          name={subcategoryItem?.subcategoryIcon}
                           {...iconOptions}
                         />
                         <Text style={styles.categoryListItemText}>
-                          {subcategoryItem.subcategoryName}
+                          {subcategoryItem?.subcategoryName}
                         </Text>
                       </TouchableOpacity>
                     ))}
@@ -400,7 +410,7 @@ const CreateAnnouncementView = () => {
                     onBlur={onBlur}
                     onChangeText={onChange}
                     placeholder="e.g. XS or 123/45"
-                    // placeholderTextColor={globalStyles.textOnAccentColor}
+                    placeholderTextColor={"gray"}
                     value={value}
                     maxLength={40}
                     autoCapitalize="sentences"
@@ -436,7 +446,7 @@ const CreateAnnouncementView = () => {
                     onBlur={onBlur}
                     onChangeText={onChange}
                     placeholder="e.g. Almost new"
-                    // placeholderTextColor={globalStyles.textOnAccentColor}
+                    placeholderTextColor={"gray"}
                     value={value}
                     maxLength={40}
                     autoCapitalize="sentences"
@@ -472,7 +482,7 @@ const CreateAnnouncementView = () => {
                     onBlur={onBlur}
                     onChangeText={onChange}
                     placeholder="e.g. 7.99"
-                    // placeholderTextColor={globalStyles.textOnAccentColor}
+                    placeholderTextColor={"gray"}
                     value={value}
                     maxLength={10}
                     autoCapitalize="none"
@@ -508,7 +518,7 @@ const CreateAnnouncementView = () => {
                     onBlur={onBlur}
                     onChangeText={onChange}
                     placeholder="Description of your announcement"
-                    // placeholderTextColor={globalStyles.textOnAccentColor}
+                    placeholderTextColor={"gray"}
                     value={value}
                     maxLength={9000}
                     autoCapitalize="sentences"
@@ -660,7 +670,7 @@ const styles = StyleSheet.create({
     borderRadius: globalStyles.BORDER_RADIUS,
     fontFamily: "Poppins_500Medium",
     fontSize: 14,
-    color: globalStyles.textOnSecondaryColor,
+    color: globalStyles.primaryColor,
     backgroundColor: globalStyles.secondaryColor,
   },
 
@@ -670,7 +680,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     height: 50,
     padding: 10,
-    marginLeft: 1, // ?????????????
+    // marginLeft: 1, // ?????????????
     backgroundColor: globalStyles.primaryColor,
     borderRadius: globalStyles.BORDER_RADIUS,
   },
@@ -697,7 +707,7 @@ const styles = StyleSheet.create({
     zIndex: -1,
     marginTop: -20,
     padding: 10,
-    paddingTop: 20,
+    paddingTop: 25,
     // gap: 5,
     height: 200,
     // flex: 1,
@@ -712,8 +722,8 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignContent: "center",
     gap: 10,
-    paddingBottom: 5,
-    marginBottom: 7,
+    paddingBottom: 7,
+    marginBottom: 9,
     borderBottomWidth: 1,
     borderBottomColor: globalStyles.textOnSecondaryColor,
   },
@@ -735,19 +745,21 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "100%",
     height: "auto",
-    gap: "10%",
+    marginTop: 10,
     justifyContent: "center",
     alignContent: "center",
     alignItems: "center",
   },
 
   createButton: {
-    width: "45%",
+    width: "50%",
     height: "auto",
     padding: 10,
     justifyContent: "center",
-    borderRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: "green",
+    // borderRadius: globalStyles.BORDER_RADIUS,
+    borderTopLeftRadius: globalStyles.BORDER_RADIUS,
+    borderBottomLeftRadius: globalStyles.BORDER_RADIUS,
+    backgroundColor: globalStyles.primaryColor,
   },
 
   createText: {
@@ -758,11 +770,13 @@ const styles = StyleSheet.create({
   },
 
   cancelButton: {
-    width: "45%",
+    width: "50%",
     height: "auto",
     padding: 10,
     justifyContent: "center",
-    borderRadius: globalStyles.BORDER_RADIUS,
+    borderTopRightRadius: globalStyles.BORDER_RADIUS,
+    borderBottomRightRadius: globalStyles.BORDER_RADIUS,
+    // borderRadius: globalStyles.BORDER_RADIUS,
     backgroundColor: "red",
   },
 

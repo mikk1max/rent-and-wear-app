@@ -226,9 +226,6 @@ const AnnouncementView = ({ route }) => {
     console.log(`Open ${index}`);
   };
 
-  const imagePlaceholder =
-    "https://img.freepik.com/free-vector/low-poly-abstract-gray-background_1017-33833.jpg";
-
   // console.log(opinionsToDisplay);
 
   return (
@@ -236,7 +233,7 @@ const AnnouncementView = ({ route }) => {
       <View style={[mainStyles.container, mainStyles.scrollBase]}>
         <ScrollView
           showsVerticalScrollIndicator={false}
-          // style={mainStyles.scrollBase}
+          style={mainStyles.scrollBase}
         >
           <View style={styles.annSwiperContainer}>
             <Swiper style={styles.annSwiper} showsButtons={false}>
@@ -427,22 +424,24 @@ const AnnouncementView = ({ route }) => {
             </View>
           </View>
         </ScrollView>
-        <View style={styles.annBookRentButtons}>
-          <TouchableOpacity
-            style={styles.annBookRentButton}
-            activeOpacity={0.8}
-            onPress={() => console.log("BOOK IT")}
-          >
-            <Text style={styles.annBookRentButtonText}>BOOK IT</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.annBookRentButton}
-            activeOpacity={0.8}
-            onPress={() => console.log("RENT IT NOW")}
-          >
-            <Text style={styles.annBookRentButtonText}>RENT IT NOW</Text>
-          </TouchableOpacity>
-        </View>
+        {announcement.advertiserId != user.id && (
+          <View style={styles.annBookRentButtons}>
+            <TouchableOpacity
+              style={styles.annBookRentButton}
+              activeOpacity={0.8}
+              onPress={() => console.log("BOOK IT")}
+            >
+              <Text style={styles.annBookRentButtonText}>BOOK IT</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.annBookRentButton}
+              activeOpacity={0.8}
+              onPress={() => navigation.navigate("RentItNowView", { id: id })}
+            >
+              <Text style={styles.annBookRentButtonText}>RENT IT NOW</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
     </SafeAreaView>
   );

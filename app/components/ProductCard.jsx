@@ -50,7 +50,7 @@ const ProductCard = ({
       >
         <View style={styles.icons}>
           <View style={styles.categoryIcon}>
-            <Icon name={categoryIcon} {...iconOptions} />
+            {categoryIcon && <Icon name={categoryIcon} {...iconOptions} />}
           </View>
           <View style={styles.spacer}></View>
           {isAuthor && (

@@ -90,7 +90,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginTop: -10,
     marginHorizontal: -10,
-    marginRight: -9, // ??????????
+    // marginRight: -9, // ??????????
     borderTopLeftRadius: globalStyles.BORDER_RADIUS,
     borderTopRightRadius: globalStyles.BORDER_RADIUS,
   },
@@ -135,7 +135,7 @@ export const styles = StyleSheet.create({
     // alignContent: "center",
     alignItems: "center",
     gap: 10,
-    marginRight: 1, // ??????????????
+    // marginRight: 1, // ??????????????
     // backgroundColor: "red"
   },
 
