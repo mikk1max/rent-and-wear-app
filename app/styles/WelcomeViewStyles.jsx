@@ -48,7 +48,7 @@ export const styles = StyleSheet.create({
     fontFamily: "Poppins_500Medium",
     fontSize: 18,
     letterSpacing: 4,
-    color: globalStyles.textOnAccentColor,
+    color: globalStyles.textOnPrimaryColor,
     textTransform: "uppercase",
     paddingLeft: 5,
     paddingRight: 5,
@@ -76,8 +76,8 @@ export const styles = StyleSheet.create({
   },
   logBtn: {
     ...buttonBase,
-    backgroundColor: globalStyles.accentColor,
-    borderColor: globalStyles.accentColor,
+    backgroundColor: globalStyles.primaryColor,
+    borderColor: globalStyles.primaryColor,
   },
   guestBtnText: {
     ...buttonTextBase,
@@ -85,6 +85,6 @@ export const styles = StyleSheet.create({
   },
   logBtnText: {
     ...buttonTextBase,
-    color: globalStyles.textOnAccentColor,
+    color: globalStyles.textOnPrimaryColor,
   },
 });

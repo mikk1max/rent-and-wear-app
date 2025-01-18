@@ -44,7 +44,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
   activeFilterButton: {
-    backgroundColor: globalStyles.accentColor,
+    backgroundColor: globalStyles.primaryColor,
   },
   filterButtonText: {
     color: "#fff",

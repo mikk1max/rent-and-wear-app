@@ -8,11 +8,11 @@ const IconButton = ({ filePath, ...props }) => {
   const buttonSize = (props.containerWidth - 10 * 4) / 5; // 10 to odstęp między przyciskami
 
   const backgroundColor = props.isActive
-    ? globalStyles.accentColor
+    ? globalStyles.primaryColor
     : globalStyles.secondaryColor;
   const iconColor = props.isActive
-    ? globalStyles.textOnAccentColor
-    : globalStyles.accentColor;
+    ? globalStyles.textOnPrimaryColor
+    : globalStyles.primaryColor;
 
   return (
     <View style={styles.container(buttonSize)}>

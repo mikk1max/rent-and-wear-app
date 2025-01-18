@@ -372,7 +372,7 @@ const AddressesView = () => {
                       onBlur={onBlur}
                       onChangeText={onChange}
                       placeholder="Bob Smith / Macrosoft Sp. z o. o."
-                      placeholderTextColor={globalStyles.textOnAccentColor}
+                      placeholderTextColor={globalStyles.textOnPrimaryColor}
                       value={value}
                       autoCapitalize="none"
                       autoComplete="name"
@@ -406,7 +406,7 @@ const AddressesView = () => {
                       onBlur={onBlur}
                       onChangeText={onChange}
                       placeholder="+48987654321 / 987654321"
-                      placeholderTextColor={globalStyles.textOnAccentColor}
+                      placeholderTextColor={globalStyles.textOnPrimaryColor}
                       value={value}
                       autoCapitalize="none"
                       autoComplete="tel"
@@ -441,7 +441,7 @@ const AddressesView = () => {
                       onBlur={onBlur}
                       onChangeText={onChange}
                       placeholder="example@gmail.com"
-                      placeholderTextColor={globalStyles.textOnAccentColor}
+                      placeholderTextColor={globalStyles.textOnPrimaryColor}
                       value={value}
                       autoCapitalize="none"
                       autoComplete="email"
@@ -474,7 +474,7 @@ const AddressesView = () => {
                       onBlur={onBlur}
                       onChangeText={onChange}
                       placeholder="ul. Nadbystrzycka"
-                      placeholderTextColor={globalStyles.textOnAccentColor}
+                      placeholderTextColor={globalStyles.textOnPrimaryColor}
                       value={value}
                       autoCapitalize="words"
                       autoComplete="street-address"
@@ -511,7 +511,7 @@ const AddressesView = () => {
                       onBlur={onBlur}
                       onChangeText={onChange}
                       placeholder="38Y"
-                      placeholderTextColor={globalStyles.textOnAccentColor}
+                      placeholderTextColor={globalStyles.textOnPrimaryColor}
                       value={value}
                       autoCapitalize="characters"
                       autoComplete="off"
@@ -539,7 +539,7 @@ const AddressesView = () => {
                       onBlur={onBlur}
                       onChangeText={onChange}
                       placeholder="m. 22"
-                      placeholderTextColor={globalStyles.textOnAccentColor}
+                      placeholderTextColor={globalStyles.textOnPrimaryColor}
                       value={value}
                       autoCapitalize="none"
                       autoComplete="off"
@@ -573,7 +573,7 @@ const AddressesView = () => {
                       onBlur={onBlur}
                       onChangeText={onChange}
                       placeholder="12"
-                      placeholderTextColor={globalStyles.textOnAccentColor}
+                      placeholderTextColor={globalStyles.textOnPrimaryColor}
                       value={value}
                       autoCapitalize="none"
                       autoComplete="off"
@@ -610,7 +610,7 @@ const AddressesView = () => {
                       onBlur={onBlur}
                       onChangeText={onChange}
                       placeholder="20-501"
-                      placeholderTextColor={globalStyles.textOnAccentColor}
+                      placeholderTextColor={globalStyles.textOnPrimaryColor}
                       value={value}
                       autoCapitalize="none"
                       autoComplete="postal-code"
@@ -643,7 +643,7 @@ const AddressesView = () => {
                       onBlur={onBlur}
                       onChangeText={onChange}
                       placeholder="Lublin"
-                      placeholderTextColor={globalStyles.textOnAccentColor}
+                      placeholderTextColor={globalStyles.textOnPrimaryColor}
                       value={value}
                       autoCapitalize="words"
                       autoComplete="off"
@@ -676,7 +676,7 @@ const AddressesView = () => {
                       onBlur={onBlur}
                       onChangeText={onChange}
                       placeholder="Polska"
-                      placeholderTextColor={globalStyles.textOnAccentColor}
+                      placeholderTextColor={globalStyles.textOnPrimaryColor}
                       value={value}
                       autoCapitalize="words"
                       autoComplete="country"

@@ -9,7 +9,7 @@ import {
   ScrollView,
   SafeAreaView,
   Platform,
-  RefreshControl
+  RefreshControl,
   StyleSheet,
 } from "react-native";
 import SearchBar from "../components/SearchBar";
@@ -196,11 +196,11 @@ const stylesTmp = StyleSheet.create({
     padding: 5,
     alignItems: "center",
     borderRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.accentColor,
+    backgroundColor: globalStyles.primaryColor,
   },
   createAnnouncementText: {
     fontFamily: "WorkSans_900Black",
     fontSize: 20,
-    color: globalStyles.textOnAccentColor,
+    color: globalStyles.textOnPrimaryColor,
   },
 });

@@ -35,7 +35,7 @@ export const styles = StyleSheet.create({
     marginVertical: 20,
     height: 2,
     borderRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.accentColor,
+    backgroundColor: globalStyles.primaryColor,
   },
 
   label: {

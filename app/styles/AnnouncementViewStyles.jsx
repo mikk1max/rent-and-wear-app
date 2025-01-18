@@ -4,7 +4,7 @@ import { globalStyles } from "../utils/style";
 export const iconParams = {
   width: 35,
   height: 35,
-  stroke: globalStyles.textOnAccentColor,
+  stroke: globalStyles.textOnPrimaryColor,
   strokeWidth: 2,
 };
 
@@ -21,7 +21,7 @@ export const styles = StyleSheet.create({
     width: "100%",
     height: 2,
     borderRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.accentColor,
+    backgroundColor: globalStyles.primaryColor,
   },
 
   // annMainImage: {
@@ -99,7 +99,7 @@ export const styles = StyleSheet.create({
   annYourAnnouncementPlate: {
     fontFamily: "WorkSans_900Black",
     fontSize: 15,
-    color: globalStyles.textOnAccentColor,
+    color: globalStyles.textOnPrimaryColor,
     backgroundColor: globalStyles.blueColor,
     paddingVertical: 5,
     paddingHorizontal: 10,
@@ -112,7 +112,7 @@ export const styles = StyleSheet.create({
   annTitle: {
     fontFamily: "WorkSans_900Black",
     fontSize: 22,
-    color: globalStyles.accentColor,
+    color: globalStyles.primaryColor,
   },
 
   annPublicationDateAndCategory: {
@@ -298,18 +298,18 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     padding: 5,
     borderRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.accentColor,
+    backgroundColor: globalStyles.primaryColor,
   },
 
   opinWriteOpinionButtonText: {
     fontFamily: "WorkSans_900Black",
     fontSize: 18,
-    color: globalStyles.textOnAccentColor,
+    color: globalStyles.textOnPrimaryColor,
   },
 
   opinWriteOpinionButtonIcon: {
     size: 5,
-    color: globalStyles.textOnAccentColor,
+    color: globalStyles.textOnPrimaryColor,
   },
 
   opinList: {
@@ -335,12 +335,12 @@ export const styles = StyleSheet.create({
     padding: 10,
     alignItems: "center",
     borderRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.accentColor,
+    backgroundColor: globalStyles.primaryColor,
   },
 
   annBookRentButtonText: {
     fontFamily: "WorkSans_900Black",
     fontSize: 18,
-    color: globalStyles.textOnAccentColor,
+    color: globalStyles.textOnPrimaryColor,
   },
 });

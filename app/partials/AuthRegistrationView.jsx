@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   registerBtn: {
-    backgroundColor: globalStyles.accentColor,
+    backgroundColor: globalStyles.primaryColor,
     marginTop: 20,
   },
   mainBtnText: {
@@ -240,7 +240,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   modalButton: {
-    backgroundColor: globalStyles.accentColor,
+    backgroundColor: globalStyles.primaryColor,
     padding: 10,
     borderRadius: globalStyles.BORDER_RADIUS,
   },

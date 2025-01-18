@@ -26,8 +26,8 @@ const SearchBarComp = ({ onSearch, ...props }) => {
       containerStyle={styles.container}
       inputContainerStyle={styles.inputContainer}
       inputStyle={styles.input}
-      searchIcon={{ size: 25, color: globalStyles.accentColor }}
-      clearIcon={{ size: 25, color: globalStyles.accentColor }}
+      searchIcon={{ size: 25, color: globalStyles.primaryColor }}
+      clearIcon={{ size: 25, color: globalStyles.primaryColor }}
       {...props}
     />
   );

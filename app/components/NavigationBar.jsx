@@ -15,13 +15,13 @@ const renderIcon = (route, focused, t) => {
   const textAndIconStyle = {
     fontFamily: "WorkSans_900Black",
     fontSize: 18,
-    color: focused ? globalStyles.textOnAccentColor : globalStyles.accentColor,
+    color: focused ? globalStyles.textOnPrimaryColor : globalStyles.primaryColor,
   };
 
   let iconName = "user-stroke";
   if (route.name === "UserProfile") {
     iconName = focused ? "user-fill" : "user-stroke";
-    return <Icon name={iconName} width={32} height={32} fillColor={globalStyles.backgroundColor} colorStroke="#2A4366" />;
+    return <Icon name={"user-fill"} width={32} height={32} fillColor={globalStyles.primaryColor} />;
   }
 
   switch (route.name) {
@@ -60,7 +60,7 @@ const NavigationBar = (route) => {
             tabBarIcon: ({ focused }) => renderIcon(route, focused, t),
             headerShown: false,
             tabBarShowLabel: false,
-            tabBarActiveBackgroundColor: globalStyles.accentColor,
+            tabBarActiveBackgroundColor: globalStyles.primaryColor,
             tabBarStyle: styles.tabBarStyle,
             tabBarItemStyle: [
               styles.tabBarItemStyle,
@@ -97,14 +97,14 @@ const styles = StyleSheet.create({
     borderRadius: 150,
     overflow: "hidden",
     borderWidth: 1,
-    borderTopColor: globalStyles.accentColor,
+    borderTopColor: globalStyles.primaryColor,
     borderTopWidth: 1,
-    borderColor: globalStyles.accentColor,
+    borderColor: globalStyles.primaryColor,
     boxShadow: "none",
     shadowColor: "transparent",
     height: 50,
     paddingBottom: 0,
-    backgroundColor: globalStyles.backgroundColor,
+    backgroundColor: "#E2E9EA",
   },
   tabBarItemStyle: {
     borderRightWidth: 1,
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
   userProfileTabStyle: {
     borderRightWidth: 1,
     borderLeftWidth: 1,
-    borderColor: globalStyles.accentColor,
+    borderColor: globalStyles.primaryColor,
   },
 });
 
