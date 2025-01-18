@@ -16,6 +16,7 @@ import { useUser } from "./UserProvider";
 import AllCategories from "./AllCategories";
 import ChatView from "../partials/ChatView";
 import AllChatsView from "../partials/AllChatsView";
+import RentItNowView from "../partials/RentItNowView";
 
 const Stack = createStackNavigator();
 
@@ -126,6 +127,11 @@ export default function Navigation() {
         name="CreateAnnouncementView"
         component={CreateAnnouncementView}
         options={{ title: "Create Announcement", ...stackOptions }}
+      />
+      <Stack.Screen
+        name="RentItNowView"
+        component={RentItNowView}
+        options={{ title: "Rent it now", ...stackOptions }}
       />
     </Stack.Navigator>
   );

@@ -121,7 +121,7 @@ const RentNowView = () => {
   };
 
   const getFilteredAnnouncements = (searchQuery) => {
-    return announcementPreviews.filter((announcementPreview) =>
+    return announcementPreviews?.filter((announcementPreview) =>
       String(announcementPreview.title)
         .toLowerCase()
         .includes(searchQuery.toLowerCase())
@@ -315,27 +315,32 @@ const RentNowView = () => {
               </TouchableOpacity>
             </View>
             <View style={styles.buttonContainer}>
-              {icons.map((iconName) => (
-                <IconButton
-                  key={iconName}
-                  iconName={iconName}
-                  onPress={() => handleButtonPress(iconName)}
-                  containerWidth={width - 60}
-                  isActive={activeIcon === iconName}
-                />
-              ))}
+              {icons &&
+                icons?.map((iconName) => (
+                  <IconButton
+                    key={iconName}
+                    iconName={iconName}
+                    onPress={() => handleButtonPress(iconName)}
+                    containerWidth={width - 60}
+                    isActive={activeIcon === iconName}
+                  />
+                ))}
             </View>
 
             <View style={styles.announcementsContainer}>
               {filteredAnnouncements &&
-                filteredAnnouncements.map((announcementPreview) => (
+                filteredAnnouncements?.map((announcementPreview) => (
                   <ProductCard
                     key={"RentNowView_ProductCard_" + announcementPreview.id}
                     id={announcementPreview.id}
                     mainImage={announcementPreview.mainImage}
                     title={announcementPreview.title}
-                    categoryName={announcementPreview?.category?.subcategoryName}
-                    categoryIcon={announcementPreview?.category?.subcategoryIcon}
+                    categoryName={
+                      announcementPreview?.category?.subcategoryName
+                    }
+                    categoryIcon={
+                      announcementPreview?.category?.subcategoryIcon
+                    }
                     pricePerDay={announcementPreview.pricePerDay}
                     currentUserId={user?.id}
                     advertiserId={announcementPreview.advertiserId}

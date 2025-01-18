@@ -170,7 +170,7 @@ export default function RentOutView() {
             }
           >
             <View style={styles.announcementsContainer}>
-              {filteredAnnouncements.map((announcementPreview) => (
+              {filteredAnnouncements?.map((announcementPreview) => (
                 <ProductCard
                   key={"RentOutView_ProductCard_" + announcementPreview.id}
                   id={announcementPreview.id}
