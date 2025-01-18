@@ -1,4 +1,6 @@
 import AddressesIcon from "../../assets/icons/addresses.svg";
+import ArrowDownIcon from "../../assets/icons/arrow-down-svgrepo-com.svg";
+import ArrowUpIcon from "../../assets/icons/arrow-up-1-svgrepo-com.svg";
 import BeanieIcon from "../../assets/icons/beanie.svg";
 import BeltIcon from "../../assets/icons/belt.svg";
 import CapIcon from "../../assets/icons/cap.svg";
@@ -22,6 +24,8 @@ import NotVerifiedIcon from "../../assets/icons/not-verified.svg";
 import OpenBoxIcon from "../../assets/icons/open-box.svg";
 import PantsIcon from "../../assets/icons/pants.svg";
 import PartyCostumeIcon from "../../assets/icons/party-costume.svg";
+import PlusIcon from "../../assets/icons/plus-alt-svgrepo-com.svg";
+import PlusIconWithBorder from "../../assets/icons/plus-square-svgrepo-com.svg";
 import SendsIcon from "../../assets/icons/sends.svg";
 import SettingsIcon from "../../assets/icons/settings.svg";
 import ShoesIcon from "../../assets/icons/shoes.svg";
@@ -56,6 +60,8 @@ import ChatIcon from "../../assets/icons/chat.svg"
 
 export const icons = {
   addresses: AddressesIcon,
+  "arrow-down": ArrowDownIcon,
+  "arrow-up": ArrowUpIcon,
   at: AtIcon,
   beanie: BeanieIcon,
   belt: BeltIcon,
@@ -88,6 +94,8 @@ export const icons = {
   pants: PantsIcon,
   "party-costume": PartyCostumeIcon,
   phone: PhoneIcon,
+  plus: PlusIcon,
+  "plus-with-border": PlusIconWithBorder,
   search: SearchIcon,
   send: SendIcon,
   sends: SendsIcon,
