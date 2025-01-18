@@ -19,13 +19,13 @@ export const styles = StyleSheet.create({
     color: "blue",
   },
   loginBtn: {
-    backgroundColor: globalStyles.accentColor,
+    backgroundColor: globalStyles.primaryColor,
     padding: 10,
     borderRadius: globalStyles.BORDER_RADIUS,
   },
   loginBtnText: {
     fontFamily: "WorkSans_900Black",
-    color: globalStyles.textOnAccentColor,
+    color: globalStyles.textOnPrimaryColor,
     fontSize: 18,
     textAlign: "center",
   },

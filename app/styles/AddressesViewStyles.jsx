@@ -35,13 +35,13 @@ export const styles = StyleSheet.create({
   modalFormTitle: {
     fontFamily: "WorkSans_900Black",
     fontSize: 18,
-    color: globalStyles.accentColor,
+    color: globalStyles.primaryColor,
   },
 
   modalDivider: {
     marginVertical: 10,
     height: 2,
-    backgroundColor: globalStyles.accentColor,
+    backgroundColor: globalStyles.primaryColor,
   },
 
   modalInputContainer: {
@@ -115,7 +115,7 @@ export const styles = StyleSheet.create({
   },
 
   newAddressButton: {
-    backgroundColor: globalStyles.accentColor,
+    backgroundColor: globalStyles.primaryColor,
     width: "auto",
     alignItems: "center",
     justifyContent: "center",
@@ -126,7 +126,7 @@ export const styles = StyleSheet.create({
   newAddressButtonText: {
     fontFamily: "WorkSans_900Black",
     fontSize: 16,
-    color: globalStyles.textOnAccentColor,
+    color: globalStyles.textOnPrimaryColor,
   },
 
   modalDeleteButton: {

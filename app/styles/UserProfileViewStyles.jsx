@@ -42,7 +42,7 @@ export const styles = StyleSheet.create({
   emailText: {
     fontFamily: "Poppins_500Medium",
     fontSize: 15,
-    color: globalStyles.accentColor,
+    color: globalStyles.primaryColor,
   },
 
   verificationContent: {
