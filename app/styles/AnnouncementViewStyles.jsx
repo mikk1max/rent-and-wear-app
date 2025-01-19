@@ -1,5 +1,7 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Dimensions } from "react-native";
 import { globalStyles } from "../utils/style";
+
+const { width } = Dimensions.get("window");
 
 export const iconParams = {
   width: 35,
@@ -358,10 +360,11 @@ export const styles = StyleSheet.create({
     // padding: 10,
     marginTop: 10,
     justifyContent: "space-between",
+    gap: 10
   },
 
   annBookRentButton: {
-    width: "45%",
+    width: (width - 2 * 25 - 10) /  2,
     height: "auto",
     padding: 10,
     alignItems: "center",

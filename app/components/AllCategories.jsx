@@ -32,27 +32,31 @@ const AllCategories = ({ route, navigation }) => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const categoriesRef = ref(db, 'categories');
+        const categoriesRef = ref(db, "categories");
         const snapshot = await get(categoriesRef);
 
         if (snapshot.exists()) {
           const rawData = snapshot.val();
 
           // Преобразование данных обратно в массив
-          const formattedCategories = Object.values(rawData).map((category) => ({
-            categoryName: category.categoryName,
-            subcategories: Object.values(category.subcategories).map((subcategory) => ({
-              subcategoryName: subcategory.subcategoryName,
-              subcategoryIcon: subcategory.subcategoryIcon,
-            })),
-          }));
+          const formattedCategories = Object.values(rawData).map(
+            (category) => ({
+              categoryName: category.categoryName,
+              subcategories: Object.values(category.subcategories).map(
+                (subcategory) => ({
+                  subcategoryName: subcategory.subcategoryName,
+                  subcategoryIcon: subcategory.subcategoryIcon,
+                })
+              ),
+            })
+          );
 
           setCategories(formattedCategories);
         } else {
-          console.error('No data available.');
+          console.error("No data available.");
         }
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
       }
@@ -112,8 +116,13 @@ const AllCategories = ({ route, navigation }) => {
         >
           {categories &&
             categories.map((categoryItem) => (
-              <View style={styles.iconsItemBox}>
-                <Text style={styles.iconsTitle}>{categoryItem.categoryName}</Text>
+              <View
+                style={styles.iconsItemBox}
+                key={`Category_${categoryItem.categoryName}`}
+              >
+                <Text style={styles.iconsTitle}>
+                  {categoryItem.categoryName}
+                </Text>
                 <ScrollView
                   style={[mainStyles.scrollBase, styles.iconsScrollContainer]}
                   showsHorizontalScrollIndicator={false}
@@ -121,11 +130,16 @@ const AllCategories = ({ route, navigation }) => {
                 >
                   {categoryItem.subcategories.map((subcategoryItem) => (
                     <TouchableOpacity
-                      key={subcategoryItem.subcategoryIcon}
+                      key={`Subcategory_${categoryItem.categoryName}_${subcategoryItem.subcategoryName}`}
                       style={styles.iconBtn}
-                      onPress={() => handleCategoryPress(subcategoryItem.subcategoryIcon)}
+                      onPress={() =>
+                        handleCategoryPress(subcategoryItem.subcategoryIcon)
+                      }
                     >
-                      <Icon name={subcategoryItem.subcategoryIcon} {...iconOptions} />
+                      <Icon
+                        name={subcategoryItem.subcategoryIcon}
+                        {...iconOptions}
+                      />
                     </TouchableOpacity>
                   ))}
                 </ScrollView>

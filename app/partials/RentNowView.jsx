@@ -17,7 +17,7 @@ import IconButton from "../components/IconButton";
 import { useCustomFonts } from "../utils/fonts";
 import ProductCard from "../components/ProductCard";
 
-import { styles as mainStyles } from "../utils/style";
+import { globalStyles, styles as mainStyles } from "../utils/style";
 import { styles } from "../styles/RentNowViewStyles";
 
 import {
@@ -120,15 +120,25 @@ const RentNowView = () => {
     setSearchQuery(text);
   };
 
-  const getFilteredAnnouncements = (searchQuery) => {
-    return announcementPreviews?.filter((announcementPreview) =>
-      String(announcementPreview.title)
+  const getFilteredAnnouncements = (searchQuery, activeIcon) => {
+    return announcementPreviews?.filter((announcementPreview) => {
+      const matchesSearch = String(announcementPreview.title)
         .toLowerCase()
-        .includes(searchQuery.toLowerCase())
-    );
+        .includes(searchQuery.toLowerCase());
+
+      const matchCategory = activeIcon
+        ? announcementPreview.category.subcategoryName?.toLowerCase() ===
+          activeIcon.toLowerCase()
+        : true;
+
+      return matchesSearch && matchCategory;
+    });
   };
 
-  const filteredAnnouncements = getFilteredAnnouncements(searchQuery);
+  const filteredAnnouncements = getFilteredAnnouncements(
+    searchQuery,
+    activeIcon
+  );
 
   const handleButtonPress = (iconName) => {
     setActiveIcon((prev) => {
@@ -204,71 +214,6 @@ const RentNowView = () => {
     }
   };
 
-  const onChatPress = (announcementPreview) => {
-    if (!user || !user.uid) {
-      Alert.alert("Login Required", "You need to log in to start a chat.");
-      return;
-    }
-
-    if (user.uid === announcementPreview.advertiserId) {
-      Alert.alert(
-        "Cannot Start Chat",
-        "You cannot start a chat with yourself. Please select another announcement."
-      );
-      return;
-    }
-
-    const { id: announcementId, advertiserId } = announcementPreview;
-    const userId = user.uid;
-
-    const chatRef = ref(db, "chats");
-
-    get(chatRef)
-      .then((snapshot) => {
-        const chats = snapshot.val();
-        let chatId = null;
-
-        if (chats) {
-          for (const key in chats) {
-            const chat = chats[key];
-
-            if (
-              chat.announcementId === announcementId &&
-              ((chat.advertiserId === advertiserId && chat.userId === userId) ||
-                (chat.advertiserId === userId && chat.userId === advertiserId))
-            ) {
-              chatId = key;
-              break;
-            }
-          }
-        }
-
-        if (chatId) {
-          console.log(`Navigating to existing chat with ID: ${chatId}`);
-          navigation.navigate("Chat", { chatId });
-        } else {
-          console.log("No existing chat found, creating a new one...");
-
-          const newChat = {
-            announcementId,
-            advertiserId,
-            userId: null, // No user yet (the user will be assigned once they send the first message)
-            messages: [],
-            timestamp: Date.now(),
-          };
-
-          const newChatRef = push(chatRef);
-          set(newChatRef, newChat).then(() => {
-            console.log(`New chat created with ID: ${newChatRef.key}`);
-            navigation.navigate("Chat", { chatId: newChatRef.key });
-          });
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching chats:", error);
-      });
-  };
-
   return (
     <SafeAreaView style={mainStyles.whiteBack}>
       <View
@@ -316,9 +261,9 @@ const RentNowView = () => {
             </View>
             <View style={styles.buttonContainer}>
               {icons &&
-                icons?.map((iconName) => (
+                icons.map((iconName) => (
                   <IconButton
-                    key={iconName}
+                    key={`IconButton_${iconName}`}
                     iconName={iconName}
                     onPress={() => handleButtonPress(iconName)}
                     containerWidth={width - 60}
@@ -345,7 +290,6 @@ const RentNowView = () => {
                     currentUserId={user?.id}
                     advertiserId={announcementPreview.advertiserId}
                     containerWidth={width - 60}
-                    onChatPress={() => onChatPress(announcementPreview)}
                   />
                 ))}
             </View>

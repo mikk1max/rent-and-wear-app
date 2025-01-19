@@ -18,10 +18,10 @@ const renderIcon = (route, focused, t) => {
     color: focused ? globalStyles.textOnPrimaryColor : globalStyles.primaryColor,
   };
 
-  let iconName = "user-stroke";
+  let iconColor = globalStyles.primaryColor;
   if (route.name === "UserProfile") {
-    iconName = focused ? "user-fill" : "user-stroke";
-    return <Icon name={"user-fill"} width={32} height={32} fillColor={globalStyles.primaryColor} />;
+    iconColor = focused ? globalStyles.textOnPrimaryColor : globalStyles.primaryColor;
+    return <Icon name={"user-fill"} width={32} height={32} fillColor={iconColor} />;
   }
 
   switch (route.name) {
