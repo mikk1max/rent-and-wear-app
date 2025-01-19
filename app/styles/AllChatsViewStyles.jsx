@@ -5,11 +5,14 @@ const { width } = Dimensions.get("window");
 
 export const styles = StyleSheet.create({
   chatCard: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     backgroundColor: globalStyles.secondaryColor, // Use a light background for visibility
     padding: 15,
     marginBottom: 10,
     borderRadius: globalStyles.BORDER_RADIUS,
     width: width - 50,
+    gap: 5
   },
   chatTitle: {
     fontSize: 18,
@@ -47,8 +50,13 @@ export const styles = StyleSheet.create({
     backgroundColor: globalStyles.primaryColor,
   },
   filterButtonText: {
-    color: "#fff",
+    color: globalStyles.textOnSecondaryColor,
     fontSize: 16,
     fontWeight: "bold",
   },
+  activeFilterButtonText: {
+    color: globalStyles.textOnPrimaryColor,
+    fontSize: 16,
+    fontWeight: "bold",
+  }
 });

@@ -7,7 +7,7 @@ const dataCardWidth = width - 50 - 100 - 15;
 export const iconParams = {
   width: 30,
   height: 30,
-  fillColor: "white",
+  fillColor: globalStyles.textOnPrimaryColor,
 };
 
 export const styles = StyleSheet.create({

@@ -8,7 +8,7 @@ import {
   ScrollView,
   SafeAreaView,
   Image,
-  Platform
+  Platform,
 } from "react-native";
 import { useCustomFonts } from "../utils/fonts";
 import { useNavigation } from "@react-navigation/native";
@@ -23,6 +23,8 @@ import Icon from "../components/Icon";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "../components/LanguageSwitcher";
 
+const FIVE_MINUTES_IN_MS = 5 * 60 * 1000;
+
 const UserProfileView = () => {
   const [userProfileImg, setUserProfileImg] = useState(null);
   const { user, setUser } = useUser();
@@ -30,33 +32,38 @@ const UserProfileView = () => {
   const { t, i18n } = useTranslation();
   const fontsLoaded = useCustomFonts();
   const [isDropdownVisible, setDropdownVisible] = useState(false);
+  const [lastVerificationAttempt, setLastVerificationAttempt] = useState(null);
+
+  const [refreshing, setRefreshing] = useState(false);
+
+  const [reloadKey, setReloadKey] = useState(0);
 
   const toggleDropdown = () => setDropdownVisible(!isDropdownVisible);
 
   useEffect(() => {
-      if (!user) return;
-  
-      const usersRef = ref(db, "users");
-      const unsubscribe = onValue(usersRef, (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-          const currentUserEntry = Object.entries(data).find(
-            ([key, userData]) => userData.email === user.email
-          );
-  
-          if (currentUserEntry) {
-            const [key, userData] = currentUserEntry;
-            setUser({ ...userData, id: key }); // Dodaj klucz jako "id"
-          } else {
-            setUser(null);
-          }
+    if (!user) return;
+
+    const usersRef = ref(db, "users");
+    const unsubscribe = onValue(usersRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const currentUserEntry = Object.entries(data).find(
+          ([key, userData]) => userData.email === user.email
+        );
+
+        if (currentUserEntry) {
+          const [key, userData] = currentUserEntry;
+          setUser({ ...userData, id: key }); // Dodaj klucz jako "id"
         } else {
           setUser(null);
         }
-      });
-  
-      return () => unsubscribe();
-    }, [user]);
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => unsubscribe();
+  }, [user]);
 
   useEffect(() => {
     const fetchProfileImg = async () => {
@@ -99,7 +106,7 @@ const UserProfileView = () => {
     try {
       const snapshot = await get(ref(db, "announcements"));
       if (snapshot.exists()) {
-        console.log("Access confirmed:", snapshot.val());
+        // console.log("Access confirmed:", snapshot.val());
       } else {
         console.log("No data or access denied.");
       }
@@ -119,7 +126,7 @@ const UserProfileView = () => {
   const handleLogout = () => {
     // Unsubscribe from Firebase listeners
     off(ref(db, "announcements"));
-    
+
     onLogout()
       .then(() => {
         navigation.navigate("Welcome");
@@ -147,11 +154,33 @@ const UserProfileView = () => {
     }
 
     return fullName.slice(0, 20) + "...";
-  }
+  };
+
+  const handleVerifyEmail = () => {
+    const now = Date.now();
+    if (
+      lastVerificationAttempt &&
+      now - lastVerificationAttempt < FIVE_MINUTES_IN_MS
+    ) {
+      Alert.alert(
+        "Wait a moment!",
+        "You can only attempt email verification every 5 minutes."
+      );
+      return;
+    }
+
+    onConfirmEmail();
+    setLastVerificationAttempt(now);
+  };
 
   return (
     <SafeAreaView style={mainStyles.whiteBack} key={i18n.language}>
-      <View style={[mainStyles.container, {marginTop: Platform.OS === "android" ? 15 : 0,}]}>
+      <View
+        style={[
+          mainStyles.container,
+          { marginTop: Platform.OS === "android" ? 15 : 0 },
+        ]}
+      >
         <View style={styles.userCard}>
           <Image
             source={{
@@ -166,9 +195,13 @@ const UserProfileView = () => {
             <Text style={styles.emailText}>{hideEmail(user.email)}</Text>
             <TouchableOpacity
               style={styles.verificationOpacity}
-              onPress={!user.isVerified && (() => onConfirmEmail())}
+              onPress={
+                !user.isVerified && user.email !== "guest@example.com"
+                  ? handleVerifyEmail
+                  : null
+              }
               activeOpacity={0.9}
-              disabled={user.isVerified && true}
+              disabled={user.isVerified || user.email === "guest@example.com"}
             >
               <View style={styles.verificationContent}>
                 {user.isVerified !== undefined && user.isVerified !== null && (
@@ -176,7 +209,7 @@ const UserProfileView = () => {
                     name={user.isVerified ? "verification" : "not-verified"}
                     width={15}
                     height={15}
-                    fillColor="white"
+                    fillColor={globalStyles.textOnPrimaryColor}
                     styles={{ marginRight: 5 }}
                   />
                 )}
@@ -193,10 +226,56 @@ const UserProfileView = () => {
         <ScrollView
           style={[mainStyles.scrollBase, { marginVertical: 20 }]}
           showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={async () => {
+                setRefreshing(true);
+                try {
+                  // Refetch user data
+                  const usersRef = ref(db, "users");
+                  const snapshot = await get(usersRef);
+                  if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    const currentUserEntry = Object.entries(data).find(
+                      ([key, userData]) => userData.email === user.email
+                    );
+
+                    if (currentUserEntry) {
+                      const [key, userData] = currentUserEntry;
+                      setUser({ ...userData, id: key });
+                    }
+                  }
+
+                  // Refetch profile image
+                  const url = await fetchImgURL(
+                    `user-avatars/${user.id}/${user.id}.jpg`
+                  );
+                  setUserProfileImg(url);
+                } catch (error) {
+                  console.error("Error refreshing user data:", error);
+                } finally {
+                  setRefreshing(false);
+                }
+              }}
+            />
+          }
         >
           <View style={{ gap: 15 }}>
             <TouchableOpacity
-              style={styles.buttonBase}
+              style={[styles.buttonBase]}
+              onPress={() => navigation.navigate("Chats")}
+              activeOpacity={0.9}
+            >
+              <Icon name="chat" {...iconParams} colorStroke="transparent" />
+              <Text style={styles.buttonText}>Chats</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.buttonBase,
+                { backgroundColor: globalStyles.textOnSecondaryColor },
+              ]}
               onPress={() => navigation.navigate("AddressesView")}
               activeOpacity={0.9}
             >
@@ -216,7 +295,10 @@ const UserProfileView = () => {
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={styles.buttonBase}
+              style={[
+                styles.buttonBase,
+                { backgroundColor: globalStyles.textOnSecondaryColor },
+              ]}
               onPress={toggleDropdown}
               activeOpacity={0.9}
             >
@@ -228,22 +310,18 @@ const UserProfileView = () => {
               <LanguageSwitcher toggleDropdown={toggleDropdown} />
             )}
 
-            <TouchableOpacity
-              style={[styles.buttonBase]}
-              onPress={() => navigation.navigate("Chats")}
-              activeOpacity={0.9}
-            >
-              <Icon name="chat" {...iconParams} colorStroke="transparent" />
-              <Text style={styles.buttonText}>Chats</Text>
-            </TouchableOpacity>
-
             <View style={{ flexDirection: "row", gap: 15 }}>
               <TouchableOpacity
                 style={[styles.buttonBase, styles.buttonRent]}
                 onPress={() => navigation.navigate("SendsView")}
                 activeOpacity={0.9}
               >
-                <Icon name="sends" width={65} height={65} fillColor="white" />
+                <Icon
+                  name="sends"
+                  width={65}
+                  height={65}
+                  fillColor={globalStyles.textOnPrimaryColor}
+                />
                 <Text style={styles.buttonRentText}>
                   {t("userProfile.sends")}
                 </Text>
@@ -253,7 +331,12 @@ const UserProfileView = () => {
                 onPress={() => navigation.navigate("GetsView")}
                 activeOpacity={0.9}
               >
-                <Icon name="gets" width={65} height={65} fillColor="white" />
+                <Icon
+                  name="gets"
+                  width={65}
+                  height={65}
+                  fillColor={globalStyles.textOnPrimaryColor}
+                />
                 <Text style={styles.buttonRentText}>
                   {t("userProfile.gets")}
                 </Text>

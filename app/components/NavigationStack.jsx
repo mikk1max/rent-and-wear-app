@@ -31,6 +31,9 @@ const stackOptions = {
   headerRightContainerStyle: {
     paddingRight: 10,
   },
+  headerStyle: {
+    backgroundColor: globalStyles.backgroundColor,
+  },
 };
 
 export default function Navigation() {
