@@ -8,6 +8,7 @@ import {
   Image,
   StyleSheet,
   ActivityIndicator,
+  Alert
 } from "react-native";
 import { useCustomFonts } from "../utils/fonts";
 import { useNavigation } from "@react-navigation/native";
@@ -22,7 +23,7 @@ import OpinionCard from "../components/OpinionCard";
 import Swiper from "react-native-swiper";
 import ImageViewing from "react-native-image-viewing";
 
-import { ref, onValue, update, get, set, remove } from "firebase/database";
+import { ref, onValue, update, push, get, set, remove } from "firebase/database";
 import { db } from "../../firebase.config";
 import { useUser } from "../components/UserProvider";
 
@@ -36,13 +37,12 @@ import Icon from "../components/Icon";
 
 const AnnouncementView = ({ route }) => {
   const navigation = useNavigation();
-
   const fontsLoaded = useCustomFonts();
   if (!fontsLoaded) return null;
 
   const { user, setUser } = useUser();
   const [isLoading, setLoading] = useState(true);
-  const [announcement, setAnnouncement] = useState([]);
+  const [announcement, setAnnouncement] = useState({});
   const [isVisible, setIsVisible] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [advertiser, setAdvertiser] = useState([]);
@@ -54,8 +54,8 @@ const AnnouncementView = ({ route }) => {
 
   // Pobieranie bieżącego użytkownika
   useEffect(() => {
-    if (!user) return;
-
+    if (!user || !user.email) return;
+  
     const usersRef = ref(db, "users");
     const unsubscribe = onValue(usersRef, (snapshot) => {
       const data = snapshot.val();
@@ -63,23 +63,27 @@ const AnnouncementView = ({ route }) => {
         const currentUserEntry = Object.entries(data).find(
           ([key, userData]) => userData.email === user.email
         );
-
+  
         if (currentUserEntry) {
           const [key, userData] = currentUserEntry;
-          setUser({ ...userData, id: key }); // Dodaj klucz jako "id"
+          setUser({ ...userData, id: key }); // Assign unique ID
         } else {
+          console.warn("No matching user found in the database.");
           setUser(null);
         }
       } else {
+        console.warn("No user data found in the database.");
         setUser(null);
       }
     });
-
+  
     return () => unsubscribe();
   }, [user]);
+  
 
   // Pobieranie ogłoszenia z bazy
   useEffect(() => {
+    setLoading(true);
     const announcementsRef = ref(db, `announcements/${id}`);
     const unsubscribe = onValue(
       announcementsRef,
@@ -103,10 +107,12 @@ const AnnouncementView = ({ route }) => {
 
   // console.log("Announcement: " + announcement);
 
-  const advertiserId = announcement.advertiserId;
+  const advertiserId = announcement ? announcement.advertiserId : null;
+
 
   // Pobieranie ogłoszeniodawcy z bazy
   useEffect(() => {
+    setLoading(true);
     const advertiserRef = ref(db, `users/${advertiserId}`);
     const unsubscribe = onValue(
       advertiserRef,
@@ -228,12 +234,79 @@ const AnnouncementView = ({ route }) => {
 
   // console.log(opinionsToDisplay);
 
+  const onChatPress = (announcement) => {
+    if (!user || !user.id) {
+      Alert.alert("Login Required", "You need to log in to start a chat.");
+      console.log("Current user:", user);
+
+      return;
+    }
+
+    if (user.id === announcement.advertiserId) {
+      Alert.alert(
+        "Cannot Start Chat",
+        "You cannot start a chat with yourself. Please select another announcement."
+      );
+      return;
+    }
+
+    const { id: announcementId, advertiserId } = announcement;
+    const userId = user.id;
+
+    const chatRef = ref(db, "chats");
+
+    get(chatRef)
+      .then((snapshot) => {
+        const chats = snapshot.val();
+        let chatId = null;
+
+        if (chats) {
+          for (const key in chats) {
+            const chat = chats[key];
+
+            if (
+              chat.announcementId === announcementId &&
+              ((chat.advertiserId === advertiserId && chat.userId === userId) ||
+                (chat.advertiserId === userId && chat.userId === advertiserId))
+            ) {
+              chatId = key;
+              break;
+            }
+          }
+        }
+
+        if (chatId) {
+          console.log(`Navigating to existing chat with ID: ${chatId}`);
+          navigation.navigate("Chat", { chatId });
+        } else {
+          console.log("No existing chat found, creating a new one...");
+
+          const newChat = {
+            announcementId,
+            advertiserId,
+            userId: user.id,
+            messages: [],
+            timestamp: Date.now(),
+          };
+
+          const newChatRef = push(chatRef);
+          set(newChatRef, newChat).then(() => {
+            console.log(`New chat created with ID: ${newChatRef.key}`);
+            navigation.navigate("Chat", { chatId: newChatRef.key });
+          });
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching chats:", error);
+      });
+  };
+
   return (
     <SafeAreaView style={mainStyles.whiteBack}>
       <View style={[mainStyles.container, mainStyles.scrollBase]}>
         <ScrollView
           showsVerticalScrollIndicator={false}
-          style={mainStyles.scrollBase}
+          style={[mainStyles.scrollBase, {marginTop: 20}]}
         >
           <View style={styles.annSwiperContainer}>
             <Swiper style={styles.annSwiper} showsButtons={false}>
@@ -429,9 +502,9 @@ const AnnouncementView = ({ route }) => {
             <TouchableOpacity
               style={styles.annBookRentButton}
               activeOpacity={0.8}
-              onPress={() => console.log("BOOK IT")}
+              onPress={() => onChatPress(announcement)}
             >
-              <Text style={styles.annBookRentButtonText}>BOOK IT</Text>
+              <Text style={styles.annBookRentButtonText}>SEND MESSAGE</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.annBookRentButton}

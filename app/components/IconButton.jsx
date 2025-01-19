@@ -4,7 +4,6 @@ import { globalStyles } from "../utils/style";
 import Icon from "./Icon";
 
 const IconButton = ({ filePath, ...props }) => {
-
   const buttonSize = (props.containerWidth - 10 * 4) / 5; // 10 to odstęp między przyciskami
 
   const backgroundColor = props.isActive

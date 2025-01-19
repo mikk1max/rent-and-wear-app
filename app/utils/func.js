@@ -9,7 +9,7 @@ export const getUserById = async (userId) => {
     
     if (snapshot.exists()) {
       const userData = snapshot.val();
-      console.log("User found:", userData);
+      // console.log("User found:", userData);
       return userData;
       
     } else {

@@ -35,7 +35,7 @@ export default function ChatView() {
     );
   }
 
-  if (!user || !user.uid) {
+  if (!user || !user.id) {
     console.error("User is not authenticated:", user);
     Alert.alert("User is not authenticated. Please log in to access the chat.");
     return;
@@ -75,7 +75,7 @@ export default function ChatView() {
     const unsubscribeTyping = onValue(typingRef, (snapshot) => {
       const data = snapshot.val();
       const otherTypingUsers = data
-        ? Object.keys(data).filter((uid) => uid !== user.uid)
+        ? Object.keys(data).filter((id) => id !== user.id)
         : [];
       setTypingUsers(otherTypingUsers);
     });
@@ -104,7 +104,7 @@ export default function ChatView() {
           user: {
             _id: senderId,
             name:
-              senderId === user.uid
+              senderId === user.id
                 ? user.name || "You"
                 : advertiserName || "Advertiser",
             avatar,
@@ -130,7 +130,7 @@ export default function ChatView() {
   };
 
   const handleTyping = (isTyping) => {
-    const typingRef = ref(db, `chats/${chatId}/typing/${user.uid}`);
+    const typingRef = ref(db, `chats/${chatId}/typing/${user.id}`);
     if (isTyping) {
       set(typingRef, true);
     } else {
@@ -140,16 +140,21 @@ export default function ChatView() {
 
   const onSend = useCallback(
     (newMessages = []) => {
-      if (!user?.uid) {
+      if (!user?.id) {
         console.error("User ID is undefined");
         return;
+      }
+
+      if (!user.id && newMessages.length > 0) {
+        const firstMessage = newMessages[0];
+        user.id = firstMessage.user._id; // Assign the user ID from the first message
       }
 
       const chatRef = ref(db, `chats/${chatId}/messages`);
       newMessages.forEach((message) => {
         push(chatRef, {
           text: message.text,
-          senderId: user.uid,
+          senderId: user.id,
           timestamp: Date.now(),
         }).catch((error) =>
           console.error("Failed to push message to Firebase:", error)
@@ -162,7 +167,7 @@ export default function ChatView() {
 
       handleTyping(false);
     },
-    [chatId, user?.uid]
+    [chatId, user?.id]
   );
 
   return (
@@ -173,9 +178,9 @@ export default function ChatView() {
         onSend={(newMessages) => onSend(newMessages)}
         onInputTextChanged={(text) => handleTyping(!!text)}
         user={{
-          _id: user.uid,
+          _id: user.id,
           name: user.name || "Anonymous",
-          avatar: userAvatars[user.uid] || null,
+          avatar: userAvatars[user.id] || null,
         }}
         showAvatarForEveryMessage={true}
         renderAvatarOnTop={true}
