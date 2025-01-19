@@ -10,7 +10,6 @@ import ClassicCostumeIcon from "../../assets/icons/classic-costume.svg";
 import CoatIcon from "../../assets/icons/coat.svg";
 import DressIcon from "../../assets/icons/dress.svg";
 import EditPencilIcon from "../../assets/icons/edit-pencil.svg";
-// import EditPencilInSquareIcon from '../../assets/icons/edit-pencil-in-square.svg';
 import FormalShoesIcon from "../../assets/icons/formal-shoes.svg";
 import GetsIcon from "../../assets/icons/gets.svg";
 import GlassesIcon from "../../assets/icons/glasses.svg";
@@ -57,6 +56,14 @@ import EnvelopeIcon from "../../assets/icons/envelope.svg";
 import LanguageIcon from "../../assets/icons/language.svg";
 import SendIcon from "../../assets/icons/send.svg"
 import ChatIcon from "../../assets/icons/chat.svg"
+import MarketIcon from "../../assets/icons/market.svg"
+import JewelryIcon from "../../assets/icons/jewelry.svg"
+import BlouseIcon from "../../assets/icons/blouse.svg"
+import ScarfIcon from "../../assets/icons/scarf.svg"
+import DownJacketIcon from "../../assets/icons/down-jacket.svg"
+import SunglassesIcon from "../../assets/icons/sunglasses.svg"
+import HeadphonesIcon from "../../assets/icons/headphones.svg"
+import RaincoatIcon from "../../assets/icons/raincoat.svg"
 
 export const icons = {
   addresses: AddressesIcon,
@@ -65,6 +72,7 @@ export const icons = {
   at: AtIcon,
   beanie: BeanieIcon,
   belt: BeltIcon,
+  blouse: BlouseIcon,
   building: BuildingIcon,
   cap: CapIcon,
   city: CityIcon,
@@ -75,6 +83,7 @@ export const icons = {
   coat: CoatIcon,
   door: DoorIcon,
   dress: DressIcon,
+  "down-jacket": DownJacketIcon,
   "edit-pencil": EditPencilIcon,
   envelope: EnvelopeIcon,
   // 'edit-pencil-in-square': EditPencilInSquareIcon,
@@ -84,11 +93,14 @@ export const icons = {
   gloves: GlovesIcon,
   hat: HatIcon,
   "high-heel": HighHeelIcon,
+  headphones: HeadphonesIcon,
   jersey: JerseyIcon,
+  jewelry: JewelryIcon,
   language: LanguageIcon,
   location: LocationIcon,
   login: LoginIcon,
   logout: LogoutIcon,
+  market: MarketIcon,
   "not-verified": NotVerifiedIcon,
   "open-box": OpenBoxIcon,
   pants: PantsIcon,
@@ -96,7 +108,9 @@ export const icons = {
   phone: PhoneIcon,
   plus: PlusIcon,
   "plus-with-border": PlusIconWithBorder,
-  search: SearchIcon,
+  raincoat: RaincoatIcon,
+  "scarf": ScarfIcon,
+  "search": SearchIcon,
   send: SendIcon,
   sends: SendsIcon,
   settings: SettingsIcon,
@@ -111,6 +125,7 @@ export const icons = {
   "sport-pants": SportPantsIcon,
   "star-fill": StarFillIcon,
   "star-stroke": StarStrokeIcon,
+  "sunglasses": SunglassesIcon,
   "t-shirt": TShirtIcon,
   trash: TrashIcon,
   "user-fill": UserFillIcon,

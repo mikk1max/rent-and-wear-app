@@ -100,11 +100,15 @@ export default function AuthLoginView() {
               />
             </View>
 
-            <TouchableOpacity>
-              <Text style={styles.forgotPass}>{`${t(
-                "login.forgotPass"
-              )}?`}</Text>
-            </TouchableOpacity>
+            <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
+              <TouchableOpacity
+                style={{ paddingHorizontal: 10, paddingVertical: 5 }}
+              >
+                <Text style={styles.forgotPass}>{`${t(
+                  "login.forgotPass"
+                )}?`}</Text>
+              </TouchableOpacity>
+            </View>
 
             <TouchableOpacity
               style={[styles.mainBtns, styles.loginBtn]}
@@ -120,11 +124,25 @@ export default function AuthLoginView() {
                 style={[styles.mainBtns, styles.anotherBtn]}
                 onPress={() => navigation.navigate("Registration")}
               >
-                <Text style={[styles.mainBtnText, {color: globalStyles.primaryColor}]}>{t("login.signUpBtn")}</Text>
+                <Text
+                  style={[
+                    styles.mainBtnText,
+                    { color: globalStyles.primaryColor },
+                  ]}
+                >
+                  {t("login.signUpBtn")}
+                </Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={[styles.mainBtns, styles.anotherBtn]}>
-                <Text style={[styles.mainBtnText, {color: globalStyles.primaryColor}]}>{t("login.googleBtn")}</Text>
+                <Text
+                  style={[
+                    styles.mainBtnText,
+                    { color: globalStyles.primaryColor },
+                  ]}
+                >
+                  {t("login.googleBtn")}
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -175,6 +193,7 @@ const styles = StyleSheet.create({
     color: globalStyles.primaryColor,
   },
   inputStyle: {
+    color: globalStyles.primaryColor,
     backgroundColor: globalStyles.secondaryColor,
     padding: 15,
     borderRadius: globalStyles.BORDER_RADIUS,

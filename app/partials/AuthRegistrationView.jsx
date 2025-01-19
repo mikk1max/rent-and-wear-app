@@ -197,6 +197,7 @@ const styles = StyleSheet.create({
     color: globalStyles.primaryColor,
   },
   inputStyle: {
+    color: globalStyles.primaryColor,
     backgroundColor: globalStyles.secondaryColor,
     padding: 15,
     borderRadius: globalStyles.BORDER_RADIUS,
