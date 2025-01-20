@@ -1,17 +1,6 @@
-import NavigationBar from "./NavigationBar";
-import React from "react";
+import React, { Suspense } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import UserProfileView from "../partials/UserProfileView";
-import SendsGetsView from "../partials/SendsGetsView";
-import SettingsView from "../partials/SettingsView";
 import { globalStyles } from "../utils/style";
-import WelcomeView from "../partials/WelcomeView";
-import RentNowView from "../partials/RentNowView";
-import AddressesView from "../partials/AddressesView";
-import AuthLoginView from "../partials/AuthLoginView";
-import AuthRegistrationView from "../partials/AuthRegistrationView";
-import AnnouncementView from "../partials/AnnouncementView";
-import CreateAnnouncementView from "../partials/CreateAnnouncementView";
 import { useUser } from "./UserProvider";
 import AllCategories from "./AllCategories";
 import ChatView from "../partials/ChatView";
@@ -21,6 +10,7 @@ import GetsView from "../partials/GetsView";
 import SendsView from "../partials/SendsView";
 import SendDetailsView from "../partials/SendDetailsView";
 import GetDetailsView from "../partials/GetDetailsView";
+import ResetPassword from "./ResetPassword";
 
 const Stack = createStackNavigator();
 
@@ -40,53 +30,32 @@ const stackOptions = {
   },
 };
 
+const Loader = React.lazy(() => import("./Loader"))
+const NavigationBar = React.lazy(() => import("./NavigationBar"));
+const UserProfileView = React.lazy(() => import("../partials/UserProfileView"));
+const SendsGetsView = React.lazy(() => import("../partials/SendsGetsView"));
+const SettingsView = React.lazy(() => import("../partials/SettingsView"));
+const WelcomeView = React.lazy(() => import("../partials/WelcomeView"));
+const RentNowView = React.lazy(() => import("../partials/RentNowView"));
+const AddressesView = React.lazy(() => import("../partials/AddressesView"));
+const AuthLoginView = React.lazy(() => import("../partials/AuthLoginView"));
+const AuthRegistrationView = React.lazy(() => import("../partials/AuthRegistrationView"));
+const AnnouncementView = React.lazy(() => import("../partials/AnnouncementView"));
+const CreateAnnouncementView = React.lazy(() => import("../partials/CreateAnnouncementView"));
+const AllCategories = React.lazy(() => import("./AllCategories"));
+const ChatView = React.lazy(() => import("../partials/ChatView"));
+const AllChatsView = React.lazy(() => import("../partials/AllChatsView"));
+const RentItNowView = React.lazy(() => import("../partials/RentItNowView"));
+
 export default function Navigation() {
   const { user } = useUser();
 
   return (
-    // *Welcome screen
-    <Stack.Navigator
-      initialRouteName={user ? "MainApp" : "Welcome"}
-      screenOptions={{ headerShown: false }}
-    >
-      <Stack.Screen name="Welcome" component={WelcomeView} />
-      <Stack.Screen name="LogIn" component={AuthLoginView} />
-      <Stack.Screen name="Registration" component={AuthRegistrationView} />
-      <Stack.Screen
-        name="MainApp"
-        component={NavigationBar}
-        options={{ gestureEnabled: false }}
-      />
-      {/* <Stack.Screen name="LogInView" component={LogInView} /> */}
-
-      {/* TODO:UserProfile screen */}
-      <Stack.Screen
-        name="UserProfileView"
-        component={UserProfileView}
+    <Suspense fallback={<Loader />}>
+      <Stack.Navigator
+        initialRouteName={user ? "MainApp" : "Welcome"}
         screenOptions={{ headerShown: false }}
       />
-      {/* <Stack.Screen
-        name="SendsView"
-        component={SendsGetsView}
-        options={
-          { title: "Your sends", ...stackOptions }
-          // headerStatusBarHeight: 44,
-          // headerBackground: () => {
-          //   backgroundColor: globalStyles.accentColor;
-          // },
-        }
-      /> */}
-      {/* <Stack.Screen
-        name="GetsView"
-        component={SendsGetsView}
-        options={
-          { title: "Your gets", ...stackOptions }
-          // headerStatusBarHeight: 44,
-          // headerBackground: () => {
-          //   backgroundColor: globalStyles.accentColor;
-          // },
-        }
-      /> */}
       <Stack.Screen
         name="SettingsView"
         component={SettingsView}
@@ -169,6 +138,27 @@ export default function Navigation() {
           title: `Get No. ${route.params.id}`, // Переопределение title с параметра маршрута
         })}
       />
-    </Stack.Navigator>
+
+
+        <Stack.Screen name="Welcome" component={WelcomeView} />
+        <Stack.Screen name="LogIn" component={AuthLoginView} />
+        <Stack.Screen name="Registration" component={AuthRegistrationView} />
+        <Stack.Screen
+          name="MainApp"
+          component={NavigationBar}
+          options={{ gestureEnabled: false }}
+        />
+        <Stack.Screen
+          name="UserProfileView"
+          component={UserProfileView}
+          screenOptions={{ headerShown: false }}
+        />
+        
+
+
+        <Stack.Screen name="ResetPassword" component={ResetPassword} options={{ ...stackOptions }}/>
+      </Stack.Navigator>
+    </Suspense>
+
   );
 }

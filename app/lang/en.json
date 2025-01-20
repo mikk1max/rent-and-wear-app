@@ -14,6 +14,9 @@
       "cancelBtn": "Cancel",
       "deleteBtn": "Delete"
     },
+    "error": {
+      "closeButton": "Close"
+    },
     "welcome": {
       "guestBtn": "Continue as a Guest",
       "loginBtn": "Log in / Sign up"
@@ -29,7 +32,10 @@
       "modalError": {
         "title": "Login Failed",
         "closeBtn": "Try again"
-      }
+      },
+      "resetPassTitle": "Reset Password",
+      "resetPassBtn": "Send Reset Link",
+      "cancelBtn": "Cancel"
     },
     "signUp": {
       "title": "Create Account",
