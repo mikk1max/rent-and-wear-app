@@ -53,7 +53,7 @@ const ProductCard = ({
           <View style={styles.spacer}></View>
           {isAuthor && (
             <View style={styles.authorIcon}>
-              <Icon name="user-fill" {...iconOptions} />
+              <Icon name="user-fill" {...iconOptions} fillColor={globalStyles.textOnAccentColor} />
             </View>
           )}
         </View>
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
   authorIcon: {
     padding: 7,
     // margin: 5,
-    backgroundColor: "green",
+    backgroundColor: globalStyles.accentColor,
     borderTopRightRadius: globalStyles.BORDER_RADIUS,
     borderBottomLeftRadius: globalStyles.BORDER_RADIUS,
   },

@@ -175,7 +175,7 @@ export default function RentOutView() {
               {filteredAnnouncements &&
                 filteredAnnouncements?.map((announcementPreview) => (
                   <ProductCard
-                    key={"RentNowView_ProductCard_" + announcementPreview.id}
+                    key={"RentOutView_ProductCard_" + announcementPreview.id}
                     id={announcementPreview.id}
                     mainImage={announcementPreview.mainImage}
                     title={announcementPreview.title}
@@ -191,7 +191,6 @@ export default function RentOutView() {
                     cardWidth={filteredAnnouncements.length === 1 ? width - 50 : (width - 50 - 15) / 2}
                   />
                 ))}
-              
             </View>
             {filteredAnnouncements.length <= 0 && <NoAnnouncementsYet />}
           </ScrollView>
