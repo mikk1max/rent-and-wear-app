@@ -15,6 +15,7 @@ import { globalStyles, styles as mainStyles } from "../utils/style";
 import { styles } from "../styles/AllChatsViewStyles";
 import { getUserById } from "../utils/func";
 import Icon from "../components/Icon";
+import NoConversation from "../components/NoConversation";
 
 const AllChatsView = () => {
   const { user } = useUser();
@@ -223,7 +224,7 @@ const AllChatsView = () => {
           {chats.length > 0 ? (
             chats.map((chat) => renderChat(chat))
           ) : (
-            <Text style={styles.noChatsText}>No chats available</Text>
+            <NoConversation />
           )}
         </ScrollView>
       </View>

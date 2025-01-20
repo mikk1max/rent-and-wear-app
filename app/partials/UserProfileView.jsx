@@ -22,6 +22,7 @@ import { onConfirmEmail, onLogin, onLogout } from "../utils/auth";
 import Icon from "../components/Icon";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "../components/LanguageSwitcher";
+import ErrorModal from "../components/ErrorModal";
 
 const FIVE_MINUTES_IN_MS = 5 * 60 * 1000;
 
@@ -33,9 +34,10 @@ const UserProfileView = () => {
   const fontsLoaded = useCustomFonts();
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const [lastVerificationAttempt, setLastVerificationAttempt] = useState(null);
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [modalContent, setModalContent] = useState({ title: "", message: "" });
 
   const [refreshing, setRefreshing] = useState(false);
-
   const [reloadKey, setReloadKey] = useState(0);
 
   const toggleDropdown = () => setDropdownVisible(!isDropdownVisible);
@@ -82,7 +84,7 @@ const UserProfileView = () => {
   useFocusEffect(
     useCallback(() => {
       const backAction = () => {
-        Alert.alert("Hold on!", "Are you sure you want to go back?", [
+        Alert.alert("Leave RENT&WEAR?", "Are you sure you want to exit?", [
           {
             text: "Cancel",
             onPress: () => null,
@@ -162,15 +164,20 @@ const UserProfileView = () => {
       lastVerificationAttempt &&
       now - lastVerificationAttempt < FIVE_MINUTES_IN_MS
     ) {
-      Alert.alert(
-        "Wait a moment!",
-        "You can only attempt email verification every 5 minutes."
-      );
+      setModalContent({
+        title: t("error.waitTitle"),
+        message: t("error.waitMessage"),
+      });
+      setModalVisible(true);
       return;
     }
 
     onConfirmEmail();
     setLastVerificationAttempt(now);
+  };
+
+  const handleModalClose = () => {
+    setModalVisible(false);
   };
 
   return (
@@ -353,6 +360,12 @@ const UserProfileView = () => {
             </TouchableOpacity>
           </View>
         </ScrollView>
+        <ErrorModal
+          isVisible={isModalVisible}
+          onClose={handleModalClose}
+          title={modalContent.title}
+          message={modalContent.message}
+        />
       </View>
     </SafeAreaView>
   );

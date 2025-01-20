@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Platform, StatusBar, Text } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import NavigationStack from "./app/components/NavigationStack";
-import { styles } from "./app/utils/style";
+import { globalStyles, styles } from "./app/utils/style";
 import { UserProvider, useUser } from "./app/components/UserProvider";
 import { I18nextProvider } from "react-i18next";
 import i18n from "./app/utils/i18n";

@@ -17,10 +17,7 @@ import InputWithLabel from "../components/InputWithLabel";
 import { globalStyles, styles as mainStyles } from "../utils/style";
 import { onLogin, signInWithGoogle } from "../utils/auth";
 import { useTranslation } from "react-i18next";
-import * as Google from "expo-auth-session/providers/google";
-import * as WebBrowser from "expo-web-browser";
-
-WebBrowser.maybeCompleteAuthSession();
+import ErrorModal from "../components/ErrorModal";
 
 export default function AuthLoginView() {
   const { t } = useTranslation();
@@ -31,13 +28,13 @@ export default function AuthLoginView() {
     formState: { errors },
   } = useForm();
   const [errorMessage, setErrorMessage] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const initializeUser = (user) => {
-    console.log("Zainicjalizowano użytkownika:", user);
+    console.log("User initialized:", user);
   };
 
   const handleLogin = async (data) => {
-    console.log("Dane logowania:", data);
     try {
       await onLogin(data, initializeUser);
       navigation.replace("MainApp");
@@ -48,8 +45,6 @@ export default function AuthLoginView() {
       setIsModalVisible(true);
     }
   };
-
-  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const closeModal = () => {
     setIsModalVisible(false);
@@ -107,6 +102,7 @@ export default function AuthLoginView() {
             <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
               <TouchableOpacity
                 style={{ paddingHorizontal: 10, paddingVertical: 5 }}
+                onPress={() => setShowResetModal(true)}
               >
                 <Text style={styles.forgotPass}>{`${t(
                   "login.forgotPass"
@@ -140,29 +136,14 @@ export default function AuthLoginView() {
             </View>
           </View>
 
-          <Modal
-            visible={isModalVisible}
-            transparent
-            animationType="slide"
-            onRequestClose={closeModal}
-          >
-            <SafeAreaView style={styles.modalContainer}>
-              <View style={styles.modalContent}>
-                <Text style={styles.modalTitle}>
-                  {t("login.modalError.title")}
-                </Text>
-                <Text style={styles.modalMessage}>{errorMessage}</Text>
-                <TouchableOpacity
-                  onPress={closeModal}
-                  style={styles.modalButton}
-                >
-                  <Text style={styles.modalButtonText}>
-                    {t("login.modalError.closeBtn")}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </SafeAreaView>
-          </Modal>
+          {/* Error Modal */}
+          <ErrorModal
+            isVisible={isModalVisible}
+            onClose={closeModal}
+            title={t("login.modalError.title")}
+            message={errorMessage}
+          />
+          
         </View>
       </KeyboardAwareScrollView>
     </SafeAreaView>
@@ -223,39 +204,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     textAlign: "center",
-  },
-
-  // Modal
-  modalContainer: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalContent: {
-    backgroundColor: globalStyles.backgroundColor,
-    padding: 20,
-    borderRadius: globalStyles.BORDER_RADIUS,
-    width: "80%",
-    alignItems: "center",
-  },
-  modalTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  modalMessage: {
-    fontSize: 16,
-    marginBottom: 20,
-  },
-  modalButton: {
-    backgroundColor: globalStyles.primaryColor,
-    padding: 10,
-    borderRadius: globalStyles.BORDER_RADIUS,
-  },
-  modalButtonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "bold",
   },
 });
