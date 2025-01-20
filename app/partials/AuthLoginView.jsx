@@ -15,8 +15,12 @@ import { useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
 import InputWithLabel from "../components/InputWithLabel";
 import { globalStyles, styles as mainStyles } from "../utils/style";
-import { onLogin } from "../utils/auth";
+import { onLogin, signInWithGoogle } from "../utils/auth";
 import { useTranslation } from "react-i18next";
+import * as Google from "expo-auth-session/providers/google";
+import * as WebBrowser from "expo-web-browser";
+
+WebBrowser.maybeCompleteAuthSession();
 
 export default function AuthLoginView() {
   const { t } = useTranslation();
@@ -131,17 +135,6 @@ export default function AuthLoginView() {
                   ]}
                 >
                   {t("login.signUpBtn")}
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={[styles.mainBtns, styles.anotherBtn]}>
-                <Text
-                  style={[
-                    styles.mainBtnText,
-                    { color: globalStyles.primaryColor },
-                  ]}
-                >
-                  {t("login.googleBtn")}
                 </Text>
               </TouchableOpacity>
             </View>

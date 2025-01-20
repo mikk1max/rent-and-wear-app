@@ -22,6 +22,7 @@ import { Divider, Rating } from "react-native-elements";
 import OpinionCard from "../components/OpinionCard";
 import Swiper from "react-native-swiper";
 import ImageViewing from "react-native-image-viewing";
+import NotFound from "../components/NotFound"
 
 import { ref, onValue, update, push, get, set, remove } from "firebase/database";
 import { db } from "../../firebase.config";
@@ -34,6 +35,7 @@ import {
 } from "../utils/fetchSVG";
 
 import Icon from "../components/Icon";
+import Loader from "../components/Loader";
 
 const AnnouncementView = ({ route }) => {
   const navigation = useNavigation();
@@ -179,10 +181,7 @@ const AnnouncementView = ({ route }) => {
     // Komponent ładowania
     return (
       <SafeAreaView style={mainStyles.whiteBack}>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#0000ff" />
-          <Text>Ładowanie ogłoszenia...</Text>
-        </View>
+        <Loader />
       </SafeAreaView>
     );
   }
@@ -191,9 +190,7 @@ const AnnouncementView = ({ route }) => {
     // Obsługa braku danych
     return (
       <SafeAreaView style={mainStyles.whiteBack}>
-        <View style={styles.noDataContainer}>
-          <Text style={styles.noDataText}>Brak danych do wyświetlenia</Text>
-        </View>
+        <NotFound />
       </SafeAreaView>
     );
   }
@@ -202,9 +199,7 @@ const AnnouncementView = ({ route }) => {
     // Obsługa braku danych
     return (
       <SafeAreaView style={mainStyles.whiteBack}>
-        <View style={styles.noDataContainer}>
-          <Text style={styles.noDataText}>Brak danych do wyświetlenia</Text>
-        </View>
+        <NotFound />
       </SafeAreaView>
     );
   }

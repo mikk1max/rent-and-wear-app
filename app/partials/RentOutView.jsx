@@ -19,7 +19,7 @@ import { useCustomFonts } from "../utils/fonts";
 import ProductCard from "../components/ProductCard";
 
 import { globalStyles, styles as mainStyles } from "../utils/style";
-import { styles } from "../styles/RentNowViewStyles";
+import { styles } from "../styles/RentOutViewStyles";
 
 import { ref, onValue, update, get, set, remove } from "firebase/database";
 import { db } from "../../firebase.config";
@@ -27,6 +27,7 @@ import { useUser } from "../components/UserProvider";
 import { useNavigation } from "@react-navigation/native";
 
 import Icon from "../components/Icon";
+import NoAnnouncementsYet from "../components/NoAnnouncementsYet";
 
 // Get the screen dimensions
 const { width } = Dimensions.get("window");
@@ -168,50 +169,40 @@ export default function RentOutView() {
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
+            keyboardShouldPersistTaps="handled"
           >
             <View style={styles.announcementsContainer}>
-              {filteredAnnouncements?.map((announcementPreview) => (
-                <ProductCard
-                  key={"RentOutView_ProductCard_" + announcementPreview.id}
-                  id={announcementPreview.id}
-                  mainImage={announcementPreview.mainImage}
-                  title={announcementPreview.title}
-                  categoryName={announcementPreview?.category?.subcategoryName}
-                  categoryIcon={announcementPreview?.category?.subcategoryIcon}
-                  pricePerDay={announcementPreview.pricePerDay}
-                  currentUserId={user?.id}
-                  advertiserId={announcementPreview.advertiserId}
-                  containerWidth={width - 60}
-                />
-              ))}
+              {filteredAnnouncements &&
+                filteredAnnouncements?.map((announcementPreview) => (
+                  <ProductCard
+                    key={"RentNowView_ProductCard_" + announcementPreview.id}
+                    id={announcementPreview.id}
+                    mainImage={announcementPreview.mainImage}
+                    title={announcementPreview.title}
+                    categoryName={
+                      announcementPreview?.category?.subcategoryName
+                    }
+                    categoryIcon={
+                      announcementPreview?.category?.subcategoryIcon
+                    }
+                    pricePerDay={announcementPreview.pricePerDay}
+                    currentUserId={user?.id}
+                    advertiserId={announcementPreview.advertiserId}
+                    cardWidth={filteredAnnouncements.length === 1 ? width - 50 : (width - 50 - 15) / 2}
+                  />
+                ))}
+              
             </View>
+            {filteredAnnouncements.length <= 0 && <NoAnnouncementsYet />}
           </ScrollView>
         </View>
         <TouchableOpacity
-          style={stylesTmp.createAnnouncementButton}
+          style={[styles.createAnnouncementButton]}
           onPress={() => navigation.navigate("CreateAnnouncementView")}
         >
-          <Icon name="plus" height={50} width={50}/>
+          <Icon name="plus" height={50} width={50} />
         </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
 }
-
-const stylesTmp = StyleSheet.create({
-  createAnnouncementButton: {
-    position: "absolute",
-    bottom: 25,
-    right: 25,
-    zIndex: 10,
-    padding: 5,
-    alignItems: "center",
-    borderRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.primaryColor,
-  },
-  createAnnouncementText: {
-    fontFamily: "WorkSans_900Black",
-    fontSize: 20,
-    color: globalStyles.textOnPrimaryColor,
-  },
-});
