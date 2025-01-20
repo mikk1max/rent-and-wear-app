@@ -1,22 +1,29 @@
 import { ref, get } from "firebase/database";
 import { db } from "../../firebase.config";
 
-export const getUserById = async (userId) => {
+export const getUserById = async (userIds) => {
   try {
-    // Reference the users node in your Firebase Realtime Database
-    const userRef = ref(db, `users/${userId}`);
-    const snapshot = await get(userRef);
-    
-    if (snapshot.exists()) {
-      const userData = snapshot.val();
-      // console.log("User found:", userData);
-      return userData;
-      
-    } else {
-      console.log("No user found with the given ID.");
-      return null;
+    // Ensure userIds is an array
+    if (!Array.isArray(userIds)) {
+      userIds = [userIds];
     }
+
+    const userPromises = userIds.map(async (id) => {
+      const userRef = ref(db, `users/${id}`);
+      const snapshot = await get(userRef);
+
+      if (snapshot.exists()) {
+        return { [id]: snapshot.val() };
+      } else {
+        console.log(`No user found with ID: ${id}`);
+        return { [id]: null };
+      }
+    });
+
+    // Combine results into a single object
+    const usersArray = await Promise.all(userPromises);
+    return Object.assign({}, ...usersArray);
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error("Error fetching users:", error);
   }
 };
