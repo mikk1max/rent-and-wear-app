@@ -72,7 +72,7 @@ export default function SettingsView() {
     async function loadUrl() {
       if (user && user.id != null) {
         try {
-          const url = await fetchImgURL(`user-avatars/${user.id}-min.jpg`);
+          const url = await fetchImgURL(`user-avatars/${user.id}/${user.id}.jpg`);
           setUserProfileImg(url);
         } catch (error) {
           setUserProfileImg(
