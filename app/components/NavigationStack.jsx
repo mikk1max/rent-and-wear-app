@@ -17,6 +17,10 @@ import AllCategories from "./AllCategories";
 import ChatView from "../partials/ChatView";
 import AllChatsView from "../partials/AllChatsView";
 import RentItNowView from "../partials/RentItNowView";
+import GetsView from "../partials/GetsView";
+import SendsView from "../partials/SendsView";
+import SendDetailsView from "../partials/SendDetailsView";
+import GetDetailsView from "../partials/GetDetailsView";
 
 const Stack = createStackNavigator();
 
@@ -61,7 +65,7 @@ export default function Navigation() {
         component={UserProfileView}
         screenOptions={{ headerShown: false }}
       />
-      <Stack.Screen
+      {/* <Stack.Screen
         name="SendsView"
         component={SendsGetsView}
         options={
@@ -71,8 +75,8 @@ export default function Navigation() {
           //   backgroundColor: globalStyles.accentColor;
           // },
         }
-      />
-      <Stack.Screen
+      /> */}
+      {/* <Stack.Screen
         name="GetsView"
         component={SendsGetsView}
         options={
@@ -82,7 +86,7 @@ export default function Navigation() {
           //   backgroundColor: globalStyles.accentColor;
           // },
         }
-      />
+      /> */}
       <Stack.Screen
         name="SettingsView"
         component={SettingsView}
@@ -137,6 +141,32 @@ export default function Navigation() {
         options={({ route }) => ({
           ...stackOptions, // Ваши стандартные опции
           title: `Rent ${route.params.title}`, // Переопределение title с параметра маршрута
+        })}
+      />
+      <Stack.Screen
+        name="GetsView"
+        component={GetsView}
+        options={{ title: "My gets", ...stackOptions }}
+      />
+      <Stack.Screen
+        name="SendsView"
+        component={SendsView}
+        options={{ title: "My sends", ...stackOptions }}
+      />
+      <Stack.Screen
+        name="SendDetailsView"
+        component={SendDetailsView}
+        options={({ route }) => ({
+          ...stackOptions, // Ваши стандартные опции
+          title: `Send No. ${route.params.id}`, // Переопределение title с параметра маршрута
+        })}
+      />
+      <Stack.Screen
+        name="GetDetailsView"
+        component={GetDetailsView}
+        options={({ route }) => ({
+          ...stackOptions, // Ваши стандартные опции
+          title: `Get No. ${route.params.id}`, // Переопределение title с параметра маршрута
         })}
       />
     </Stack.Navigator>

@@ -197,10 +197,10 @@ const CreateAnnouncementView = () => {
         pricePerDay: +data.price,
         size: data.price,
         condition: data.condition,
-        status: {
-          code: 0,
-          messege: "Available for rent",
-        },
+        // status: {
+        //   code: 0,
+        //   messege: "Available for rent",
+        // },
         rentalData: {
           borrowerId: "",
           startDate: -1,
@@ -564,12 +564,6 @@ const CreateAnnouncementView = () => {
 export default CreateAnnouncementView;
 
 const styles = StyleSheet.create({
-  mainSection: {
-    flex: 1,
-    backgroundColor: globalStyles.secondaryColor,
-    borderRadius: globalStyles.BORDER_RADIUS,
-    padding: 20,
-  },
 
   divider: {
     marginVertical: 10,
