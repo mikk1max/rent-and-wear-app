@@ -16,9 +16,9 @@ export const styles = StyleSheet.create({
   },
 
   userProfileImg: {
-    width: 100,
-    height: 100,
-    borderRadius: 100,
+    width:150,
+    height: 150,
+    borderRadius: globalStyles.BORDER_RADIUS,
 
     // marginRight: 15,
     // borderTopLeftRadius: 15,
