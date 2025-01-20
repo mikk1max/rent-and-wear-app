@@ -148,7 +148,7 @@ const AnnouncementView = ({ route }) => {
   useEffect(() => {
     const fetchProfileImg = async () => {
       try {
-        const url = await fetchImgURL(`user-avatars/${advertiserId}.jpg`);
+        const url = await fetchImgURL(`user-avatars/${advertiserId}/${advertiserId}.jpg`);
         setAdvertiserAvatar(url);
       } catch {
         const randomUrl = await getRandomAvatarUrl();
