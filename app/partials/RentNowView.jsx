@@ -32,6 +32,7 @@ import {
 import { db } from "../../firebase.config";
 import { useUser } from "../components/UserProvider";
 import { useTranslation } from "react-i18next";
+import NoItemsFound from "../components/NoItemsFound";
 
 // Get the screen dimensions
 const { width } = Dimensions.get("window");
@@ -290,9 +291,12 @@ const RentNowView = () => {
                     currentUserId={user?.id}
                     advertiserId={announcementPreview.advertiserId}
                     containerWidth={width - 60}
+                    cardWidth={(width - 50 - 15) / 2}
                   />
                 ))}
             </View>
+
+            {filteredAnnouncements.length <= 0 && <NoItemsFound />}
           </ScrollView>
         </View>
       </View>
