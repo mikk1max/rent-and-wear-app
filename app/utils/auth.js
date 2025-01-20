@@ -1,6 +1,7 @@
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
 } from "firebase/auth";
 import { get, ref, set, update } from "firebase/database";
 import {
@@ -9,7 +10,7 @@ import {
   sendEmailVerification,
   updateProfile,
 } from "firebase/auth";
-import { db } from "../../firebase.config";
+import { auth, db } from "../../firebase.config";
 
 export const onRegister = async (data, initializeUser) => {
   try {
@@ -118,5 +119,29 @@ export const checkEmailVerification = async () => {
   } catch (error) {
     console.error("Error while checking email verification:", error.message);
     throw error;
+  }
+};
+export const resetPassword = async (email) => {
+  // If `email` is an object, extract the actual email value
+  const emailAddress = typeof email === "object" ? email.resetEmail : email;
+
+  console.log("Email passed to Firebase:", emailAddress); // Debugging log
+
+  try {
+    if (!emailAddress || typeof emailAddress !== "string") {
+      throw new Error("Invalid email address.");
+    }
+
+    await sendPasswordResetEmail(auth, emailAddress);
+
+    console.log("Password reset email sent to:", emailAddress);
+    return {
+      message: "A password reset email has been sent to your email address.",
+    };
+  } catch (error) {
+    console.error("Firebase error details:", error.code, error.message);
+    throw new Error(
+      error.message || "Failed to send password reset email. Please try again."
+    );
   }
 };

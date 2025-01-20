@@ -18,6 +18,7 @@ import { onRegister } from "../utils/auth";
 import { useUser } from "../components/UserProvider";
 import { globalStyles } from "../utils/style";
 import { useTranslation } from "react-i18next";
+import ErrorModal from "../components/ErrorModal";
 
 const { width } = Dimensions.get("window");
 
@@ -151,29 +152,13 @@ export default function AuthRegistrationView() {
               <Text style={{ color: "red" }}>{errorMessage}</Text>
             )}
           </View>
-          <Modal
-            visible={isModalVisible}
-            transparent
-            animationType="slide"
-            onRequestClose={closeModal}
-          >
-            <SafeAreaView style={styles.modalContainer}>
-              <View style={styles.modalContent}>
-                <Text style={styles.modalTitle}>
-                  {t("signUp.modalError.title")}
-                </Text>
-                <Text style={styles.modalMessage}>{errorMessage}</Text>
-                <TouchableOpacity
-                  onPress={closeModal}
-                  style={styles.modalButton}
-                >
-                  <Text style={styles.modalButtonText}>
-                    {t("signUp.modalError.closeBtn")}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </SafeAreaView>
-          </Modal>
+
+          <ErrorModal
+            isVisible={isModalVisible}
+            onClose={closeModal}
+            title={t("signUp.modalError.title")}
+            message={errorMessage}
+          />
         </View>
       </KeyboardAwareScrollView>
     </SafeAreaView>
