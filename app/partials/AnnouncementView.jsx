@@ -8,7 +8,7 @@ import {
   Image,
   StyleSheet,
   ActivityIndicator,
-  Alert
+  Alert,
 } from "react-native";
 import { useCustomFonts } from "../utils/fonts";
 import { useNavigation } from "@react-navigation/native";
@@ -23,7 +23,15 @@ import OpinionCard from "../components/OpinionCard";
 import Swiper from "react-native-swiper";
 import ImageViewing from "react-native-image-viewing";
 
-import { ref, onValue, update, push, get, set, remove } from "firebase/database";
+import {
+  ref,
+  onValue,
+  update,
+  push,
+  get,
+  set,
+  remove,
+} from "firebase/database";
 import { db } from "../../firebase.config";
 import { useUser } from "../components/UserProvider";
 
@@ -55,7 +63,7 @@ const AnnouncementView = ({ route }) => {
   // Pobieranie bieżącego użytkownika
   useEffect(() => {
     if (!user || !user.email) return;
-  
+
     const usersRef = ref(db, "users");
     const unsubscribe = onValue(usersRef, (snapshot) => {
       const data = snapshot.val();
@@ -63,7 +71,7 @@ const AnnouncementView = ({ route }) => {
         const currentUserEntry = Object.entries(data).find(
           ([key, userData]) => userData.email === user.email
         );
-  
+
         if (currentUserEntry) {
           const [key, userData] = currentUserEntry;
           setUser({ ...userData, id: key }); // Assign unique ID
@@ -76,10 +84,9 @@ const AnnouncementView = ({ route }) => {
         setUser(null);
       }
     });
-  
+
     return () => unsubscribe();
   }, [user]);
-  
 
   // Pobieranie ogłoszenia z bazy
   useEffect(() => {
@@ -108,7 +115,6 @@ const AnnouncementView = ({ route }) => {
   // console.log("Announcement: " + announcement);
 
   const advertiserId = announcement ? announcement.advertiserId : null;
-
 
   // Pobieranie ogłoszeniodawcy z bazy
   useEffect(() => {
@@ -306,7 +312,7 @@ const AnnouncementView = ({ route }) => {
       <View style={[mainStyles.container, mainStyles.scrollBase]}>
         <ScrollView
           showsVerticalScrollIndicator={false}
-          style={[mainStyles.scrollBase, {marginTop: 20}]}
+          style={[mainStyles.scrollBase, { marginTop: 20 }]}
         >
           <View style={styles.annSwiperContainer}>
             <Swiper style={styles.annSwiper} showsButtons={false}>
@@ -509,7 +515,12 @@ const AnnouncementView = ({ route }) => {
             <TouchableOpacity
               style={styles.annBookRentButton}
               activeOpacity={0.8}
-              onPress={() => navigation.navigate("RentItNowView", { id: id })}
+              onPress={() =>
+                navigation.navigate("RentItNowView", {
+                  id: id,
+                  title: announcement.title,
+                })
+              }
             >
               <Text style={styles.annBookRentButtonText}>RENT IT NOW</Text>
             </TouchableOpacity>
