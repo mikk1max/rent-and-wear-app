@@ -85,7 +85,7 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "green",
+    backgroundColor: globalStyles.accentColor,
     paddingVertical: 5,
     paddingHorizontal: 10,
     marginTop: -10,
@@ -249,7 +249,7 @@ export const styles = StyleSheet.create({
   annDescriptionValue: {
     fontFamily: "Poppins_500Medium",
     fontSize: 15,
-    color: globalStyles.textOnSecondaryColor,
+    color: globalStyles.primaryColor,
   },
 
   advertiser: {

@@ -52,6 +52,8 @@ import Icon from "../components/Icon";
 const CreateAnnouncementView = () => {
   const navigation = useNavigation();
 
+  const { user, setUser } = useUser();
+
   // const [image, setImage] = useState<string | null >(null);
   const [currentAnnouncement, setCurrentAnnouncement] = useState();
   const [image, setImage] = useState();
@@ -72,7 +74,6 @@ const CreateAnnouncementView = () => {
   } = useForm();
 
   // Pobieranie bieżącego użytkownika
-  const { user, setUser } = useUser();
   useEffect(() => {
     if (!user) return;
 
@@ -253,7 +254,13 @@ const CreateAnnouncementView = () => {
 
   return (
     <SafeAreaView style={mainStyles.whiteBack}>
-      <View style={[mainStyles.container, mainStyles.scrollBase]}>
+      <View
+        style={[
+          mainStyles.container,
+          mainStyles.scrollBase,
+          { paddingTop: 20 },
+        ]}
+      >
         <ScrollView
           showsVerticalScrollIndicator={false}
           nestedScrollEnabled={true}
@@ -331,6 +338,7 @@ const CreateAnnouncementView = () => {
               <TouchableOpacity
                 style={styles.categoryListButton}
                 onPress={toggleCategoryList}
+                activeOpacity={globalStyles.ACTIVE_OPACITY}
               >
                 <View style={styles.categoryListButtonTextWithIcon}>
                   {category && (
@@ -374,6 +382,7 @@ const CreateAnnouncementView = () => {
                             : styles.categoryListItemWithBorder
                         }
                         onPress={() => selectCategory(subcategoryItem)}
+                        activeOpacity={1}
                       >
                         <Icon
                           name={subcategoryItem?.subcategoryIcon}
@@ -766,7 +775,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontFamily: "Poppins_500Medium",
     fontSize: 16,
-    color: "white",
+    color: globalStyles.textOnPrimaryColor,
   },
 
   cancelButton: {
@@ -777,13 +786,13 @@ const styles = StyleSheet.create({
     borderTopRightRadius: globalStyles.BORDER_RADIUS,
     borderBottomRightRadius: globalStyles.BORDER_RADIUS,
     // borderRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: "red",
+    backgroundColor: globalStyles.redColor,
   },
 
   cancelText: {
     textAlign: "center",
     fontFamily: "Poppins_500Medium",
     fontSize: 16,
-    color: "white",
+    color: globalStyles.textOnRedColor,
   },
 });
