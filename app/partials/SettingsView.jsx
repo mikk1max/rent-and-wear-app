@@ -13,7 +13,7 @@ import { useForm, Controller } from "react-hook-form";
 import { Divider } from "react-native-elements";
 
 import { ref, onValue, update } from "firebase/database";
-import { db } from "../../firebase.config";
+import { auth, db } from "../../firebase.config";
 
 import { fetchImgURL } from "../utils/fetchSVG";
 
@@ -23,32 +23,20 @@ import InputWithLabel from "../components/InputWithLabel";
 
 import { useUser } from "../components/UserProvider";
 import { useTranslation } from "react-i18next";
+import {
+  EmailAuthProvider,
+  reauthenticateWithCredential,
+  updatePassword,
+} from "firebase/auth";
 
 export default function SettingsView() {
-  // const [user, setUser] = useState([]);
   const { t } = useTranslation();
   const { user, setUser } = useUser();
   const [userProfileImg, setUserProfileImg] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const fontsLoaded = useCustomFonts();
   if (!fontsLoaded) return null;
-
-  // User
-  // useEffect(() => {
-  //   const usersRef = ref(db, "users");
-  //   onValue(usersRef, (snapshot) => {
-  //     const data = snapshot.val();
-  //     if (data) {
-  //       const usersArray = Object.keys(data).map((key) => ({
-  //         ...data[key],
-  //       }));
-  //       // console.log(usersArray.filter((user) => user.id === 0));
-
-  //       const currentUser = usersArray.find((user) => user.id == 0);
-  //       setUser(currentUser || {});
-  //     }
-  //   });
-  // }, []);
 
   useEffect(() => {
     if (!user) return;
@@ -57,10 +45,16 @@ export default function SettingsView() {
     const unsubscribe = onValue(usersRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
-        const currentUser = Object.values(data).find(
-          (userData) => userData.email === user.email
+        const currentUserEntry = Object.entries(data).find(
+          ([key, userData]) => userData.email === user.email
         );
-        setUser(currentUser || null);
+
+        if (currentUserEntry) {
+          const [key, userData] = currentUserEntry;
+          setUser({ ...userData, id: key }); // Dodaj klucz jako "id"
+        } else {
+          setUser(null);
+        }
       } else {
         setUser(null);
       }
@@ -124,11 +118,6 @@ export default function SettingsView() {
     setEditableSurname(false);
     setSurnameTextInputStyle([styles.textInput, styles.textInputBlocked]);
     setSurnameButtonsStyle(styles.buttonsHidden);
-
-    resetEmail();
-    setEditableEmail(false);
-    setEmailTextInputStyle([styles.textInput, styles.textInputBlocked]);
-    setEmailButtonsStyle(styles.buttonsHidden);
   };
 
   const onSubmitName = (data) => {
@@ -172,11 +161,6 @@ export default function SettingsView() {
     setEditableName(false);
     setNameTextInputStyle([styles.textInput, styles.textInputBlocked]);
     setNameButtonsStyle(styles.buttonsHidden);
-
-    resetEmail();
-    setEditableEmail(false);
-    setEmailTextInputStyle([styles.textInput, styles.textInputBlocked]);
-    setEmailButtonsStyle(styles.buttonsHidden);
   };
 
   const onSubmitSurname = (data) => {
@@ -195,26 +179,26 @@ export default function SettingsView() {
     setSurnameButtonsStyle(styles.buttonsHidden);
   };
 
-  // E-mail form
   const {
-    control: controlEmail,
-    handleSubmit: handleSubmitEmail,
-    reset: resetEmail,
-    formState: { errors: errorsEmail },
+    control: controlPassword,
+    handleSubmit: handleSubmitPassword,
+    reset: resetPassword,
+    formState: { errors: errorsPassword },
   } = useForm();
 
-  const [editableEmail, setEditableEmail] = useState(false);
-  const [emailTextInputStyle, setEmailTextInputStyle] = useState([
+  const [editablePassword, setEditablePassword] = useState(false);
+  const [passwordTextInputStyle, setPasswordTextInputStyle] = useState([
     styles.textInput,
     styles.textInputBlocked,
   ]);
-  const [emailButtonsStyle, setEmailButtonsStyle] = useState(
+  const [passwordButtonsStyle, setPasswordButtonsStyle] = useState(
     styles.buttonsHidden
   );
-  const editEmail = () => {
-    setEditableEmail(true);
-    setEmailTextInputStyle(styles.textInput);
-    setEmailButtonsStyle(styles.SaveCancelBtns);
+
+  const editPassword = () => {
+    setEditablePassword(true);
+    setPasswordTextInputStyle(styles.textInput);
+    setPasswordButtonsStyle(styles.SaveCancelBtns);
 
     resetName();
     setEditableName(false);
@@ -227,20 +211,35 @@ export default function SettingsView() {
     setSurnameButtonsStyle(styles.buttonsHidden);
   };
 
-  const onSubmitEmail = (data) => {
-    user.email = data.email.toLowerCase();
-    saveUser(user, "email");
+  const onSubmitPassword = async (data) => {
+    try {
+      // Reauthenticate the user (Firebase requires reauthentication to change sensitive data like passwords)
+      const credential = EmailAuthProvider.credential(
+        user.email,
+        data.currentPassword
+      );
+      await reauthenticateWithCredential(auth.currentUser, credential);
 
-    setEditableEmail(false);
-    setEmailTextInputStyle([styles.textInput, styles.textInputBlocked]);
-    setEmailButtonsStyle(styles.buttonsHidden);
+      // Change the password
+      await updatePassword(auth.currentUser, data.newPassword);
+
+      console.log("Password updated successfully!");
+      alert("Password updated successfully!");
+
+      setEditablePassword(false);
+      setPasswordTextInputStyle([styles.textInput, styles.textInputBlocked]);
+      setPasswordButtonsStyle(styles.buttonsHidden);
+    } catch (error) {
+      console.error("Error updating password: ", error);
+      alert("Error updating password: " + error.message);
+    }
   };
 
-  const onCancelEmail = () => {
-    resetEmail();
-    setEditableEmail(false);
-    setEmailTextInputStyle([styles.textInput, styles.textInputBlocked]);
-    setEmailButtonsStyle(styles.buttonsHidden);
+  const onCancelPassword = () => {
+    resetPassword();
+    setEditablePassword(false);
+    setPasswordTextInputStyle([styles.textInput, styles.textInputBlocked]);
+    setPasswordButtonsStyle(styles.buttonsHidden);
   };
 
   return (
@@ -375,255 +374,68 @@ export default function SettingsView() {
                 </View>
               </View>
 
-              {/* E-mail form */}
               <View style={{ gap: 25 }}>
+                {/* Pole do wpisania obecnego hasła */}
                 <InputWithLabel
-                  control={controlEmail}
-                  name={"email"}
-                  placeholder={"example@gmail.com"}
-                  errors={errorsEmail}
-                  editable={editableEmail}
-                  onEdit={editEmail}
-                  onSubmit={handleSubmitEmail(onSubmitEmail)}
-                  onCancel={onCancelEmail}
-                  inputStyle={emailTextInputStyle}
-                  buttonStyle={emailButtonsStyle}
-                  label={`${t("settings.emailLabel")}:`}
+                  control={controlPassword}
+                  name={"currentPassword"}
+                  placeholder={"Current Password"}
+                  errors={errorsPassword}
+                  editable={editablePassword}
+                  onEdit={editPassword}
+                  onSubmit={handleSubmitPassword(onSubmitPassword)}
+                  onCancel={onCancelPassword}
+                  inputStyle={passwordTextInputStyle}
+                  buttonStyle={passwordButtonsStyle}
+                  label={"Current Password:"}
                   validationRules={{
-                    required: "E-mail is required",
-                    pattern: {
-                      value:
-                        /^(?!\.)[a-zA-Z0-9!#$%&'*+/=?^_`{|}~.-]{1,64}(?<!\.)@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$/,
-                      message: "Invalid E-mail format",
-                    },
+                    required: "Current password is required",
                   }}
-                  value={user.email}
-                  defaultValue={user.email}
+                  value=""
                   isWithEditBtn={true}
+                  secureTextEntry={true}
                 />
-              </View>
 
-              <View style={[emailButtonsStyle, { marginBottom: 20 }]}>
-                <TouchableOpacity
-                  style={styles.buttonSave}
-                  activeOpacity={0.8}
-                  onPress={handleSubmitEmail(onSubmitEmail)}
-                >
-                  <Text style={styles.buttonText}>
-                    {t("universal.saveBtn")}
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.buttonCancel}
-                  activeOpacity={0.8}
-                  onPress={onSubmitEmail}
-                >
-                  <Text style={styles.buttonText}>
-                    {t("universal.cancelBtn")}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-
-            {/* <View style={styles.inputContainer}>
-                <View style={styles.labelContainer}>
-                  <Text style={styles.label}>First Name:</Text>
-                  <TouchableOpacity
-                    style={styles.buttonEdit}
-                    activeOpacity={0.8}
-                    onPress={editName}
-                  >
-                    <Text style={styles.buttonText}>Edit</Text>
-                  </TouchableOpacity>
-                </View>
-
-                {errorsName.name && (
-                  <View style={styles.textErrorContainer}>
-                    <Text style={styles.textError}>
-                      {errorsName.name.message}
-                    </Text>
-                  </View>
-                )}
-                <Controller
-                  control={controlName}
-                  rules={{
-                    required: "First Name is required",
-                    pattern: {
-                      value:
-                        /^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+(?:\s[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)?$/,
-                      message: "Invalid First Name format",
+                {/* Pole do wpisania nowego hasła */}
+                <InputWithLabel
+                  control={controlPassword}
+                  name={"newPassword"}
+                  placeholder={"New Password"}
+                  errors={errorsPassword}
+                  editable={editablePassword}
+                  inputStyle={passwordTextInputStyle}
+                  buttonStyle={passwordButtonsStyle}
+                  label={"New Password:"}
+                  validationRules={{
+                    required: "New password is required",
+                    minLength: {
+                      value: 6,
+                      message: "Password must be at least 6 characters",
                     },
                   }}
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <TextInput
-                      style={nameTextInputStyle}
-                      onBlur={onBlur}
-                      onChangeText={onChange}
-                      placeholder="Grzegorz"
-                      value={value}
-                      defaultValue={user.name}
-                      autoCapitalize="words"
-                      autoComplete="given-name"
-                      inputMode="text"
-                      editable={editableName}
-                    />
-                  )}
-                  name="name"
-                  // defaultValue={user.name || ""}
+                  value=""
+                  secureTextEntry={true}
                 />
 
-                <View style={nameButtonsStyle}>
+                {/* Przyciski zapisz i anuluj */}
+                <View style={[passwordButtonsStyle, { marginBottom: 20 }]}>
                   <TouchableOpacity
                     style={styles.buttonSave}
                     activeOpacity={0.8}
-                    onPress={handleSubmitName(onSubmitName)}
+                    onPress={handleSubmitPassword(onSubmitPassword)}
                   >
                     <Text style={styles.buttonText}>Save</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.buttonCancel}
                     activeOpacity={0.8}
-                    onPress={onCancelName}
-                  >
-                    <Text style={styles.buttonText}>Cancel</Text>
-                  </TouchableOpacity>
-                </View>
-              </View> */}
-
-            {/* Surname form */}
-            {/* <View>
-              <View style={styles.inputContainer}>
-                <View style={styles.labelContainer}>
-                  <Text style={styles.label}>Last Name:</Text>
-                  <TouchableOpacity
-                    style={styles.buttonEdit}
-                    activeOpacity={0.8}
-                    onPress={editSurname}
-                  >
-                    <Text style={styles.buttonText}>Edit</Text>
-                  </TouchableOpacity>
-                </View>
-
-                {errorsSurname.surname && (
-                  <View style={styles.textErrorContainer}>
-                    <Text style={styles.textError}>
-                      {errorsSurname.surname.message}
-                    </Text>
-                  </View>
-                )}
-                <Controller
-                  control={controlSurname}
-                  rules={{
-                    required: "Last Name is required",
-                    pattern: {
-                      value:
-                        /^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]*(?:[-'][A-ZĄĆĘŁŃÓŚŹŻ]?[a-ząćęłńóśźż]+)?(?:-[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]*(?:[-'][A-ZĄĆĘŁŃÓŚŹŻ]?[a-ząćęłńóśźż]+)?)?$/,
-                      message: "Invalid Last Name format",
-                    },
-                  }}
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <TextInput
-                      style={surnameTextInputStyle}
-                      onBlur={onBlur}
-                      onChangeText={onChange}
-                      value={value}
-                      // standartTextInputAtributes
-                      placeholder="Brzęczyszczykiewicz"
-                      defaultValue={user.surname}
-                      autoCapitalize="words"
-                      autoComplete="family-name"
-                      inputMode="text"
-                      editable={editableSurname}
-                    />
-                  )}
-                  name="surname"
-                />
-
-                <View style={surnameButtonsStyle}>
-                  <TouchableOpacity
-                    style={styles.buttonSave}
-                    activeOpacity={0.8}
-                    onPress={handleSubmitSurname(onSubmitSurname)}
-                  >
-                    <Text style={styles.buttonText}>Save</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.buttonCancel}
-                    activeOpacity={0.8}
-                    onPress={onCancelSurname}
+                    onPress={onCancelPassword}
                   >
                     <Text style={styles.buttonText}>Cancel</Text>
                   </TouchableOpacity>
                 </View>
               </View>
             </View>
-*/}
-
-            {/* <View>
-              <View style={styles.inputContainer}>
-                <View style={styles.labelContainer}>
-                  <Text style={styles.label}>E-mail:</Text>
-                  <TouchableOpacity
-                    style={styles.buttonEdit}
-                    activeOpacity={0.8}
-                    onPress={editEmail}
-                  >
-                    <Text style={styles.buttonText}>Edit</Text>
-                  </TouchableOpacity>
-                </View>
-
-                {errorsEmail.email && (
-                  <View style={styles.textErrorContainer}>
-                    <Text style={styles.textError}>
-                      {errorsEmail.email.message}
-                    </Text>
-                  </View>
-                )}
-                <Controller
-                  control={controlEmail}
-                  rules={{
-                    required: "E-mail is required",
-                    pattern: {
-                      value:
-                        /^(?!\.)[a-zA-Z0-9!#$%&'*+/=?^_`{|}~.-]{1,64}(?<!\.)@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$/,
-                      message: "Invalid E-mail format",
-                    },
-                  }}
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <TextInput
-                      style={emailTextInputStyle}
-                      onBlur={onBlur}
-                      onChangeText={onChange}
-                      placeholder="example@gmail.com"
-                      value={value}
-                      defaultValue={user.email}
-                      autoCapitalize="none"
-                      autoComplete="email"
-                      inputMode="email"
-                      editable={editableEmail}
-                    />
-                  )}
-                  name="email"
-                />
-
-                <View style={emailButtonsStyle}>
-                  <TouchableOpacity
-                    style={styles.buttonSave}
-                    activeOpacity={0.8}
-                    onPress={handleSubmitEmail(onSubmitEmail)}
-                  >
-                    <Text style={styles.buttonText}>Save</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.buttonCancel}
-                    activeOpacity={0.8}
-                    onPress={onCancelEmail}
-                  >
-                    <Text style={styles.buttonText}>Cancel</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </View> */}
           </ScrollView>
         </View>
       </View>
