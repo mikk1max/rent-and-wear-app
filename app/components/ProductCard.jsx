@@ -16,6 +16,7 @@ const ProductCard = ({
   currentUserId,
   advertiserId,
   containerWidth,
+  cardWidth,
 }) => {
   // Navigation
   const navigation = useNavigation();
@@ -23,9 +24,6 @@ const ProductCard = ({
   // Fonts
   const fontsLoaded = useCustomFonts();
   if (!fontsLoaded) return null;
-
-  // Width of card
-  const cardWidth = (containerWidth - 1 * 5) / 2;
 
   let isAuthor = false;
   if (currentUserId === advertiserId) isAuthor = true;
@@ -37,8 +35,9 @@ const ProductCard = ({
   };
 
   return (
-    <View>
+    <View style={{ width: cardWidth }}>
       <Card
+        pointerEvents="box-none"
         containerStyle={{
           height: 200,
           width: cardWidth,
@@ -67,12 +66,9 @@ const ProductCard = ({
         />
 
         <TouchableOpacity
-          onPress={() =>
-            navigation.navigate("AnnouncementView", {
-              id: id,
-              title: title,
-            })
-          }
+          onPress={() => {
+            navigation.navigate("AnnouncementView", { id: id, title: title });
+          }}
           style={styles.cardButton}
         >
           <Text style={styles.textOnButtonName}>{title}</Text>
