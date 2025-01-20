@@ -24,7 +24,7 @@ const stackOptions = {
   headerShown: true,
   headerBackTitle: " ",
   headerTitleStyle: { fontSize: 24 },
-  headerTintColor: globalStyles.primaryColor,
+  headerTintColor: globalStyles.textOnPrimaryColor,
   headerLeftContainerStyle: {
     paddingLeft: 10,
   },
@@ -32,7 +32,7 @@ const stackOptions = {
     paddingRight: 10,
   },
   headerStyle: {
-    backgroundColor: globalStyles.backgroundColor,
+    backgroundColor: globalStyles.primaryColor,
   },
 };
 
@@ -134,7 +134,10 @@ export default function Navigation() {
       <Stack.Screen
         name="RentItNowView"
         component={RentItNowView}
-        options={{ title: "Rent it now", ...stackOptions }}
+        options={({ route }) => ({
+          ...stackOptions, // Ваши стандартные опции
+          title: `Rent ${route.params.title}`, // Переопределение title с параметра маршрута
+        })}
       />
     </Stack.Navigator>
   );

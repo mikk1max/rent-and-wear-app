@@ -5,11 +5,15 @@ export const globalStyles = {
   textOnPrimaryColor: "#E2E9EA",
   secondaryColor: "#D2DDE1",
   textOnSecondaryColor: "#1098F7",
+  accentColor: "#D6A419",
+  textOnAccentColor: "#FFF1E3",
   backgroundColor: "#F1F5F2",
 
   redColor: "#DC143C",
+  textOnRedColor: "#FFE4E1",
   blueColor: "#1338BE",
 
+  ACTIVE_OPACITY: 0.8,
   BORDER_RADIUS: 15,
 };
 

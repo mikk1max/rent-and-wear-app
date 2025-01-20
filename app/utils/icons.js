@@ -54,16 +54,21 @@ import CityIcon from "../../assets/icons/city.svg";
 import LocationIcon from "../../assets/icons/location.svg";
 import EnvelopeIcon from "../../assets/icons/envelope.svg";
 import LanguageIcon from "../../assets/icons/language.svg";
-import SendIcon from "../../assets/icons/send.svg"
-import ChatIcon from "../../assets/icons/chat.svg"
-import MarketIcon from "../../assets/icons/market.svg"
-import JewelryIcon from "../../assets/icons/jewelry.svg"
-import BlouseIcon from "../../assets/icons/blouse.svg"
-import ScarfIcon from "../../assets/icons/scarf.svg"
-import DownJacketIcon from "../../assets/icons/down-jacket.svg"
-import SunglassesIcon from "../../assets/icons/sunglasses.svg"
-import HeadphonesIcon from "../../assets/icons/headphones.svg"
-import RaincoatIcon from "../../assets/icons/raincoat.svg"
+import SendIcon from "../../assets/icons/send.svg";
+import ChatIcon from "../../assets/icons/chat.svg";
+import MarketIcon from "../../assets/icons/market.svg";
+import JewelryIcon from "../../assets/icons/jewelry.svg";
+import BlouseIcon from "../../assets/icons/blouse.svg";
+import ScarfIcon from "../../assets/icons/scarf.svg";
+import DownJacketIcon from "../../assets/icons/down-jacket.svg";
+import SunglassesIcon from "../../assets/icons/sunglasses.svg";
+import HeadphonesIcon from "../../assets/icons/headphones.svg";
+import RaincoatIcon from "../../assets/icons/raincoat.svg";
+
+import CircleAcceptIcon from "../../assets/icons/checkmark-circle-svgrepo-com.svg";
+import CircleDeniedIcon from "../../assets/icons/xmark-circle-svgrepo-com.svg";
+import CircleQuestionIcon from "../../assets/icons/question-circle-svgrepo-com.svg";
+import CircleInfoIcon from "../../assets/icons/info-circle-svgrepo-com.svg";
 
 export const icons = {
   addresses: AddressesIcon,
@@ -76,6 +81,10 @@ export const icons = {
   building: BuildingIcon,
   cap: CapIcon,
   city: CityIcon,
+  "circle-accept": CircleAcceptIcon,
+  "circle-denied": CircleDeniedIcon,
+  "circle-question": CircleQuestionIcon,
+  "circle-info": CircleInfoIcon,
   chat: ChatIcon,
   child: ChildIcon,
   "classic-costume": ClassicCostumeIcon,
@@ -109,8 +118,8 @@ export const icons = {
   plus: PlusIcon,
   "plus-with-border": PlusIconWithBorder,
   raincoat: RaincoatIcon,
-  "scarf": ScarfIcon,
-  "search": SearchIcon,
+  scarf: ScarfIcon,
+  search: SearchIcon,
   send: SendIcon,
   sends: SendsIcon,
   settings: SettingsIcon,
@@ -125,7 +134,7 @@ export const icons = {
   "sport-pants": SportPantsIcon,
   "star-fill": StarFillIcon,
   "star-stroke": StarStrokeIcon,
-  "sunglasses": SunglassesIcon,
+  sunglasses: SunglassesIcon,
   "t-shirt": TShirtIcon,
   trash: TrashIcon,
   "user-fill": UserFillIcon,
