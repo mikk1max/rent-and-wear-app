@@ -170,20 +170,25 @@ export default function RentOutView() {
             }
           >
             <View style={styles.announcementsContainer}>
-              {filteredAnnouncements?.map((announcementPreview) => (
-                <ProductCard
-                  key={"RentOutView_ProductCard_" + announcementPreview.id}
-                  id={announcementPreview.id}
-                  mainImage={announcementPreview.mainImage}
-                  title={announcementPreview.title}
-                  categoryName={announcementPreview?.category?.subcategoryName}
-                  categoryIcon={announcementPreview?.category?.subcategoryIcon}
-                  pricePerDay={announcementPreview.pricePerDay}
-                  currentUserId={user?.id}
-                  advertiserId={announcementPreview.advertiserId}
-                  containerWidth={width - 60}
-                />
-              ))}
+              {filteredAnnouncements &&
+                filteredAnnouncements?.map((announcementPreview) => (
+                  <ProductCard
+                    key={"RentOutView_ProductCard_" + announcementPreview.id}
+                    id={announcementPreview.id}
+                    mainImage={announcementPreview.mainImage}
+                    title={announcementPreview.title}
+                    categoryName={
+                      announcementPreview?.category?.subcategoryName
+                    }
+                    categoryIcon={
+                      announcementPreview?.category?.subcategoryIcon
+                    }
+                    pricePerDay={announcementPreview.pricePerDay}
+                    currentUserId={user?.id}
+                    advertiserId={announcementPreview.advertiserId}
+                    containerWidth={width - 60}
+                  />
+                ))}
             </View>
           </ScrollView>
         </View>
@@ -191,7 +196,7 @@ export default function RentOutView() {
           style={stylesTmp.createAnnouncementButton}
           onPress={() => navigation.navigate("CreateAnnouncementView")}
         >
-          <Icon name="plus" height={50} width={50}/>
+          <Icon name="plus" height={50} width={50} />
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -207,11 +212,11 @@ const stylesTmp = StyleSheet.create({
     padding: 5,
     alignItems: "center",
     borderRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.primaryColor,
+    backgroundColor: globalStyles.accentColor,
   },
   createAnnouncementText: {
     fontFamily: "WorkSans_900Black",
     fontSize: 20,
-    color: globalStyles.textOnPrimaryColor,
+    color: globalStyles.textOnAccentColor,
   },
 });

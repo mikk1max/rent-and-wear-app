@@ -67,26 +67,6 @@ const AllCategories = ({ route, navigation }) => {
 
   // console.log(categories);
 
-  const headwear = ["beanie", "cap", "hat"];
-  const outerwear = ["coat", "vest"];
-  const dresses = [
-    "dress",
-    "sweater",
-    "classic-costume",
-    "woman-classic-costume",
-    "party-costume",
-  ];
-  const tops = ["jersey", "t-shirt", "short-sleeves-shirt"];
-  const bottoms = ["pants", "shorts", "short-skirt", "sport-pants"];
-  const footwear = [
-    "formal-shoes",
-    "sneakers",
-    "high-heel",
-    "slippers",
-    "socks",
-  ];
-  const accessories = ["gloves", "belt"];
-
   const iconOptions = {
     width: 50,
     height: 50,
