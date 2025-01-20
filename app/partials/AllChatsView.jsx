@@ -15,6 +15,7 @@ import { globalStyles, styles as mainStyles } from "../utils/style";
 import { styles } from "../styles/AllChatsViewStyles";
 import { getUserById } from "../utils/func";
 import Icon from "../components/Icon";
+import NoConversation from "../components/NoConversation";
 
 const AllChatsView = () => {
   const { user } = useUser();
@@ -38,12 +39,12 @@ const AllChatsView = () => {
 
         Object.keys(data).forEach((key) => {
           const chat = data[key];
-        
+
           if (!chat) return;
-        
+
           const isRentNow = chat?.userId === user.id;
           const isRentOut = chat?.advertiserId === user.id;
-        
+
           if (
             (isRentNow || isRentOut) &&
             (filter === "All" ||
@@ -53,7 +54,6 @@ const AllChatsView = () => {
             filteredChats.push({ id: key, ...chat });
           }
         });
-        
 
         setChats(filteredChats);
         setRefreshing(false);
@@ -71,16 +71,24 @@ const AllChatsView = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       if (user?.id && chats.length > 0) {
-        const uniqueAdvertiserIds = [
-          ...new Set(chats.map((chat) => chat.advertiserId)),
+        // Identify other participant IDs
+        const otherParticipantIds = [
+          ...new Set(
+            chats.map((chat) =>
+              chat.userId === user.id ? chat.advertiserId : chat.userId
+            )
+          ),
         ];
-        const userInfo = await getUserById(uniqueAdvertiserIds);
-        setUserData(userInfo);
+  
+        const userInfo = await getUserById(otherParticipantIds);
+        setUserData(userInfo); // Store fetched user data
       }
     };
-
+  
     fetchUserData();
   }, [user, chats]);
+  
+  
 
   const handleChatPress = (chatId) => {
     console.log("Navigating to Chat with ID:", chatId);
@@ -101,7 +109,6 @@ const AllChatsView = () => {
     }
     return "No Title";
   };
-  
 
   // Render filter buttons
   const renderFilterButtons = () => (
@@ -139,17 +146,29 @@ const AllChatsView = () => {
     }
   }, []);
 
+  const handleAnnouncementPress = async (chat) => {
+    const title = await fetchAnnouncementTitle(chat?.announcementId);
+    navigation.navigate("AnnouncementView", {
+      id: chat?.announcementId,
+      title: title,
+    });
+  };
+
   // Render individual chat card
   const renderChat = (chat) => {
     if (!chat) return null;
-    
+  
     const firstMessage =
       (chat.messages &&
         Object.values(chat.messages)[Object.values(chat.messages).length - 1]
           ?.text) ||
       "";
-
-    const advertiserName = userData.name || "Unknown";
+  
+    // Determine the other participant
+    const otherParticipantId =
+      chat.userId === user.id ? chat.advertiserId : chat.userId;
+    const otherParticipantName = userData?.[otherParticipantId]?.name || "Unknown";
+  
     return (
       <TouchableOpacity
         key={chat.id}
@@ -159,7 +178,7 @@ const AllChatsView = () => {
         onLayout={handleLayout}
       >
         <View style={{ flexShrink: 1 }}>
-          <Text style={styles.chatTitle}>Chat with {advertiserName}</Text>
+          <Text style={styles.chatTitle}>Chat with {otherParticipantName}</Text>
           <Text style={styles.chatPreview}>{firstMessage}</Text>
         </View>
         <View>
@@ -171,14 +190,10 @@ const AllChatsView = () => {
               width: 50,
               height: height - 30,
               justifyContent: "center",
-              alignItems: "center"
+              alignItems: "center",
             }}
-            onPress={() => navigation.navigate("AnnouncementView", {
-              id: chat?.announcementId,
-              title: fetchAnnouncementTitle(chat?.announcementId)
-            })}
+            onPress={() => handleAnnouncementPress(chat)}
           >
-            {/* {console.log(chat)} */}
             <Icon
               name="market"
               width={25}
@@ -190,6 +205,7 @@ const AllChatsView = () => {
       </TouchableOpacity>
     );
   };
+  
 
   return (
     <SafeAreaView style={mainStyles.whiteBack}>
@@ -208,7 +224,7 @@ const AllChatsView = () => {
           {chats.length > 0 ? (
             chats.map((chat) => renderChat(chat))
           ) : (
-            <Text style={styles.noChatsText}>No chats available</Text>
+            <NoConversation />
           )}
         </ScrollView>
       </View>

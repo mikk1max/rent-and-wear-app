@@ -18,6 +18,7 @@ import { globalStyles, styles as mainStyles } from "../utils/style";
 import { styles } from "../styles/AddressesViewStyles";
 import { useUser } from "../components/UserProvider";
 import { useTranslation } from "react-i18next";
+import NoAddressesYet from "../components/NoAddressesYet";
 
 const AddressesView = () => {
   const { t } = useTranslation();
@@ -319,6 +320,7 @@ const AddressesView = () => {
                   />
                 ))}
               </View>
+              {addresses.length <= 0 && <NoAddressesYet />}
               <TouchableOpacity
                 onPress={() => openAddressForm()}
                 style={styles.newAddressButton}
