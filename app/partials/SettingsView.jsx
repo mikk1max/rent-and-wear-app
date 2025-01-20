@@ -28,6 +28,11 @@ import {
   reauthenticateWithCredential,
   updatePassword,
 } from "firebase/auth";
+import * as ImagePicker from 'expo-image-picker';
+import { storage } from "../../firebase.config";
+import { ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
+
+
 
 export default function SettingsView() {
   const { t } = useTranslation();
@@ -91,6 +96,53 @@ export default function SettingsView() {
       .catch((error) => {
         console.error(`Error updating user ${fieldName}: `, error);
       });
+  };
+
+  const uploadImage = async (uri, userId) => {
+    if (!uri) return null;
+  
+    const response = await fetch(uri);
+    const blob = await response.blob();
+    const filePath = `user-avatars/${userId}/${userId}.jpg`;
+  
+    const imgRef = storageRef(storage, filePath);
+    await uploadBytes(imgRef, blob);
+  
+    const url = await getDownloadURL(imgRef);
+    return url;
+  };
+  
+  const handleEditPicture = async () => {
+    try {
+      // Prośba o uprawnienia
+      const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (permissionResult.status !== 'granted') {
+        alert("Permission to access media library is required!");
+        return;
+      }
+  
+      // Wybierz obraz
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        quality: 0.8,
+      });
+  
+      if (!result.canceled) {
+        setIsLoading(true);
+        const uploadedUrl = await uploadImage(result.assets[0].uri, user.id);
+  
+        if (uploadedUrl) {
+          // Zapisz URL do bazy danych
+          saveUser({ ...user, profileImg: uploadedUrl }, "profileImg");
+          setUserProfileImg(uploadedUrl); // Zaktualizuj lokalny stan
+        }
+      }
+    } catch (error) {
+      console.error("Error uploading image:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Name form
@@ -265,7 +317,7 @@ export default function SettingsView() {
               />
               <TouchableOpacity
                 activeOpacity={0.6}
-                onPress={() => console.log("Edit picture")}
+                onPress={handleEditPicture}
               >
                 <Text style={styles.imageText}>
                   {t("settings.editPictureText")}
