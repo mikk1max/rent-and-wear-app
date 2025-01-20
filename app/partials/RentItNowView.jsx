@@ -93,24 +93,10 @@ const RentItNowView = ({ route }) => {
   const [isFinishButtonActive, setFinishButtonActive] = useState(true);
   const [counter, setCounter] = useState(0);
 
-  const { id } = route.params;
+  const fontsLoaded = useCustomFonts();
+  if (!fontsLoaded) return null;
 
-  // Formularz do karty płatniczej
-  // const {
-  //   control: cardControl,
-  //   handleSubmit: cardHandleSubmit,
-  //   reset: cardReset,
-  //   setValue: cardSetValue,
-  //   formState: { errors: cardErrors },
-  // } = useForm();
-  // Formularz do BLIKa
-  const {
-    control: blikControl,
-    handleSubmit: blikHandleSubmit,
-    reset: blikReset,
-    setValue: blikSetValue,
-    formState: { errors: blikErrors },
-  } = useForm();
+  const { id } = route.params;
 
   // Funkcje do zarządzania datami
   const getToday = () => {
@@ -456,6 +442,31 @@ const RentItNowView = ({ route }) => {
       `announcements/${announcement.id}/${dataPath}/${dataId}`
     );
     await set(dataRef, data);
+    console.log(
+      `Set ${data} into announcements/${announcement.id}/${dataPath}/${dataId}`
+    );
+  };
+
+  const insertDataIntoUser = async (dataId, data) => {
+    const dataRef = ref(
+      db,
+      `users/${user.id}/rentalOrReservationData/${dataId}`
+    );
+    await set(dataRef, data);
+    console.log(
+      `Set ${data} into users/${user.id}/rentalOrReservationData/${dataId}`
+    );
+  };
+
+  const insertDataIntoAdvertiser = async (dataId, data) => {
+    const dataRef = ref(
+      db,
+      `users/${announcement.advertiserId}/imRenting/${dataId}`
+    );
+    await set(dataRef, data);
+    console.log(
+      `Set ${data} into users/${announcement.advertiserId}/imRenting/${dataId}`
+    );
   };
 
   const requestRenting = async () => {
@@ -468,15 +479,17 @@ const RentItNowView = ({ route }) => {
       endDate: selectedEndDate.getTime(),
       destinationAddress: address,
       paymentMethod: selectedPaymentMethod,
+      status: { statusCode: 1, statusName: "Pending" },
     };
     const dataId = Date.now();
+    const dataInUser = { announcementId: announcement.id, type: rentalOption };
     if (rentalOption === "Rent") {
       await createRentalOrReservationData(dataId, data, "rentalData");
     } else if (rentalOption === "Book") {
       await createRentalOrReservationData(dataId, data, "reservationData");
     }
-    alert("Successfully rented / booked!");
-    navigation.goBack();
+    await insertDataIntoUser(dataId, dataInUser);
+    await insertDataIntoAdvertiser(dataId, dataInUser);
   };
 
   const intervalRef = useRef();
@@ -498,20 +511,28 @@ const RentItNowView = ({ route }) => {
     if (counter >= 100) {
       clearInterval(intervalRef.current);
       setCounter(100);
-      requestRenting();
+      alert("Successfully rented / booked!");
+      navigation.goBack();
     }
   }, [counter]);
 
   const finishRenting = () => {
     console.log("Finish");
     interval();
+    requestRenting();
   };
 
   // console.log(selectedStartDate.getTime());
 
   return (
     <SafeAreaView style={mainStyles.whiteBack}>
-      <View style={[mainStyles.container, mainStyles.scrollBase, {paddingTop: 20}]}>
+      <View
+        style={[
+          mainStyles.container,
+          mainStyles.scrollBase,
+          { paddingTop: 20 },
+        ]}
+      >
         <ScrollView
           showsVerticalScrollIndicator={false}
           nestedScrollEnabled={true}
