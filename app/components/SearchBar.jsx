@@ -53,6 +53,8 @@ const SearchBarComp = ({ onSearch, ...props }) => {
       spinnerVisibility={spinnerVisible}
       searchIconImageStyle={{ tintColor: globalStyles.primaryColor }}
       clearIconImageStyle={{ tintColor: globalStyles.primaryColor }}
+      spinnerColor={globalStyles.primaryColor}
+      textInputStyle={{color: globalStyles.primaryColor}}
       {...props}
     />
   );
