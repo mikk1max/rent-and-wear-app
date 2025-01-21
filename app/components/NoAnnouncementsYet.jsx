@@ -1,5 +1,12 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { globalStyles } from "../utils/style";
 
@@ -15,9 +22,7 @@ const NoAnnouncementsYet = () => {
         style={styles.image}
       />
       <Text style={styles.title}>No Items</Text>
-      <Text style={styles.subtitle}>
-      You have no announcements yet!
-      </Text>
+      <Text style={styles.subtitle}>You have no announcements yet!</Text>
     </View>
   );
 };
@@ -48,17 +53,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 30,
     lineHeight: 22,
-  },
-  button: {
-    backgroundColor: globalStyles.primaryColor,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-  },
-  buttonText: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#fff",
   },
 });
 

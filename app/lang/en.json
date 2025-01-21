@@ -69,7 +69,8 @@
       "addresses": "Addresses",
       "sends": "Sends",
       "gets": "Gets",
-      "logout": "Log out"
+      "logout": "Log out",
+      "login": "Log in / Sign up"
     },
     "settings": {
       "titleLabel": "Settings",
