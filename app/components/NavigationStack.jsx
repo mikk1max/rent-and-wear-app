@@ -158,7 +158,7 @@ export default function Navigation() {
         <Stack.Screen
           name="ResetPassword"
           component={ResetPassword}
-          options={{ ...stackOptions }}
+          options={{ ...stackOptions, title: "Password Reset" }}
         />
       </Stack.Navigator>
     </Suspense>

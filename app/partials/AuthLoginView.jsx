@@ -102,7 +102,7 @@ export default function AuthLoginView() {
             <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
               <TouchableOpacity
                 style={{ paddingHorizontal: 10, paddingVertical: 5 }}
-                onPress={() => setShowResetModal(true)}
+                onPress={() => navigation.navigate("ResetPassword")}
               >
                 <Text style={styles.forgotPass}>{`${t(
                   "login.forgotPass"

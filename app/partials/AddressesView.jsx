@@ -19,6 +19,7 @@ import { styles } from "../styles/AddressesViewStyles";
 import { useUser } from "../components/UserProvider";
 import { useTranslation } from "react-i18next";
 import NoAddressesYet from "../components/NoAddressesYet";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 const AddressesView = () => {
   const { t } = useTranslation();
@@ -28,7 +29,7 @@ const AddressesView = () => {
   const { user, setUser } = useUser();
 
   const [addresses, setAddresses] = useState([[]]);
-  
+
   const userId = user?.id;
   useEffect(() => {
     const addressesRef = ref(db, `users/${userId}/addresses`);
@@ -343,8 +344,10 @@ const AddressesView = () => {
       >
         <View style={styles.modalBackground}>
           <View style={styles.modalCard}>
-            <ScrollView
+            <KeyboardAwareScrollView
+              keyboardShouldPersistTaps="handled"
               showsVerticalScrollIndicator={false}
+              nestedScrollEnabled={true}
               style={[mainStyles.scrollBase, { marginVertical: 40 }]}
             >
               {/* Title */}
@@ -697,7 +700,7 @@ const AddressesView = () => {
                   <Text style={styles.modalButtonText}>Cancel</Text>
                 </TouchableOpacity>
               </View>
-            </ScrollView>
+            </KeyboardAwareScrollView>
           </View>
         </View>
       </Modal>

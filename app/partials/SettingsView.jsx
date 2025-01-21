@@ -31,6 +31,7 @@ import {
 import * as ImagePicker from 'expo-image-picker';
 import { storage } from "../../firebase.config";
 import { ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 
 
@@ -303,8 +304,10 @@ export default function SettingsView() {
         ]}
       >
         <View style={styles.mainSection}>
-          <ScrollView
-            showsVerticalScrollIndicator={false}
+          <KeyboardAwareScrollView
+                        keyboardShouldPersistTaps="handled"
+                        showsVerticalScrollIndicator={false}
+                        nestedScrollEnabled={true}
             style={mainStyles.scrollBase}
           >
             {/* Profile image */}
@@ -488,7 +491,7 @@ export default function SettingsView() {
                 </View>
               </View>
             </View>
-          </ScrollView>
+          </KeyboardAwareScrollView>
         </View>
       </View>
     </SafeAreaView>
