@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Dimensions,
   View,
@@ -23,6 +23,7 @@ import { Divider, Rating } from "react-native-elements";
 import OpinionCard from "../components/OpinionCard";
 import Swiper from "react-native-swiper";
 import ImageViewing from "react-native-image-viewing";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 import {
   ref,
@@ -63,6 +64,8 @@ const CreateAnnouncementView = () => {
   const [category, setCategory] = useState("");
   const [categoryError, setCategoryError] = useState();
   const [isCategoryListVisible, setCategoryListVisible] = useState(false);
+
+  const scrollViewRef = useRef(null);
 
   // Formularz
   const {
@@ -269,7 +272,8 @@ const CreateAnnouncementView = () => {
           { paddingTop: 20 },
         ]}
       >
-        <ScrollView
+        <KeyboardAwareScrollView
+          keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
           nestedScrollEnabled={true}
           style={mainStyles.scrollBase}
@@ -331,6 +335,9 @@ const CreateAnnouncementView = () => {
                     autoComplete="off"
                     inputMode="text"
                     editable={true}
+                    onFocus={(event) => {
+                      scrollViewRef.current?.scrollToFocusedInput(event.target);
+                    }}
                   />
                 )}
                 name="title"
@@ -563,7 +570,7 @@ const CreateAnnouncementView = () => {
               <Text style={styles.cancelText}>Cancel</Text>
             </TouchableOpacity>
           </View>
-        </ScrollView>
+        </KeyboardAwareScrollView>
       </View>
     </SafeAreaView>
   );

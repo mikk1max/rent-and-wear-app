@@ -113,7 +113,7 @@ export default function RentOutView() {
   useFocusEffect(
     useCallback(() => {
       const backAction = () => {
-        Alert.alert("Hold on!", "Are you sure you want to go back?", [
+        Alert.alert("Hold on!", "Are you sure you want to exit?", [
           {
             text: "Cancel",
             onPress: () => null,
@@ -121,7 +121,7 @@ export default function RentOutView() {
           },
           { text: "YES", onPress: () => BackHandler.exitApp() },
         ]);
-        return true; // Предотвращает стандартное действие
+        return true;
       };
 
       const backHandler = BackHandler.addEventListener(
@@ -129,7 +129,6 @@ export default function RentOutView() {
         backAction
       );
 
-      // Удаляем обработчик при выходе с экрана
       return () => backHandler.remove();
     }, [])
   );

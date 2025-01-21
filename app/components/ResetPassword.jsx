@@ -5,11 +5,12 @@ import {
   SafeAreaView,
   TouchableOpacity,
   StyleSheet,
+  Image
 } from "react-native";
 import { useForm } from "react-hook-form";
 import InputWithLabel from "../components/InputWithLabel";
 import { resetPassword } from "../utils/auth";
-import { globalStyles } from "../utils/style";
+import { globalStyles, styles as mainStyles } from "../utils/style";
 
 export default function ResetPassword() {
   const {
@@ -31,8 +32,11 @@ export default function ResetPassword() {
 
   return (
     <SafeAreaView style={globalStyles.whiteBack}>
-      <View style={styles.container}>
-        <Text style={styles.title}>Reset Password</Text>
+      <View style={[mainStyles.container, styles.container]}>
+        <Image
+                source={require("../../assets/images/NotLogin.png")}
+                style={styles.image}
+              />
         <InputWithLabel
           control={control}
           name="resetEmail"
@@ -61,9 +65,16 @@ export default function ResetPassword() {
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
-    justifyContent: "center",
-    paddingHorizontal: 20,
+    flex: 0,
+    alignItems: "stretch",
+    // justifyContent: "center",
+    paddingVertical: 20,
+  },
+  image: {
+    width: "100%",
+    height: 200,
+    resizeMode: "contain",
+    marginTop: 10,
   },
   title: {
     fontSize: 24,
