@@ -80,18 +80,20 @@ const CreateAnnouncementView = () => {
     const usersRef = ref(db, "users");
     const unsubscribe = onValue(usersRef, (snapshot) => {
       const data = snapshot.val();
-      if (data) {
-        const currentUserEntry = Object.entries(data).find(
-          ([key, userData]) => userData.email === user.email
-        );
+      if (!data) {
+        console.error("No users data found");
+        return;
+      }
 
-        if (currentUserEntry) {
-          const [key, userData] = currentUserEntry;
-          setUser({ ...userData, id: key }); // Dodaj klucz jako "id"
-        } else {
-          setUser(null);
-        }
+      const currentUserEntry = Object.entries(data).find(
+        ([key, userData]) => userData?.email === user?.email
+      );
+
+      if (currentUserEntry) {
+        const [key, userData] = currentUserEntry;
+        setUser({ ...userData, id: key });
       } else {
+        console.warn("User not found in the database");
         setUser(null);
       }
     });
@@ -184,37 +186,43 @@ const CreateAnnouncementView = () => {
   };
 
   const onSubmit = async (data) => {
-    if (category === "") setCategoryError("Category is required!");
-    else {
+    if (!category || !category.subcategoryName || !category.subcategoryIcon) {
+      setCategoryError("Please select a valid category");
+      return;
+    } else {
       setCategoryError(null);
       let announcement = {
         advertiserId: user.id,
-        title: data.title,
+        title: data.title || "No title",
         rating: 0,
-        category: category,
+        category: category || {
+          subcategoryName: "Unknown",
+          subcategoryIcon: "default",
+        },
         description: data.description,
         publicationDate: Date.now(),
-        pricePerDay: +data.price,
-        size: data.price,
-        condition: data.condition,
+        pricePerDay: +data.price || 0,
+        size: data.size || "",
+        condition: data.condition || "Unknown",
+        images: [],
         // status: {
         //   code: 0,
         //   messege: "Available for rent",
         // },
         rentalData: {
           borrowerId: "",
-          startDate: -1,
-          endDate: -1,
-          daysInRent: -1,
-          amount: -1,
+          startDate: null,
+          endDate: null,
+          daysInRent: null,
+          amount: null,
         },
         reservationData: [
           {
             borrowerId: "",
-            startDate: -1,
-            endDate: -1,
-            daysInRent: -1,
-            amount: -1,
+            startDate: null,
+            endDate: null,
+            daysInRent: null,
+            amount: null,
           },
         ],
         opinions: [],
@@ -564,7 +572,6 @@ const CreateAnnouncementView = () => {
 export default CreateAnnouncementView;
 
 const styles = StyleSheet.create({
-
   divider: {
     marginVertical: 10,
     width: "100%",

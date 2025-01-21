@@ -70,22 +70,25 @@ export default function RentOutView() {
     const announcementsRef = ref(db, `announcements`);
     const unsubscribe = onValue(announcementsRef, (snapshot) => {
       const data = snapshot.val();
-      if (data) {
-        const announcementPreviewsArray = Object.keys(data)
-          .filter((key) => data[key].advertiserId === user.id)
-          .map((key) => ({
-            id: key,
-            mainImage: data[key].images[0],
-            title: data[key].title,
-            category: data[key].category,
-            pricePerDay: data[key].pricePerDay,
-            advertiserId: data[key].advertiserId,
-          }));
-        setAnnouncementPreviews(announcementPreviewsArray);
-      } else {
+      if (!data) {
+        console.warn("No announcements found");
         setAnnouncementPreviews([]);
+        return;
       }
+    
+      const announcementPreviewsArray = Object.keys(data)
+        .filter((key) => data[key]?.advertiserId === user?.id)
+        .map((key) => ({
+          id: key,
+          mainImage: data[key]?.images?.[0] || "default_image_url",
+          title: data[key]?.title || "Untitled",
+          category: data[key]?.category || { subcategoryName: "Unknown" },
+          pricePerDay: data[key]?.pricePerDay || 0,
+          advertiserId: data[key]?.advertiserId || null,
+        }));
+      setAnnouncementPreviews(announcementPreviewsArray);
     });
+    
 
     return () => unsubscribe();
   }, []);
@@ -100,9 +103,8 @@ export default function RentOutView() {
 
   const getFilteredAnnouncements = (searchQuery) => {
     return announcementPreviews.filter((announcementPreview) =>
-      String(announcementPreview.title)
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase())
+      announcementPreview?.title &&
+      announcementPreview.title.toLowerCase().includes(searchQuery.toLowerCase())
     );
   };
 
@@ -173,24 +175,41 @@ export default function RentOutView() {
           >
             <View style={styles.announcementsContainer}>
               {filteredAnnouncements &&
-                filteredAnnouncements?.map((announcementPreview) => (
-                  <ProductCard
-                    key={"RentOutView_ProductCard_" + announcementPreview.id}
-                    id={announcementPreview.id}
-                    mainImage={announcementPreview.mainImage}
-                    title={announcementPreview.title}
-                    categoryName={
-                      announcementPreview?.category?.subcategoryName
-                    }
-                    categoryIcon={
-                      announcementPreview?.category?.subcategoryIcon
-                    }
-                    pricePerDay={announcementPreview.pricePerDay}
-                    currentUserId={user?.id}
-                    advertiserId={announcementPreview.advertiserId}
-                    cardWidth={filteredAnnouncements.length === 1 ? width - 50 : (width - 50 - 15) / 2}
-                  />
-                ))}
+                filteredAnnouncements?.map((announcementPreview) => {
+                  if (!announcementPreview.category) {
+                    console.warn(
+                      `Ogłoszenie ${announcementPreview.id} nie ma kategorii`
+                    );
+                    return null;
+                  }
+                  
+                  return (
+                    <ProductCard
+                      key={"RentOutView_ProductCard_" + announcementPreview.id}
+                      id={announcementPreview.id}
+                      mainImage={
+                        announcementPreview.mainImage || "default_image_url"
+                      }
+                      title={announcementPreview.title}
+                      categoryName={
+                        announcementPreview?.category?.subcategoryName ||
+                        "Unknown"
+                      }
+                      categoryIcon={
+                        announcementPreview?.category?.subcategoryIcon ||
+                        "default_icon"
+                      }
+                      pricePerDay={announcementPreview.pricePerDay}
+                      currentUserId={user?.id}
+                      advertiserId={announcementPreview.advertiserId}
+                      cardWidth={
+                        filteredAnnouncements.length === 1
+                          ? width - 50
+                          : (width - 50 - 15) / 2
+                      }
+                    />
+                  );
+                })}
             </View>
             {filteredAnnouncements.length <= 0 && <NoAnnouncementsYet />}
           </ScrollView>

@@ -91,14 +91,14 @@ const RentNowView = () => {
       (snapshot) => {
         const data = snapshot.val();
         if (data) {
-          const announcementPreviewsArray = Object.keys(data).map((key) => ({
+          const announcementPreviewsArray = Object.keys(data || {}).map((key) => ({
             id: key,
-            mainImage: data[key].images[0],
-            title: data[key].title,
-            category: data[key].category,
-            pricePerDay: data[key].pricePerDay,
-            advertiserId: data[key].advertiserId,
-          }));
+            mainImage: data[key]?.images?.[0] || "default_image_url",
+            title: data[key]?.title || "Untitled",
+            category: data[key]?.category || {},
+            pricePerDay: data[key]?.pricePerDay || 0,
+            advertiserId: data[key]?.advertiserId || null,
+          }));          
           setAnnouncementPreviews(announcementPreviewsArray);
         } else {
           setAnnouncementPreviews([]);
@@ -281,12 +281,8 @@ const RentNowView = () => {
                     id={announcementPreview.id}
                     mainImage={announcementPreview.mainImage}
                     title={announcementPreview.title}
-                    categoryName={
-                      announcementPreview?.category?.subcategoryName
-                    }
-                    categoryIcon={
-                      announcementPreview?.category?.subcategoryIcon
-                    }
+                    categoryName={announcementPreview?.category?.subcategoryName || "Unknown"}
+                    categoryIcon={announcementPreview?.category?.subcategoryIcon || "default_icon"}                    
                     pricePerDay={announcementPreview.pricePerDay}
                     currentUserId={user?.id}
                     advertiserId={announcementPreview.advertiserId}
