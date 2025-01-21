@@ -75,7 +75,7 @@ export default function RentOutView() {
         setAnnouncementPreviews([]);
         return;
       }
-    
+
       const announcementPreviewsArray = Object.keys(data)
         .filter((key) => data[key]?.advertiserId === user?.id)
         .map((key) => ({
@@ -88,7 +88,6 @@ export default function RentOutView() {
         }));
       setAnnouncementPreviews(announcementPreviewsArray);
     });
-    
 
     return () => unsubscribe();
   }, []);
@@ -102,9 +101,12 @@ export default function RentOutView() {
   };
 
   const getFilteredAnnouncements = (searchQuery) => {
-    return announcementPreviews.filter((announcementPreview) =>
-      announcementPreview?.title &&
-      announcementPreview.title.toLowerCase().includes(searchQuery.toLowerCase())
+    return announcementPreviews.filter(
+      (announcementPreview) =>
+        announcementPreview?.title &&
+        announcementPreview.title
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase())
     );
   };
 
@@ -181,7 +183,7 @@ export default function RentOutView() {
                     );
                     return null;
                   }
-                  
+
                   return (
                     <ProductCard
                       key={"RentOutView_ProductCard_" + announcementPreview.id}

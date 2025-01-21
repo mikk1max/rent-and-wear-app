@@ -79,7 +79,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   buttonLogOut: {
-    backgroundColor: globalStyles.redColor,
+    backgroundColor: globalStyles.accentColor,
   },
   buttonRent: {
     width: (width - 2 * 25 - 15) / 2,
@@ -93,4 +93,44 @@ export const styles = StyleSheet.create({
     fontSize: 24,
     color: globalStyles.textOnPrimaryColor,
   },
+
+  image: {
+    width: "100%",
+    height: 200,
+    resizeMode: "contain",
+    marginTop: 10,
+  },
+
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: globalStyles.primaryColor,
+    marginBottom: 10,
+    alignSelf: "center"
+  },
+  subtitle: {
+    fontSize: 16,
+    color: globalStyles.textOnSecondaryColor,
+    textAlign: "center",
+    marginBottom: 20,
+    lineHeight: 22,
+    alignSelf: "center"
+  },
+
+  notLogContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  buttonLOGIN: {
+    flexDirection: "row",
+    backgroundColor: globalStyles.primaryColor,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+  },
+  // buttonText: {
+  //   fontSize: 16,
+  //   fontWeight: "bold",
+  //   color: globalStyles.textOnAccentColor,
+  // },
 });

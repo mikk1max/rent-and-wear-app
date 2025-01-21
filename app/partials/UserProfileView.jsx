@@ -230,136 +230,225 @@ const UserProfileView = () => {
           </View>
         </View>
 
-        <ScrollView
-          style={[mainStyles.scrollBase, { marginVertical: 20 }]}
-          showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={async () => {
-                setRefreshing(true);
-                try {
-                  // Refetch user data
-                  const usersRef = ref(db, "users");
-                  const snapshot = await get(usersRef);
-                  if (snapshot.exists()) {
-                    const data = snapshot.val();
-                    const currentUserEntry = Object.entries(data).find(
-                      ([key, userData]) => userData.email === user.email
-                    );
+        {user && user.email !== "guest@example.com" ? (
+          <ScrollView
+            style={[mainStyles.scrollBase, { marginVertical: 20 }]}
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={async () => {
+                  setRefreshing(true);
+                  try {
+                    // Refetch user data
+                    const usersRef = ref(db, "users");
+                    const snapshot = await get(usersRef);
+                    if (snapshot.exists()) {
+                      const data = snapshot.val();
+                      const currentUserEntry = Object.entries(data).find(
+                        ([key, userData]) => userData.email === user.email
+                      );
 
-                    if (currentUserEntry) {
-                      const [key, userData] = currentUserEntry;
-                      setUser({ ...userData, id: key });
+                      if (currentUserEntry) {
+                        const [key, userData] = currentUserEntry;
+                        setUser({ ...userData, id: key });
+                      }
                     }
+
+                    // Refetch profile image
+                    const url = await fetchImgURL(
+                      `user-avatars/${user.id}/${user.id}.jpg`
+                    );
+                    setUserProfileImg(url);
+                  } catch (error) {
+                    console.error("Error refreshing user data:", error);
+                  } finally {
+                    setRefreshing(false);
                   }
-
-                  // Refetch profile image
-                  const url = await fetchImgURL(
-                    `user-avatars/${user.id}/${user.id}.jpg`
-                  );
-                  setUserProfileImg(url);
-                } catch (error) {
-                  console.error("Error refreshing user data:", error);
-                } finally {
-                  setRefreshing(false);
-                }
-              }}
-            />
-          }
-        >
-          <View style={{ gap: 15 }}>
-            <TouchableOpacity
-              style={[styles.buttonBase]}
-              onPress={() => navigation.navigate("Chats")}
-              activeOpacity={0.9}
-            >
-              <Icon name="chat" {...iconParams} colorStroke="transparent" />
-              <Text style={styles.buttonText}>Chats</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[
-                styles.buttonBase,
-                { backgroundColor: globalStyles.textOnSecondaryColor },
-              ]}
-              onPress={() => navigation.navigate("AddressesView")}
-              activeOpacity={0.9}
-            >
-              <Icon name="addresses" {...iconParams} />
-              <Text style={styles.buttonText}>
-                {t("userProfile.addresses")}
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.buttonBase]}
-              onPress={() => navigation.navigate("SettingsView")}
-              activeOpacity={0.9}
-            >
-              <Icon name="settings" {...iconParams} />
-              <Text style={styles.buttonText}>{t("userProfile.settings")}</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[
-                styles.buttonBase,
-                { backgroundColor: globalStyles.textOnSecondaryColor },
-              ]}
-              onPress={toggleDropdown}
-              activeOpacity={0.9}
-            >
-              <Icon name="language" {...iconParams} />
-              <Text style={styles.buttonText}>{t("userProfile.language")}</Text>
-            </TouchableOpacity>
-
-            {isDropdownVisible && (
-              <LanguageSwitcher toggleDropdown={toggleDropdown} />
-            )}
-
-            <View style={{ flexDirection: "row", gap: 15 }}>
+                }}
+              />
+            }
+          >
+            <View style={{ gap: 15 }}>
               <TouchableOpacity
-                style={[styles.buttonBase, styles.buttonRent]}
-                onPress={() => navigation.navigate("SendsView")}
+                style={[styles.buttonBase]}
+                onPress={() => navigation.navigate("Chats")}
                 activeOpacity={0.9}
               >
-                <Icon
-                  name="sends"
-                  width={65}
-                  height={65}
-                  fillColor={globalStyles.textOnPrimaryColor}
-                />
-                <Text style={styles.buttonRentText}>
-                  {t("userProfile.sends")}
+                <Icon name="chat" {...iconParams} colorStroke="transparent" />
+                <Text style={styles.buttonText}>Chats</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[
+                  styles.buttonBase,
+                  { backgroundColor: globalStyles.textOnSecondaryColor },
+                ]}
+                onPress={() => navigation.navigate("AddressesView")}
+                activeOpacity={0.9}
+              >
+                <Icon name="addresses" {...iconParams} />
+                <Text style={styles.buttonText}>
+                  {t("userProfile.addresses")}
                 </Text>
               </TouchableOpacity>
+
               <TouchableOpacity
-                style={[styles.buttonBase, styles.buttonRent]}
-                onPress={() => navigation.navigate("GetsView")}
+                style={[styles.buttonBase]}
+                onPress={() => navigation.navigate("SettingsView")}
                 activeOpacity={0.9}
               >
-                <Icon
-                  name="gets"
-                  width={65}
-                  height={65}
-                  fillColor={globalStyles.textOnPrimaryColor}
-                />
-                <Text style={styles.buttonRentText}>
-                  {t("userProfile.gets")}
+                <Icon name="settings" {...iconParams} />
+                <Text style={styles.buttonText}>
+                  {t("userProfile.settings")}
                 </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[
+                  styles.buttonBase,
+                  { backgroundColor: globalStyles.textOnSecondaryColor },
+                ]}
+                onPress={toggleDropdown}
+                activeOpacity={0.9}
+              >
+                <Icon name="language" {...iconParams} />
+                <Text style={styles.buttonText}>
+                  {t("userProfile.language")}
+                </Text>
+              </TouchableOpacity>
+
+              {isDropdownVisible && (
+                <LanguageSwitcher toggleDropdown={toggleDropdown} />
+              )}
+
+              <View style={{ flexDirection: "row", gap: 15 }}>
+                <TouchableOpacity
+                  style={[styles.buttonBase, styles.buttonRent]}
+                  onPress={() => navigation.navigate("SendsView")}
+                  activeOpacity={0.9}
+                >
+                  <Icon
+                    name="sends"
+                    width={65}
+                    height={65}
+                    fillColor={globalStyles.textOnPrimaryColor}
+                  />
+                  <Text style={styles.buttonRentText}>
+                    {t("userProfile.sends")}
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.buttonBase, styles.buttonRent]}
+                  onPress={() => navigation.navigate("GetsView")}
+                  activeOpacity={0.9}
+                >
+                  <Icon
+                    name="gets"
+                    width={65}
+                    height={65}
+                    fillColor={globalStyles.textOnPrimaryColor}
+                  />
+                  <Text style={styles.buttonRentText}>
+                    {t("userProfile.gets")}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              <TouchableOpacity
+                style={[styles.buttonBase, styles.buttonLogOut]}
+                onPress={handleLogout}
+                activeOpacity={0.9}
+              >
+                <Icon name="logout" {...iconParams} />
+                <Text style={styles.buttonText}>{t("userProfile.logout")}</Text>
               </TouchableOpacity>
             </View>
+          </ScrollView>
+        ) : (
+          <ScrollView
+            style={[mainStyles.scrollBase, { marginVertical: 20 }]}
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={async () => {
+                  setRefreshing(true);
+                  try {
+                    // Refetch user data
+                    const usersRef = ref(db, "users");
+                    const snapshot = await get(usersRef);
+                    if (snapshot.exists()) {
+                      const data = snapshot.val();
+                      const currentUserEntry = Object.entries(data).find(
+                        ([key, userData]) => userData.email === user.email
+                      );
 
-            <TouchableOpacity
-              style={[styles.buttonBase, styles.buttonLogOut]}
-              onPress={handleLogout}
-              activeOpacity={0.9}
-            >
-              <Icon name="logout" {...iconParams} />
-              <Text style={styles.buttonText}>{t("userProfile.logout")}</Text>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
+                      if (currentUserEntry) {
+                        const [key, userData] = currentUserEntry;
+                        setUser({ ...userData, id: key });
+                      }
+                    }
+
+                    // Refetch profile image
+                    const url = await fetchImgURL(
+                      `user-avatars/${user.id}/${user.id}.jpg`
+                    );
+                    setUserProfileImg(url);
+                  } catch (error) {
+                    console.error("Error refreshing user data:", error);
+                  } finally {
+                    setRefreshing(false);
+                  }
+                }}
+              />
+            }
+          >
+            <View style={{ gap: 15 }}>
+              <TouchableOpacity
+                style={[
+                  styles.buttonBase,
+                  { backgroundColor: globalStyles.textOnSecondaryColor },
+                ]}
+                onPress={toggleDropdown}
+                activeOpacity={0.9}
+              >
+                <Icon name="language" {...iconParams} />
+                <Text style={styles.buttonText}>
+                  {t("userProfile.language")}
+                </Text>
+              </TouchableOpacity>
+
+              {isDropdownVisible && (
+                <LanguageSwitcher toggleDropdown={toggleDropdown} />
+              )}
+
+              <View style={styles.notLogContainer}>
+                <Image
+                  source={require("../../assets/images/NotLogin.png")}
+                  style={styles.image}
+                />
+  
+                <Text style={styles.title}>Not Logged In</Text>
+                <Text style={styles.subtitle}>
+                  Sign up or log in to access all the app's features!
+                </Text>
+
+                <TouchableOpacity
+                style={[styles.buttonLOGIN]}
+                onPress={handleLogout}
+                activeOpacity={0.9}
+              >
+                {/* <Icon name="logout" {...iconParams} /> */}
+                <Text style={styles.buttonText}>{t("userProfile.login")}</Text>
+              </TouchableOpacity>
+              </View>
+
+
+            </View>
+          </ScrollView>
+        )}
+
         <ErrorModal
           isVisible={isModalVisible}
           onClose={handleModalClose}
