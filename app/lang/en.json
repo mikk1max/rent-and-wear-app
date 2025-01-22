@@ -396,7 +396,7 @@
       "addresses": "Addresses",
       "categories": "Categories",
       "chats": "Chats",
-      "chat": "Chat", 
+      "chat": "Chat",
       "createAnnouncement": "Create Announcement",
       "rentItem": "Rent {{item}}",
       "myGets": "My Gets",
@@ -412,6 +412,10 @@
     "error": {
       "waitTitle": "Please Wait",
       "waitMessage": "You can request a verification link only once every 5 minutes."
+    },
+    "verification": {
+      "requiredTitle": "Verification Required",
+      "requiredMessage": "You need to be a verified user to create an announcement."
     }
   }
 }

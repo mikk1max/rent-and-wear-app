@@ -401,7 +401,10 @@
       "waitTitle": "Proszę czekać",
       "waitMessage": "Link weryfikacyjny można wysyłać tylko raz na 5 minut."
     },
-
+    "verification": {
+      "requiredTitle": "Wymagana weryfikacja",
+      "requiredMessage": "Musisz być zweryfikowanym użytkownikiem, aby utworzyć ogłoszenie."
+    },
     "viewTitles": {
       "settings": "Ustawienia",
       "addresses": "Adresy",

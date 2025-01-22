@@ -219,7 +219,9 @@ const AnnouncementView = ({ route }) => {
         month: "short",
         day: "numeric",
       })
-    : i18n.language === "pl" ? "Data ukryta" : "Date hidden";;
+    : i18n.language === "pl"
+    ? "Data ukryta"
+    : "Date hidden";
 
   const openImage = (index) => {
     setCurrentIndex(index); // Ustaw aktualny indeks
@@ -518,12 +520,19 @@ const AnnouncementView = ({ route }) => {
             <TouchableOpacity
               style={styles.annBookRentButton}
               activeOpacity={0.8}
-              onPress={() =>
-                navigation.navigate("RentItNowView", {
-                  id: id,
-                  title: announcement.title,
-                })
-              }
+              onPress={() => {
+                if (user?.isVerified) {
+                  navigation.navigate("RentItNowView", {
+                    id: id,
+                    title: announcement.title,
+                  });
+                } else {
+                  Alert.alert(
+                    t("verification.requiredTitle"),
+                    t("verification.requiredMessage")
+                  );
+                }
+              }}
             >
               <Text style={styles.annBookRentButtonText}>
                 {t("announcement.rentNow")}
