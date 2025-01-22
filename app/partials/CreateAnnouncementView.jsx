@@ -49,10 +49,11 @@ import * as ImagePicker from "expo-image-picker";
 import { useForm, Controller } from "react-hook-form";
 import { SelectList } from "react-native-dropdown-select-list";
 import Icon from "../components/Icon";
+import { useTranslation } from "react-i18next";
 
 const CreateAnnouncementView = () => {
   const navigation = useNavigation();
-
+  const { t } = useTranslation();
   const { user, setUser } = useUser();
 
   // const [image, setImage] = useState<string | null >(null);
@@ -285,7 +286,6 @@ const CreateAnnouncementView = () => {
                   <TouchableOpacity
                     key={"CreateAnnouncement_Image_" + img}
                     style={styles.deleteImageButton}
-                    // onPress={() => console.log("Delete " + img)}
                     onPress={() => deleteImage(img)}
                   >
                     <Image source={{ uri: img }} style={styles.image} />
@@ -301,13 +301,16 @@ const CreateAnnouncementView = () => {
               )}
             </View>
             {images.length == 0 && (
-              <Text style={styles.imagesLabel}>Add images of your product</Text>
+              <Text style={styles.imagesLabel}>
+                {t("createAnnouncement.imagesLabel")}
+              </Text>
             )}
           </View>
           <View style={styles.inputs}>
-            {/* Title */}
             <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Announcement title:</Text>
+              <Text style={styles.inputLabel}>
+                {`${t("createAnnouncement.annTitleLabel")}:`}
+              </Text>
               {errors.title && (
                 <Text style={styles.textInputError}>
                   {errors.title.message}
@@ -316,10 +319,10 @@ const CreateAnnouncementView = () => {
               <Controller
                 control={control}
                 rules={{
-                  required: "Title is required!",
+                  required: t("createAnnouncement.titleRequired"),
                   pattern: {
                     value: /^.{14,70}$/,
-                    message: "Min 14 and max 70 characters.",
+                    message: t("createAnnouncement.titlePattern"),
                   },
                 }}
                 render={({ field: { onChange, onBlur, value } }) => (
@@ -327,7 +330,7 @@ const CreateAnnouncementView = () => {
                     style={styles.textInput}
                     onBlur={onBlur}
                     onChangeText={onChange}
-                    placeholder="e.g. Black underpants with good price"
+                    placeholder={t("createAnnouncement.titlePlaceholder")}
                     placeholderTextColor={"gray"}
                     value={value}
                     maxLength={70}
@@ -344,9 +347,10 @@ const CreateAnnouncementView = () => {
               />
             </View>
 
-            {/* Category */}
             <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Category:</Text>
+              <Text style={styles.inputLabel}>
+                {t("createAnnouncement.categoryLabel")}:
+              </Text>
               {categoryError && (
                 <Text style={styles.textInputError}>{categoryError}</Text>
               )}
@@ -364,7 +368,9 @@ const CreateAnnouncementView = () => {
                     />
                   )}
                   <Text style={styles.categoryListButtonText}>
-                    {category ? category?.subcategoryName : "Choose a category"}
+                    {category
+                      ? category?.subcategoryName
+                      : t("createAnnouncement.chooseCategory")}
                   </Text>
                 </View>
 
@@ -404,7 +410,7 @@ const CreateAnnouncementView = () => {
                           {...iconOptions}
                         />
                         <Text style={styles.categoryListItemText}>
-                          {subcategoryItem?.subcategoryName}
+                          {t(`subcategoryNames.${subcategoryItem?.subcategoryIcon}`)}
                         </Text>
                       </TouchableOpacity>
                     ))}
@@ -413,19 +419,20 @@ const CreateAnnouncementView = () => {
               )}
             </View>
 
-            {/* Size */}
             <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Size:</Text>
+              <Text style={styles.inputLabel}>
+                {t("createAnnouncement.sizeLabel")}:
+              </Text>
               {errors.size && (
                 <Text style={styles.textInputError}>{errors.size.message}</Text>
               )}
               <Controller
                 control={control}
                 rules={{
-                  required: "Size is required!",
+                  required: t("createAnnouncement.sizeRequired"),
                   pattern: {
                     value: /^.{1,40}$/,
-                    message: "Min 1 and max 40 characters.",
+                    message: t("createAnnouncement.sizePattern"),
                   },
                 }}
                 render={({ field: { onChange, onBlur, value } }) => (
@@ -433,7 +440,7 @@ const CreateAnnouncementView = () => {
                     style={styles.textInput}
                     onBlur={onBlur}
                     onChangeText={onChange}
-                    placeholder="e.g. XS or 123/45"
+                    placeholder={t("createAnnouncement.sizePlaceholder")}
                     placeholderTextColor={"gray"}
                     value={value}
                     maxLength={40}
@@ -447,9 +454,10 @@ const CreateAnnouncementView = () => {
               />
             </View>
 
-            {/* Condition */}
             <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Condition:</Text>
+              <Text style={styles.inputLabel}>
+                {t("createAnnouncement.conditionLabel")}:
+              </Text>
               {errors.condition && (
                 <Text style={styles.textInputError}>
                   {errors.condition.message}
@@ -458,10 +466,10 @@ const CreateAnnouncementView = () => {
               <Controller
                 control={control}
                 rules={{
-                  required: "Condition is required",
+                  required: t("createAnnouncement.conditionRequired"),
                   pattern: {
                     value: /^.{3,40}$/,
-                    message: "Min 3 and max 40 characters.",
+                    message: t("createAnnouncement.conditionPattern"),
                   },
                 }}
                 render={({ field: { onChange, onBlur, value } }) => (
@@ -469,7 +477,7 @@ const CreateAnnouncementView = () => {
                     style={styles.textInput}
                     onBlur={onBlur}
                     onChangeText={onChange}
-                    placeholder="e.g. Almost new"
+                    placeholder={t("createAnnouncement.conditionPlaceholder")}
                     placeholderTextColor={"gray"}
                     value={value}
                     maxLength={40}
@@ -483,9 +491,10 @@ const CreateAnnouncementView = () => {
               />
             </View>
 
-            {/* Price */}
             <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Price per day in PLN:</Text>
+              <Text style={styles.inputLabel}>
+                {t("createAnnouncement.priceLabel")}:
+              </Text>
               {errors.price && (
                 <Text style={styles.textInputError}>
                   {errors.price.message}
@@ -494,10 +503,10 @@ const CreateAnnouncementView = () => {
               <Controller
                 control={control}
                 rules={{
-                  required: "Price is required!",
+                  required: t("createAnnouncement.priceRequired"),
                   pattern: {
                     value: /^(?!0)\d+(\.\d{1,2})?$/,
-                    message: "Invalid price format!",
+                    message: t("createAnnouncement.pricePattern"),
                   },
                 }}
                 render={({ field: { onChange, onBlur, value } }) => (
@@ -505,7 +514,7 @@ const CreateAnnouncementView = () => {
                     style={styles.textInput}
                     onBlur={onBlur}
                     onChangeText={onChange}
-                    placeholder="e.g. 7.99"
+                    placeholder={t("createAnnouncement.pricePlaceholder")}
                     placeholderTextColor={"gray"}
                     value={value}
                     maxLength={10}
@@ -519,9 +528,10 @@ const CreateAnnouncementView = () => {
               />
             </View>
 
-            {/* Description */}
             <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Description:</Text>
+              <Text style={styles.inputLabel}>
+                {t("createAnnouncement.descriptionLabel")}:
+              </Text>
               {errors.description && (
                 <Text style={styles.textInputError}>
                   {errors.description.message}
@@ -530,10 +540,10 @@ const CreateAnnouncementView = () => {
               <Controller
                 control={control}
                 rules={{
-                  required: "Description is required!",
+                  required: t("createAnnouncement.descriptionRequired"),
                   pattern: {
                     value: /^.{40,9000}$/s,
-                    message: "Min 40 and max 9000 characters",
+                    message: t("createAnnouncement.descriptionPattern"),
                   },
                 }}
                 render={({ field: { onChange, onBlur, value } }) => (
@@ -541,7 +551,7 @@ const CreateAnnouncementView = () => {
                     style={[styles.textInput, { height: "auto" }]}
                     onBlur={onBlur}
                     onChangeText={onChange}
-                    placeholder="Description of your announcement"
+                    placeholder={t("createAnnouncement.descriptionPlaceholder")}
                     placeholderTextColor={"gray"}
                     value={value}
                     maxLength={9000}
@@ -561,13 +571,17 @@ const CreateAnnouncementView = () => {
               style={styles.createButton}
               onPress={handleSubmit(onSubmit)}
             >
-              <Text style={styles.createText}>Create</Text>
+              <Text style={styles.createText}>
+                {t("createAnnouncement.createButton")}
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.cancelButton}
               onPress={() => navigation.goBack()}
             >
-              <Text style={styles.cancelText}>Cancel</Text>
+              <Text style={styles.cancelText}>
+                {t("createAnnouncement.cancelButton")}
+              </Text>
             </TouchableOpacity>
           </View>
         </KeyboardAwareScrollView>
@@ -602,6 +616,7 @@ const styles = StyleSheet.create({
     fontFamily: "WorkSans_900Black",
     fontSize: 18,
     color: globalStyles.textOnSecondaryColor,
+    marginTop: 10
   },
 
   imagesList: {

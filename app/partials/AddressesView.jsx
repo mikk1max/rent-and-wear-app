@@ -143,19 +143,19 @@ const AddressesView = () => {
   };
   const [currentAddress, setCurrentAddress] = useState(emptyAddress);
   const [currentAddressId, setCurrentAddressId] = useState(null);
-  const [formTitle, setFormTitle] = useState("Create new address");
+  const [formTitle, setFormTitle] = useState(t("addresses.newAddressBtn"));
 
   const openAddressForm = (addressId) => {
     if (addressId != null) {
       setCurrentAddress(getAddressById(addresses, addressId));
       setCurrentAddressId(addressId);
       setFormTitle(
-        "Edit address for " + getAddressById(addresses, addressId).adresse
+        `${t("addresses.editAddressFor")} ` + getAddressById(addresses, addressId).adresse
       );
     } else {
       setCurrentAddress(emptyAddress);
       setCurrentAddressId(null);
-      setFormTitle("Create new address");
+      setFormTitle(t("addresses.newAddressBtn"));
     }
 
     toggleModal();
@@ -370,14 +370,14 @@ const AddressesView = () => {
                 <Controller
                   control={control}
                   rules={{
-                    required: "Addressee is required",
+                    required: `${t("addresses.modalAddEdit.addresseeValidationR")}: `,
                   }}
                   render={({ field: { onChange, onBlur, value } }) => (
                     <TextInput
                       style={styles.modalTextInput}
                       onBlur={onBlur}
                       onChangeText={onChange}
-                      placeholder="Bob Smith / Macrosoft Sp. z o. o."
+                      placeholder={t("addresses.modalAddEdit.addresseePlaceholder")}
                       value={value}
                       autoCapitalize="none"
                       autoComplete="name"
@@ -391,7 +391,7 @@ const AddressesView = () => {
 
               {/* Phone number */}
               <View style={styles.modalInputContainer}>
-                <Text style={styles.modalLabel}>Phone number:</Text>
+                <Text style={styles.modalLabel}>{`${t("addresses.modalAddEdit.phoneLabel")}`}</Text>
                 {errors.phoneNumber && (
                   <Text style={styles.modalTextError}>
                     {errors.phoneNumber.message}
@@ -402,7 +402,7 @@ const AddressesView = () => {
                   rules={{
                     pattern: {
                       value: /^(?:\+48\d{9}|\d{9})$/,
-                      message: "Invalid phone number format",
+                      message: `${t("addresses.modalAddEdit.phoneValidationP")}`,
                     },
                   }}
                   render={({ field: { onChange, onBlur, value } }) => (
@@ -410,7 +410,7 @@ const AddressesView = () => {
                       style={styles.modalTextInput}
                       onBlur={onBlur}
                       onChangeText={onChange}
-                      placeholder="+48987654321 / 987654321"
+                      placeholder={`${t("addresses.modalAddEdit.phonePlaceholder")}`}
                       value={value}
                       autoCapitalize="none"
                       autoComplete="tel"
@@ -424,7 +424,7 @@ const AddressesView = () => {
 
               {/* E-mail */}
               <View style={styles.modalInputContainer}>
-                <Text style={styles.modalLabel}>E-mail:</Text>
+                <Text style={styles.modalLabel}>{`${t("addresses.modalAddEdit.emailLabel")}: `}</Text>
                 {errors.email && (
                   <Text style={styles.modalTextError}>
                     {errors.email.message}
@@ -436,7 +436,7 @@ const AddressesView = () => {
                     pattern: {
                       value:
                         /^(?!\.)[a-zA-Z0-9!#$%&'*+/=?^_`{|}~.-]{1,64}(?<!\.)@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$/,
-                      message: "Invalid e-mail format",
+                      message: t("addresses.modalAddEdit.emailValidationP"),
                     },
                   }}
                   render={({ field: { onChange, onBlur, value } }) => (
@@ -444,7 +444,7 @@ const AddressesView = () => {
                       style={styles.modalTextInput}
                       onBlur={onBlur}
                       onChangeText={onChange}
-                      placeholder="example@gmail.com"
+                      placeholder={t("addresses.modalAddEdit.emailPlaceholder")}
                       value={value}
                       autoCapitalize="none"
                       autoComplete="email"
@@ -459,7 +459,7 @@ const AddressesView = () => {
               {/* Street */}
               <View style={styles.modalInputContainer}>
                 <Text style={styles.modalLabel}>
-                  Street: <Text style={{ color: "red" }}>*</Text>
+                {`${t("addresses.modalAddEdit.streetLabel")}: `}<Text style={{ color: "red" }}>*</Text>
                 </Text>
                 {errors.street && (
                   <Text style={styles.modalTextError}>
@@ -469,14 +469,14 @@ const AddressesView = () => {
                 <Controller
                   control={control}
                   rules={{
-                    required: "Street is required",
+                    required: t("addresses.modalAddEdit.streetValidationR"),
                   }}
                   render={({ field: { onChange, onBlur, value } }) => (
                     <TextInput
                       style={styles.modalTextInput}
                       onBlur={onBlur}
                       onChangeText={onChange}
-                      placeholder="ul. Nadbystrzycka"
+                      placeholder={t("addresses.modalAddEdit.streetPlaceholder")}
                       value={value}
                       autoCapitalize="words"
                       autoComplete="street-address"
@@ -491,7 +491,7 @@ const AddressesView = () => {
               {/* Building number */}
               <View style={styles.modalInputContainer}>
                 <Text style={styles.modalLabel}>
-                  Building number: <Text style={{ color: "red" }}>*</Text>
+                {`${t("addresses.modalAddEdit.buildingLabel")}: `}<Text style={{ color: "red" }}>*</Text>
                 </Text>
                 {errors.buildingNumber && (
                   <Text style={styles.modalTextError}>
@@ -501,10 +501,10 @@ const AddressesView = () => {
                 <Controller
                   control={control}
                   rules={{
-                    required: "Building number is required",
+                    required: t("addresses.modalAddEdit.buildingValidationR"),
                     pattern: {
                       value: /^[0-9]{1,4}[A-Za-z]?$/,
-                      message: "Invalid building number format",
+                      message: t("addresses.modalAddEdit.buildingValidationP"),
                     },
                   }}
                   render={({ field: { onChange, onBlur, value } }) => (
@@ -512,7 +512,7 @@ const AddressesView = () => {
                       style={styles.modalTextInput}
                       onBlur={onBlur}
                       onChangeText={onChange}
-                      placeholder="38Y"
+                      placeholder={t("addresses.modalAddEdit.buildingPlaceholder")}
                       value={value}
                       autoCapitalize="characters"
                       autoComplete="off"
@@ -526,7 +526,7 @@ const AddressesView = () => {
 
               {/* Flar of Apartment number */}
               <View style={styles.modalInputContainer}>
-                <Text style={styles.modalLabel}>Flat or Apartment number:</Text>
+                <Text style={styles.modalLabel}>{`${t("addresses.modalAddEdit.apartmentLabel")}: `}</Text>
                 {errors.flatOrApartmentNumber && (
                   <Text style={styles.modalTextError}>
                     {errors.flatOrApartmentNumber.message}
@@ -539,7 +539,7 @@ const AddressesView = () => {
                       style={styles.modalTextInput}
                       onBlur={onBlur}
                       onChangeText={onChange}
-                      placeholder="m. 22"
+                      placeholder={t("addresses.modalAddEdit.apartmentPlaceholder")}
                       value={value}
                       autoCapitalize="none"
                       autoComplete="off"
@@ -553,7 +553,7 @@ const AddressesView = () => {
 
               {/* Floor number */}
               <View style={styles.modalInputContainer}>
-                <Text style={styles.modalLabel}>Floor number:</Text>
+                <Text style={styles.modalLabel}>{`${t("addresses.modalAddEdit.floorLabel")}: `}</Text>
                 {errors.floorNumber && (
                   <Text style={styles.modalTextError}>
                     {errors.floorNumber.message}
@@ -564,7 +564,7 @@ const AddressesView = () => {
                   rules={{
                     pattern: {
                       value: /^(0|[1-9][0-9]{0,1}|1[0-9]{2}|200|-([1-9]))$/,
-                      message: "Invalid floor number format",
+                      message: t("addresses.modalAddEdit.floorValidationP"),
                     },
                   }}
                   render={({ field: { onChange, onBlur, value } }) => (
@@ -572,7 +572,7 @@ const AddressesView = () => {
                       style={styles.modalTextInput}
                       onBlur={onBlur}
                       onChangeText={onChange}
-                      placeholder="12"
+                      placeholder={t("addresses.modalAddEdit.floorPlaceholder")}
                       value={value}
                       autoCapitalize="none"
                       autoComplete="off"
@@ -587,7 +587,7 @@ const AddressesView = () => {
               {/* Postal code */}
               <View style={styles.modalInputContainer}>
                 <Text style={styles.modalLabel}>
-                  Postal code: <Text style={{ color: "red" }}>*</Text>
+                {`${t("addresses.modalAddEdit.postalCodeLabel")}: `}<Text style={{ color: "red" }}>*</Text>
                 </Text>
                 {errors.postalCode && (
                   <Text style={styles.modalTextError}>
@@ -597,10 +597,10 @@ const AddressesView = () => {
                 <Controller
                   control={control}
                   rules={{
-                    required: "Postal code is required",
+                    required: t("addresses.modalAddEdit.postalCodeValidationR"),
                     pattern: {
                       value: /^[0-9]{2}-[0-9]{3}$/,
-                      message: "Invalid postal code format",
+                      message: t("addresses.modalAddEdit.postalCodeValidationP"),
                     },
                   }}
                   render={({ field: { onChange, onBlur, value } }) => (
@@ -608,7 +608,7 @@ const AddressesView = () => {
                       style={styles.modalTextInput}
                       onBlur={onBlur}
                       onChangeText={onChange}
-                      placeholder="20-501"
+                      placeholder={t("addresses.modalAddEdit.postalCodePlaceholder")}
                       value={value}
                       autoCapitalize="none"
                       autoComplete="postal-code"
@@ -623,7 +623,7 @@ const AddressesView = () => {
               {/* City */}
               <View style={styles.modalInputContainer}>
                 <Text style={styles.modalLabel}>
-                  City: <Text style={{ color: "red" }}>*</Text>
+                {`${t("addresses.modalAddEdit.cityLabel")}: `}<Text style={{ color: "red" }}>*</Text>
                 </Text>
                 {errors.city && (
                   <Text style={styles.modalTextError}>
@@ -633,14 +633,14 @@ const AddressesView = () => {
                 <Controller
                   control={control}
                   rules={{
-                    required: "City is required",
+                    required: t("addresses.modalAddEdit.cityValidationR"),
                   }}
                   render={({ field: { onChange, onBlur, value } }) => (
                     <TextInput
                       style={styles.modalTextInput}
                       onBlur={onBlur}
                       onChangeText={onChange}
-                      placeholder="Lublin"
+                      placeholder={t("addresses.modalAddEdit.cityPlaceholder")}
                       value={value}
                       autoCapitalize="words"
                       autoComplete="off"
@@ -655,7 +655,7 @@ const AddressesView = () => {
               {/* Country */}
               <View style={styles.modalInputContainer}>
                 <Text style={styles.modalLabel}>
-                  Country: <Text style={{ color: "red" }}>*</Text>
+                {`${t("addresses.modalAddEdit.countryLabel")}: `}<Text style={{ color: "red" }}>*</Text>
                 </Text>
                 {errors.country && (
                   <Text style={styles.modalTextError}>
@@ -665,14 +665,14 @@ const AddressesView = () => {
                 <Controller
                   control={control}
                   rules={{
-                    required: "Country is required",
+                    required: t("addresses.modalAddEdit.countryValidationR"),
                   }}
                   render={({ field: { onChange, onBlur, value } }) => (
                     <TextInput
                       style={styles.modalTextInput}
                       onBlur={onBlur}
                       onChangeText={onChange}
-                      placeholder="Polska"
+                      placeholder={t("addresses.modalAddEdit.countryPlaceholder")}
                       value={value}
                       autoCapitalize="words"
                       autoComplete="country"
@@ -690,14 +690,14 @@ const AddressesView = () => {
                   activeOpacity={0.8}
                   onPress={handleSubmit(onSubmit)}
                 >
-                  <Text style={styles.modalButtonText}>Save</Text>
+                  <Text style={styles.modalButtonText}>{`${t("universal.saveBtn")}`}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.modalCancelButton}
                   activeOpacity={0.8}
                   onPress={onCancel}
                 >
-                  <Text style={styles.modalButtonText}>Cancel</Text>
+                  <Text style={styles.modalButtonText}>{`${t("universal.cancelBtn")}`}</Text>
                 </TouchableOpacity>
               </View>
             </KeyboardAwareScrollView>
@@ -714,7 +714,7 @@ const AddressesView = () => {
         <View style={styles.modalBackground}>
           <View style={styles.modalCardMini}>
             <Text style={styles.modalFormTitle}>
-              Delete address for {confirmationTitle}?
+              {`${t("addresses.deleteAddressFor")}`} {confirmationTitle}?
             </Text>
             <View style={styles.modalButtons}>
               <TouchableOpacity
@@ -722,7 +722,7 @@ const AddressesView = () => {
                 activeOpacity={0.8}
                 onPress={confirmAddressDeletion}
               >
-                <Text style={styles.modalButtonText}>Delete</Text>
+                <Text style={styles.modalButtonText}>{`${t("universal.deleteBtn")}`}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.modalRejectButton}
@@ -735,7 +735,7 @@ const AddressesView = () => {
                     { color: globalStyles.redColor },
                   ]}
                 >
-                  Cancel
+                  {`${t("universal.cancelBtn")}`}
                 </Text>
               </TouchableOpacity>
             </View>

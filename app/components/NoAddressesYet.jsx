@@ -1,12 +1,21 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { globalStyles } from "../utils/style";
+import { useTranslation } from "react-i18next";
 
 const { width, height } = Dimensions.get("window");
 
 const NoAddressesYet = () => {
   const navigation = useNavigation();
+  const { t } = useTranslation();
 
   return (
     <View style={styles.container}>
@@ -14,10 +23,8 @@ const NoAddressesYet = () => {
         source={require("../../assets/images/NoAddressesYet.png")}
         style={styles.image}
       />
-      <Text style={styles.title}>No Addresses</Text>
-      <Text style={styles.subtitle}>
-      You have no saved addresses yet!
-      </Text>
+      <Text style={styles.title}>{t("noAddresses.title")}</Text>
+      <Text style={styles.subtitle}>{t("noAddresses.subtitle")}</Text>
     </View>
   );
 };
@@ -25,7 +32,7 @@ const NoAddressesYet = () => {
 const styles = StyleSheet.create({
   container: {
     // width: width,
-    height: height - 180,
+    height: height - 250,
     // height: "100%",
     backgroundColor: globalStyles.backgroundColor,
     alignItems: "center",

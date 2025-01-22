@@ -3,12 +3,14 @@ import SearchBar from "react-native-dynamic-search-bar";
 import { Dimensions, StyleSheet } from "react-native";
 import { useCustomFonts } from "../utils/fonts";
 import { globalStyles } from "../utils/style";
+import { useTranslation } from "react-i18next";
 
 const { width } = Dimensions.get("window");
 
 const SearchBarComp = ({ onSearch, ...props }) => {
   const [search, setSearch] = useState("");
   const [spinnerVisible, setSpinnerVisible] = useState(false);
+  const { t } = useTranslation();
 
   const updateSearch = (search) => {
     setSearch(search);
@@ -30,21 +32,8 @@ const SearchBarComp = ({ onSearch, ...props }) => {
   const { key, ...restProps } = props;
 
   return (
-    // <SearchBar
-    //   placeholder="Search"
-    //   placeholderTextColor={"#3B6592"}
-    //   onChangeText={updateSearch}
-    //   value={search}
-    //   round
-    //   containerStyle={styles.container}
-    //   inputContainerStyle={styles.inputContainer}
-    //   inputStyle={styles.input}
-    //   searchIcon={{ size: 25, color: globalStyles.primaryColor }}
-    //   clearIcon={{ size: 25, color: globalStyles.primaryColor }}
-    //   {...restProps}
-    // />
     <SearchBar
-      placeholder="Search here"
+      placeholder={t("searchBar.placeholder")}
       placeholderTextColor="#3B6592"
       style={[styles.searchBar]}
       value={search}
@@ -54,7 +43,7 @@ const SearchBarComp = ({ onSearch, ...props }) => {
       searchIconImageStyle={{ tintColor: globalStyles.primaryColor }}
       clearIconImageStyle={{ tintColor: globalStyles.primaryColor }}
       spinnerColor={globalStyles.primaryColor}
-      textInputStyle={{color: globalStyles.primaryColor}}
+      textInputStyle={{ color: globalStyles.primaryColor }}
       {...props}
     />
   );

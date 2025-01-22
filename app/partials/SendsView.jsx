@@ -63,12 +63,15 @@ import {
 import { color } from "react-native-elements/dist/helpers";
 
 import * as Progress from "react-native-progress";
+import { useTranslation } from "react-i18next";
 // import { statusCodes } from "@react-native-google-signin/google-signin";
 
-const { height } = Dimensions.get("window");
+const { width, height } = Dimensions.get("window");
 
 const SendsView = () => {
   const navigation = useNavigation();
+
+  const { t } = useTranslation();
 
   const { user, setUser } = useUser();
 
@@ -196,7 +199,7 @@ const SendsView = () => {
 
   const filteredRentsAndReservations = currentRentsAndReservations.filter(
     (rentOrReservation) =>
-      activeStatus === "All" ||
+      activeStatus === statuses[0].statusName ||
       rentOrReservation.status.statusName === activeStatus
   );
 
@@ -222,7 +225,7 @@ const SendsView = () => {
                 ]}
                 onPress={() =>
                   setActiveStatus((prevStatus) =>
-                    prevStatus == status.statusName ? "All" : status.statusName
+                    prevStatus == status.statusName ? statuses[0].statusName : status.statusName
                   )
                 }
               >
@@ -233,7 +236,7 @@ const SendsView = () => {
                       : styles.statusTextInactive
                   }
                 >
-                  {status.statusName}
+                  {t(`statusNames.${status.statusName}`)}
                 </Text>
               </TouchableOpacity>
             ))}
@@ -266,11 +269,11 @@ const SendsView = () => {
                     <Divider style={styles.rentOrReservationDivider} />
                     <Text
                       style={styles.rentOrReservationText}
-                    >{`$${rentOrReservation.amount} for ${rentOrReservation.daysInRent} days`}</Text>
+                    >{`$${rentOrReservation.amount} ${t("sendsGets.for")} ${rentOrReservation.daysInRent} ${t("sendsGets.day")}`}</Text>
                     <Divider style={styles.rentOrReservationDivider} />
                     <Text
                       style={styles.rentOrReservationText}
-                    >{`Status: ${rentOrReservation.status.statusName}`}</Text>
+                    >{`Status: ${t(`statusNames.${rentOrReservation?.status?.statusName || 'undefined'}`)}`}</Text>
                     <Progress.Bar
                       progress={rentOrReservation.status.statusCode / 8}
                       height={20}
@@ -292,7 +295,7 @@ const SendsView = () => {
                     activeOpacity={globalStyles.ACTIVE_OPACITY}
                   >
                     <Text style={styles.rentOrReservationButtonText}>
-                      Details
+                      {t("sendsGets.details")}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -301,7 +304,7 @@ const SendsView = () => {
             {filteredRentsAndReservations.length === 0 && (
               <View style={styles.noItemsContainer}>
                 <Text style={styles.noItemsMessage}>
-                  No sends found! Please check your filters.
+                  {t("sendsGets.noItemsMessage")}
                 </Text>
                 <View style={styles.centeredButtonContainer}>
                   <TouchableOpacity
@@ -316,7 +319,7 @@ const SendsView = () => {
                       height={150}
                       fillColor={globalStyles.primaryColor}
                     />
-                    <Text style={styles.noItemsBtn}>No items found</Text>
+                    <Text style={styles.noItemsBtn}>{t("sendsGets.NoItems")}</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -445,6 +448,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     gap: 100,
     // height: height/2
+    width: width - 50
   },
 
   noItemsMessage: {
@@ -474,5 +478,6 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     fontFamily: "Poppins_500Medium",
     fontSize: 20,
+    textAlign: "center"
   },
 });

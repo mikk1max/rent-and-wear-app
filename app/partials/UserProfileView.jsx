@@ -84,13 +84,13 @@ const UserProfileView = () => {
   useFocusEffect(
     useCallback(() => {
       const backAction = () => {
-        Alert.alert("Leave RENT&WEAR?", "Are you sure you want to exit?", [
+        Alert.alert(`${t("exitApp.title")}`, `${t("exitApp.description")}`, [
           {
-            text: "Cancel",
+            text: `${t("universal.cancelBtn")}`,
             onPress: () => null,
             style: "cancel",
           },
-          { text: "YES", onPress: () => BackHandler.exitApp() },
+          { text: `${t("universal.yesBtn")}`, onPress: () => BackHandler.exitApp() },
         ]);
         return true;
       };
@@ -276,7 +276,7 @@ const UserProfileView = () => {
                 activeOpacity={0.9}
               >
                 <Icon name="chat" {...iconParams} colorStroke="transparent" />
-                <Text style={styles.buttonText}>Chats</Text>
+                <Text style={styles.buttonText}>{t("userProfile.chats")}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -428,23 +428,23 @@ const UserProfileView = () => {
                   source={require("../../assets/images/NotLogin.png")}
                   style={styles.image}
                 />
-  
-                <Text style={styles.title}>Not Logged In</Text>
+
+                <Text style={styles.title}>{t("userProfile.notLogTitle")}</Text>
                 <Text style={styles.subtitle}>
-                  Sign up or log in to access all the app's features!
+                  {t("userProfile.notLogSubTitle")}
                 </Text>
 
                 <TouchableOpacity
-                style={[styles.buttonLOGIN]}
-                onPress={handleLogout}
-                activeOpacity={0.9}
-              >
-                {/* <Icon name="logout" {...iconParams} /> */}
-                <Text style={styles.buttonText}>{t("userProfile.login")}</Text>
-              </TouchableOpacity>
+                  style={[styles.buttonLOGIN]}
+                  onPress={handleLogout}
+                  activeOpacity={0.9}
+                >
+                  {/* <Icon name="logout" {...iconParams} /> */}
+                  <Text style={styles.buttonText}>
+                    {t("userProfile.login")}
+                  </Text>
+                </TouchableOpacity>
               </View>
-
-
             </View>
           </ScrollView>
         )}

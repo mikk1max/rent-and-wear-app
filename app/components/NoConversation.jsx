@@ -1,12 +1,21 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { globalStyles } from "../utils/style";
+import { useTranslation } from "react-i18next";
 
 const { width, height } = Dimensions.get("window");
 
 const NoConversation = () => {
   const navigation = useNavigation();
+  const { t } = useTranslation();
 
   return (
     <View style={styles.container}>
@@ -14,10 +23,8 @@ const NoConversation = () => {
         source={require("../../assets/images/NoConversation.png")}
         style={styles.image}
       />
-      <Text style={styles.title}>No Chats</Text>
-      <Text style={styles.subtitle}>
-      You have no any chat rooms yet!
-      </Text>
+      <Text style={styles.title}>{t("noChats.title")}</Text>
+      <Text style={styles.subtitle}>{t("noChats.subtitle")}</Text>
     </View>
   );
 };

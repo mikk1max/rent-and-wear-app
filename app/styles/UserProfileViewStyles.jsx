@@ -79,7 +79,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   buttonLogOut: {
-    backgroundColor: globalStyles.accentColor,
+    backgroundColor: globalStyles.redColor,
   },
   buttonRent: {
     width: (width - 2 * 25 - 15) / 2,

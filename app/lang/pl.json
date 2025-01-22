@@ -12,20 +12,32 @@
       "editBtn": "Edytuj",
       "saveBtn": "Zapisz",
       "cancelBtn": "Anuluj",
-      "deleteBtn": "Usuń"
+      "deleteBtn": "Usuń",
+      "closeBtn": "Zamknij",
+      "yesBtn": "TAK",
+      "somethingWentWrong": "Coś poszło nie tak! Spróbuj ponownie później."
     },
     "welcome": {
       "guestBtn": "Kontynuuj jako gość",
       "loginBtn": "Zaloguj się / Zarejestruj się"
     },
+    "productCard": {
+      "day": "dzień"
+    },
     "login": {
       "title": "Witaj ponownie",
       "emailLabel": "E-mail",
+      "emailPlaceholder": "example@gmail.com",
+      "emailRequired": "E-mail jest wymagany",
+      "emailPattern": "Nieprawidłowy format e-maila",
       "passLabel": "Hasło",
+      "passwordPlaceholder": "qwerty123",
+      "passwordRequired": "Hasło jest wymagane",
+      "passwordMinLength": "Hasło musi mieć co najmniej 6 znaków",
       "forgotPass": "Zapomniałeś hasła",
       "loginBtn": "Zaloguj się",
+      "orText": "lub",
       "signUpBtn": "Zarejestruj się",
-      "googleBtn": "Zaloguj się przez Google",
       "modalError": {
         "title": "Błąd logowania",
         "closeBtn": "Spróbuj ponownie"
@@ -34,9 +46,21 @@
     "signUp": {
       "title": "Utwórz konto",
       "nameLabel": "Imię",
+      "namePlaceholder": "Jan",
+      "nameRequired": "Imię jest wymagane",
+      "namePattern": "Nieprawidłowy format imienia",
       "surnameLabel": "Nazwisko",
+      "surnamePlaceholder": "Kowalski",
+      "surnameRequired": "Nazwisko jest wymagane",
+      "surnamePattern": "Nieprawidłowy format nazwiska",
       "emailLabel": "E-mail",
+      "emailPlaceholder": "example@gmail.com",
+      "emailRequired": "E-mail jest wymagany",
+      "emailPattern": "Nieprawidłowy format e-maila",
       "passLabel": "Hasło",
+      "passwordPlaceholder": "qwerty123",
+      "passwordRequired": "Hasło jest wymagane",
+      "passwordMinLength": "Hasło musi mieć co najmniej 6 znaków",
       "signUpBtn": "Zarejestruj się",
       "modalError": {
         "title": "Błąd rejestracji",
@@ -58,49 +82,338 @@
         "completed": "Zweryfikowano",
         "uncompleted": "Nie zweryfikowano"
       },
-      "language": "Język",
-      "settings": "Ustawienia",
+      "chats": "Czaty",
       "addresses": "Adresy",
+      "settings": "Ustawienia",
+      "language": "Język",
       "sends": "Wysyłki",
       "gets": "Odbiory",
-      "logout": "Wyloguj się"
+      "logout": "Wyloguj się",
+      "login": "Zaloguj się / Zarejestruj się",
+      "notLogTitle": "Nie zalogowano",
+      "notLogSubTitle": "Zarejestruj się lub zaloguj, aby uzyskać dostęp do wszystkich funkcji aplikacji!"
+    },
+    "sendsGets": {
+      "details": "Szczegóły",
+      "noItemsMessage": "Brak wyników! Upewnij się, że ustawienia filtrów są poprawne.",
+      "NoItems": "Nie znaleziono przedmiotów",
+      "for": "za okres",
+      "day": "dni"
+    },
+    "rentItNow": {
+      "from": "Od",
+      "to": "Do",
+      "total": "Kwota całkowita",
+      "startDate": "Wybierz datę rozpoczęcia",
+      "endDate": "Wybierz datę zakończenia",
+      "totalAmount": "Najpierw wybierz okres dat",
+      "amountForBooking": "za rezerwację",
+      "resetDates": "Resetuj wybrane daty",
+      "rentalOptionTitle": "Wybierz opcję wynajmu",
+      "rentTermsSubTitle": "Wynajmujesz z zobowiązaniem do zapłaty pełnej kwoty. Pamiętaj, że anulacje są bezzwrotne.",
+      "rentalOptionBookItDescriptionFirst": "Rezerwujesz tę ofertę na przyszłość. Wymagana jest bezzwrotna wpłata 20% całkowitej kwoty. Ta opłata nie zostanie zwrócona, jeśli anulujesz rezerwację. Od momentu rezerwacji do",
+      "rentalOptionBookItDescriptionLast": "musisz zapłacić pozostałe 80% do określonego terminu, aby potwierdzić wynajem. Niezapłacenie salda przed terminem spowoduje anulowanie rezerwacji.",
+      "rentItNowBtn": "Wypożycz teraz",
+      "bookItBtn": "Zarezerwuj",
+      "rentalOptionBookItDisabled": "Nie możesz zarezerwować tych dat",
+      "nextStepText": "Następny krok",
+      "addressLabel": "Adres dostawy",
+      "addressResetText": "Wyczyść",
+      "addressListText": "Wybierz adres",
+      "addressOrText": "lub",
+      "addressCreateAnAddressText": "Utwórz nowy adres",
+      "paymentLabel": "Metoda płatności",
+      "paymentMethodCardText": "Karta",
+      "paymentMethodBLIKText": "BLIK",
+      "placeholderBlIK": "Wprowadź kod BLIK",
+      "cardValidText": "Karta wygląda na ważną",
+      "cardNotValidText": "Karta jest nieważna lub niekompletna",
+      "paymentCardInfoTextNum": "Numer",
+      "paymentCardInfoTextExp": "Ważność",
+      "paymentCardInfoTextCVC": "CVC / CVV",
+      "paymentCardInfoTextType": "Typ",
+      "lastRentalOptionRentText": "Wypożycz teraz",
+      "lastRentalOptionBookText": "Zarezerwuj",
+      "lastRentalOptionFOR": "za",
+      "dayText": "dzień",
+      "successfulRent": "Pomyślnie wypożyczono",
+      "successfulBook": "Pomyślnie zarezerwowano",
+      "alerts": {
+        "unavailableDates": "The selected range includes unavailable dates.",
+        "rentedOrBooked": "Successfully rented / booked!"
+      }
+    },
+    "allCategories": {
+      "Headwear": "Nakrycia głowy",
+      "Outerwear": "Odzież wierzchnia",
+      "Dresses": "Dresy",
+      "Tops": "Bluzki",
+      "Bottoms": "Spodnie",
+      "Footwear": "Obuwie",
+      "Accessories": "Akcesoria"
+    },
+    "calendar": {
+      "months": [
+        "Styczeń",
+        "Luty",
+        "Marzec",
+        "Kwiecień",
+        "Maj",
+        "Czerwiec",
+        "Lipiec",
+        "Sierpień",
+        "Wrzesień",
+        "Październik",
+        "Listopad",
+        "Grudzień"
+      ],
+      "weekdays": ["Pn", "Wt", "Śr", "Czw", "Pt", "Sob", "Nie"],
+      "previous": "Wstecz",
+      "next": "Dalej",
+      "selectMonthTitle": "Wybierz miesiąc w ",
+      "selectYearTitle": "Wybierz rok"
+    },
+    "createAnnouncement": {
+      "imagesLabel": "Dodaj zdjęcia",
+      "annTitleLabel": "Tytuł",
+      "titleRequired": "Tytuł jest wymagany!",
+      "titlePattern": "Minimum 14 i maksimum 70 znaków.",
+      "titlePlaceholder": "np. Czarne spodnie w dobrej cenie",
+      "categoryLabel": "Kategoria",
+      "selectValidCategory": "Wybierz poprawną kategorię",
+      "chooseCategory": "Wybierz kategorię",
+      "sizeLabel": "Rozmiar",
+      "sizeRequired": "Rozmiar jest wymagany!",
+      "sizePattern": "Minimum 1 i maksimum 40 znaków.",
+      "sizePlaceholder": "np. XS lub 123/45",
+      "conditionLabel": "Stan",
+      "conditionRequired": "Stan jest wymagany!",
+      "conditionPattern": "Minimum 3 i maksimum 40 znaków.",
+      "conditionPlaceholder": "np. Prawie nowy",
+      "priceLabel": "Cena za dzień w PLN",
+      "priceRequired": "Cena jest wymagana!",
+      "pricePattern": "Nieprawidłowy format ceny!",
+      "pricePlaceholder": "np. 7.99",
+      "descriptionLabel": "Opis",
+      "descriptionRequired": "Opis jest wymagany!",
+      "descriptionPattern": "Minimum 40 i maksimum 9000 znaków.",
+      "descriptionPlaceholder": "Opis twojego ogłoszenia",
+      "createButton": "Utwórz",
+      "cancelButton": "Anuluj",
+      "defaultTitle": "Brak tytułu",
+      "defaultSubcategory": "Nieznany",
+      "defaultCondition": "Nieznany"
+    },
+    "chat": {
+      "userNotAuth": "Użytkownik nie jest uwierzytelniony. Zaloguj się, aby uzyskać dostęp do czatu.",
+      "allBtn": "Wszystkie",
+      "rentNowBtn": "Wynajem",
+      "rentOutBtn": "Najem",
+      "inputPlaceholder": "Napisz wiadomość..."
     },
     "settings": {
       "titleLabel": "Ustawienia",
       "editPictureText": "Edytuj zdjęcie profilowe",
       "nameLabel": "Imię",
       "surnameLabel": "Nazwisko",
-      "emailLabel": "E-mail"
+      "namePlaceholder": "Jan",
+      "nameValidationR": "Imię jest wymagane",
+      "nameValidationP": "Nieprawidłowy format imienia",
+      "surnamePlaceholder": "Kowalski",
+      "surnameValidationR": "Nazwisko jest wymagane",
+      "surnameValidationP": "Nieprawidłowy format nazwiska",
+      "passCurrLabel": "Aktualne hasło",
+      "passNewLabel": "Nowe hasło",
+      "passCurrPlaceholder": "qwerty123",
+      "passNewPlaceholder": "qwerty123",
+      "passValidationR": "Hasło jest wymagane",
+      "passValidationP": "Hasło musi mieć co najmniej 6 znaków",
+      "permissionToLibraryFail": "Wymagane jest pozwolenie na dostęp do biblioteki multimediów!",
+      "passwordUpdateSuccessful": "Hasło zostało pomyślnie zaktualizowane!",
+      "passwordUpdateFailure": "Błąd podczas aktualizacji hasła"
     },
     "addresses": {
       "titleLabel": "Adresy",
       "newAddressBtn": "Nowy adres",
+      "editAddressFor": "Edytuj adres dla",
+      "deleteAddressFor": "Usuń adres dla",
       "modalAddEdit": {
         "addresseeLabel": "Odbiorca",
+        "addresseePlaceholder": "Jan Kowalski / Macrosoft Sp. z o. o.",
+        "addresseeValidationR": "Odbiorca jest wymagany",
+
         "phoneLabel": "Numer telefonu",
+        "phonePlaceholder": "+48987654321 / 987654321",
+        "phoneValidationP": "Nieprawidłowy format numeru telefonu",
+
         "emailLabel": "E-mail",
+        "emailPlaceholder": "example@gmail.com",
+        "emailValidationP": "Nieprawidłowy format adresu e-mail",
+
         "streetLabel": "Ulica",
+        "streetPlaceholder": "ul. Prosta Aleja",
+        "streetValidationR": "Ulica jest wymagana",
+
         "buildingLabel": "Numer budynku",
-        "apartmentLabel": "Numer mieszkania",
+        "buildingPlaceholder": "38Y",
+        "buildingValidationR": "Numer budynku jest wymagany",
+        "buildingValidationP": "Nieprawidłowy format numeru budynku",
+
+        "apartmentLabel": "Numer mieszkania/lokalu",
+        "apartmentPlaceholder": "22",
+
         "floorLabel": "Numer piętra",
+        "floorPlaceholder": "2",
+        "floorValidationP": "Nieprawidłowy format numeru piętra",
+
         "postalCodeLabel": "Kod pocztowy",
+        "postalCodePlaceholder": "12345",
+        "postalCodeValidationR": "Kod pocztowy jest wymagany",
+        "postalCodeValidationP": "Nieprawidłowy format kodu pocztowego",
+
         "cityLabel": "Miasto",
-        "countryLabel": "Kraj"
+        "cityPlaceholder": "Warszawa",
+        "cityValidationR": "Miasto jest wymagane",
+
+        "countryLabel": "Kraj",
+        "countryPlaceholder": "Polska",
+        "countryValidationR": "Kraj jest wymagany"
+      },
+      "addressCard": {
+        "zeroFloor": "parter",
+        "firstFloor": "1 piętro",
+        "secondFloor": "2 piętro",
+        "thirdFloor": "3 piętro",
+        "anyFloor": "piętro"
       }
     },
     "announcement": {
-      "categoryLabel": "Kategoria",
-      "price": ["$", "dzień"],
-      "sizeLabel": "Rozmiar",
-      "conditionLabel": "Stan",
-      "descLabel": "Opis",
-      "ownerLabel": "Ogłaszający",
-      "opinionsLabel": "Opinie",
-      "writeYourOpinionBtn": "Napisz swoją opinię",
-      "onModerationText": "Na moderacji",
-      "yourOpinionLabel": "Twoja opinia",
-      "bookItBtn": "Zarezerwuj",
-      "rentItNow": "Wypożycz teraz"
+      "yourAd": "Twoje ogłoszenie",
+      "category": "Kategoria",
+      "day": "dzień",
+      "size": "Rozmiar",
+      "condition": "Stan",
+      "description": "Opis",
+      "advertiser": "Ogłoszeniodawca",
+      "advertiserInfoOn": "W dniu",
+      "advertiserInfoFrom": "od",
+      "opinions": "Opinie",
+      "writeOpinion": "Napisz swoją opinię",
+      "sendMessage": "NAPISZ",
+      "rentNow": "WYPOŻYCZ"
+    },
+    "searchBar": {
+      "placeholder": "Szukaj tutaj"
+    },
+    "passwordReset": {
+      "emailLabel": "E-mail",
+      "emailPlaceholder": "example@gmail.com",
+      "emailRequired": "E-mail jest wymagany",
+      "emailPattern": "Nieprawidłowy format e-maila",
+      "sendResetLink": "Wyślij link resetujący",
+      "resetPasswordAlert": {
+        "success": "Sukces",
+        "successDescription": "E-mail z linkiem do resetowania hasła został wysłany na Twój adres e-mail.",
+        "failure": "Błąd",
+        "failureDescription": "Nie udało się wysłać e-maila do resetowania hasła. Spróbuj ponownie później.",
+        "tooSoon": "Prośba o reset hasła została już wysłana",
+        "tooSoonDescription": "Proszę spróbować ponownie za 5 minut."
+      }
+    },
+    "subcategoryNames": {
+      "beanie": "Czapka",
+      "cap": "Czapka z daszkiem",
+      "hat": "Kapelusz",
+      "headphones": "Słuchawki",
+      "coat": "Płaszcz",
+      "vest": "Kamizelka",
+      "down-jacket": "Kurtka puchowa",
+      "raincoat": "Płaszcz przeciwdeszczowy",
+      "dress": "Sukienka",
+      "sweater": "Sweter",
+      "classic-costume": "Dress męski klasyczny",
+      "woman-classic-costume": "Dress damski klasyczny",
+      "party-costume": "Strój imprezowy",
+      "jersey": "Koszulka sportowa",
+      "t-shirt": "Koszulka",
+      "short-sleeves-shirt": "Koszula z krótkim rękawem",
+      "blouse": "Bluzka",
+      "pants": "Spodnie",
+      "shorts": "Szorty",
+      "short-skirt": "Krótka spódnica",
+      "sport-pants": "Spodnie sportowe",
+      "formal-shoes": "Buty wizytowe",
+      "sneakers": "Trampki",
+      "high-heel": "Szpilki",
+      "slippers": "Kapcie",
+      "socks": "Skarpetki",
+      "gloves": "Rękawiczki",
+      "belt": "Pasek",
+      "jewelry": "Biżuteria",
+      "scarf": "Szalik",
+      "sunglasses": "Okulary przeciwsłoneczne"
+    },
+    "statusNames": {
+      "All": "Wszystkie",
+      "Pending": "Oczekujące",
+      "Reserved": "Zarezerwowane",
+      "Rented": "Wynajęte",
+      "Sent for use": "Wysłane do użycia",
+      "In use": "W użyciu",
+      "Sent back": "Odesłane",
+      "Done": "Zakończone",
+      "Canceled": "Anulowane"
+    },
+    "notFound": {
+      "title": "Ups!",
+      "subtitle": "Strona, której szukasz, nie istnieje. Ogłoszenie mogło zostać usunięte przez ogłaszającego lub może być tymczasowo niedostępne.",
+      "goToHome": "Przejdź do strony głównej"
+    },
+    "noItemsFound": {
+      "title": "Nie znaleziono przedmiotów",
+      "subtitle": "Zmień filtry lub spróbuj ponownie później ;)"
+    },
+    "noChats": {
+      "title": "Brak czatów",
+      "subtitle": "Nie masz jeszcze żadnych czatów!"
+    },
+    "noAnnouncements": {
+      "title": "Brak przedmiotów",
+      "subtitle": "Nie masz jeszcze żadnych ogłoszeń!"
+    },
+    "noAddresses": {
+      "title": "Brak adresów",
+      "subtitle": "Nie masz jeszcze zapisanych adresów!"
+    },
+    "inputField": {
+      "editButton": "Edytuj"
+    },
+    "card": {
+      "productPrice": "${price} / wynajem",
+      "viewDetails": "Zobacz szczegóły"
+    },
+    "exitApp": {
+      "title": "Poczekaj!",
+      "description": "Czy na pewno chcesz wyjść?"
+    },
+    "error": {
+      "waitTitle": "Proszę czekać",
+      "waitMessage": "Link weryfikacyjny można wysyłać tylko raz na 5 minut."
+    },
+
+    "viewTitles": {
+      "settings": "Ustawienia",
+      "addresses": "Adresy",
+      "categories": "Kategorie",
+      "chats": "Czaty",
+      "chat": "Czat", 
+      "createAnnouncement": "Utwórz Ogłoszenie",
+      "rentItem": "Wynajmij {{item}}",
+      "myGets": "Moje odbiory",
+      "mySends": "Moje wysyłki",
+      "sendDetails": "Szczegóły",
+      "getDetails": "Szczegóły",
+      "passwordReset": "Resetowanie hasła"
     }
   }
 }

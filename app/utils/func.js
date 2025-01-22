@@ -15,7 +15,7 @@ export const getUserById = async (userIds) => {
       if (snapshot.exists()) {
         return { [id]: snapshot.val() };
       } else {
-        console.log(`No user found with ID: ${id}`);
+        // console.log(`No user found with ID: ${id}`);
         return { [id]: null };
       }
     });
@@ -27,3 +27,7 @@ export const getUserById = async (userIds) => {
     console.error("Error fetching users:", error);
   }
 };
+
+export const cutTitle = (title) => {
+  return title?.length > 20 ? title.slice(0, 16) + "..." : title
+}

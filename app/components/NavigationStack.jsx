@@ -1,5 +1,6 @@
 import React, { Suspense } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
+import { useTranslation } from "react-i18next";
 import { globalStyles } from "../utils/style";
 import { useUser } from "./UserProvider";
 import GetsView from "../partials/GetsView";
@@ -51,6 +52,7 @@ const RentItNowView = React.lazy(() => import("../partials/RentItNowView"));
 
 export default function Navigation() {
   const { user } = useUser();
+  const { t } = useTranslation();
 
   return (
     <Suspense fallback={<Loader />}>
@@ -61,7 +63,7 @@ export default function Navigation() {
         <Stack.Screen
           name="SettingsView"
           component={SettingsView}
-          options={{ title: "Settings", ...stackOptions }}
+          options={{ title: t("viewTitles.settings"), ...stackOptions }}
         />
         <Stack.Screen
           name="LogOut"
@@ -71,76 +73,74 @@ export default function Navigation() {
         <Stack.Screen
           name="AddressesView"
           component={AddressesView}
-          options={{ title: "Addresses", ...stackOptions }}
+          options={{ title: t("viewTitles.addresses"), ...stackOptions }}
         />
         <Stack.Screen
           name="RentNowView"
           component={RentNowView}
-          // options={{ title: "Settings", ...stackOptions }}
         />
         <Stack.Screen
           name="AnnouncementView"
           component={AnnouncementView}
           options={({ route }) => ({
-            ...stackOptions, // Ваши стандартные опции
-            title: route.params.title, // Переопределение title с параметра маршрута
+            ...stackOptions,
+            title: route.params.title
           })}
         />
         <Stack.Screen
           name="Categories"
           component={AllCategories}
-          options={{ ...stackOptions }}
+          options={{ ...stackOptions, title: t("viewTitles.categories") }}
         />
         <Stack.Screen
           name="Chats"
           component={AllChatsView}
-          options={{ ...stackOptions }}
+          options={{ ...stackOptions, title: t("viewTitles.chats") }}
         />
         <Stack.Screen
           name="Chat"
           component={ChatView}
-          options={{ ...stackOptions }}
+          options={{ title: t("viewTitles.chat"), ...stackOptions }}
         />
         <Stack.Screen
           name="CreateAnnouncementView"
           component={CreateAnnouncementView}
-          options={{ title: "Create Announcement", ...stackOptions }}
+          options={{ title: t("viewTitles.createAnnouncement"), ...stackOptions }}
         />
         <Stack.Screen
           name="RentItNowView"
           component={RentItNowView}
           options={({ route }) => ({
-            ...stackOptions, // Ваши стандартные опции
-            title: `Rent ${route.params.title}`, // Переопределение title с параметра маршрута
+            ...stackOptions,
+            title: t("viewTitles.rentItem", { item: route.params.title }),
           })}
         />
         <Stack.Screen
           name="GetsView"
           component={GetsView}
-          options={{ title: "My gets", ...stackOptions }}
+          options={{ title: t("viewTitles.myGets"), ...stackOptions }}
         />
         <Stack.Screen
           name="SendsView"
           component={SendsView}
-          options={{ title: "My sends", ...stackOptions }}
+          options={{ title: t("viewTitles.mySends"), ...stackOptions }}
         />
         <Stack.Screen
           name="SendDetailsView"
           component={SendDetailsView}
           options={({ route }) => ({
-            ...stackOptions, // Ваши стандартные опции
-            title: `Send No. ${route.params.id}`, // Переопределение title с параметра маршрута
+            ...stackOptions,
+            title: t("viewTitles.sendDetails", { id: route.params.id }),
           })}
         />
         <Stack.Screen
           name="GetDetailsView"
           component={GetDetailsView}
           options={({ route }) => ({
-            ...stackOptions, // Ваши стандартные опции
-            title: `Get No. ${route.params.id}`, // Переопределение title с параметра маршрута
+            ...stackOptions,
+            title: t("viewTitles.getDetails", { id: route.params.id }),
           })}
         />
-
         <Stack.Screen name="Welcome" component={WelcomeView} />
         <Stack.Screen name="LogIn" component={AuthLoginView} />
         <Stack.Screen name="Registration" component={AuthRegistrationView} />
@@ -154,11 +154,10 @@ export default function Navigation() {
           component={UserProfileView}
           screenOptions={{ headerShown: false }}
         />
-
         <Stack.Screen
           name="ResetPassword"
           component={ResetPassword}
-          options={{ ...stackOptions, title: "Password Reset" }}
+          options={{ ...stackOptions, title: t("viewTitles.passwordReset") }}
         />
       </Stack.Navigator>
     </Suspense>
