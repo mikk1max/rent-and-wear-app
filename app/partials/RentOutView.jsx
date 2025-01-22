@@ -29,13 +29,14 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 
 import Icon from "../components/Icon";
 import NoAnnouncementsYet from "../components/NoAnnouncementsYet";
+import { useTranslation } from "react-i18next";
 
 // Get the screen dimensions
 const { width } = Dimensions.get("window");
 
 export default function RentOutView() {
   const navigation = useNavigation();
-
+  const { t } = useTranslation();
   const fontsLoaded = useCustomFonts();
   if (!fontsLoaded) return null;
 
@@ -222,7 +223,16 @@ export default function RentOutView() {
         </View>
         <TouchableOpacity
           style={[styles.createAnnouncementButton]}
-          onPress={() => navigation.navigate("CreateAnnouncementView")}
+          onPress={() => {
+            if (user?.isVerified) {
+              navigation.navigate("CreateAnnouncementView");
+            } else {
+              Alert.alert(
+                t("verification.requiredTitle"),
+                t("verification.requiredMessage")
+              );
+            }
+          }}
         >
           <Icon name="plus" height={50} width={50} />
         </TouchableOpacity>
