@@ -369,7 +369,7 @@ const CreateAnnouncementView = () => {
                   )}
                   <Text style={styles.categoryListButtonText}>
                     {category
-                      ? category?.subcategoryName
+                      ? t(`subcategoryNames.${category?.subcategoryIcon}`)
                       : t("createAnnouncement.chooseCategory")}
                   </Text>
                 </View>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dimensions,
   View,
@@ -8,59 +8,18 @@ import {
   SafeAreaView,
   Image,
   StyleSheet,
-  ActivityIndicator,
-  TextInput,
-  Platform,
 } from "react-native";
 import { useCustomFonts } from "../utils/fonts";
 import { useNavigation } from "@react-navigation/native";
 
-// import fetchSVG, { fetchImgURL } from "../utils/fetchSVG";
-import { G, SvgUri } from "react-native-svg";
-
 import { globalStyles, styles as mainStyles } from "../utils/style";
-// import { iconParams, styles } from "../styles/AnnouncementViewStyles";
-import { Divider, Rating } from "react-native-elements";
-import OpinionCard from "../components/OpinionCard";
-import Swiper from "react-native-swiper";
-import ImageViewing from "react-native-image-viewing";
+import { Divider } from "react-native-elements";
 
-import {
-  ref,
-  onValue,
-  update,
-  get,
-  set,
-  remove,
-  goOnline,
-} from "firebase/database";
-import { db, storage } from "../../firebase.config";
+import { ref, onValue, get } from "firebase/database";
+import { db } from "../../firebase.config";
 import { useUser } from "../components/UserProvider";
-import { getStorage, ref as storageRef, uploadBytes } from "firebase/storage";
-import { getDownloadURL } from "firebase/storage";
 
-import {
-  fetchSvgURL,
-  fetchImgURL,
-  getRandomAvatarUrl,
-} from "../utils/fetchSVG";
-
-import * as ImagePicker from "expo-image-picker";
-import { useForm, Controller } from "react-hook-form";
-import { SelectList } from "react-native-dropdown-select-list";
 import Icon from "../components/Icon";
-
-import CalendarPicker from "react-native-calendar-picker";
-
-import {
-  CreditCardView,
-  CreditCardInput,
-  LiteCreditCardInput,
-  CreditCardFormData,
-  CreditCardFormField,
-  ValidationState,
-} from "react-native-credit-card-input";
-import { color } from "react-native-elements/dist/helpers";
 
 import * as Progress from "react-native-progress";
 import { useTranslation } from "react-i18next";
@@ -69,7 +28,7 @@ const { width, height } = Dimensions.get("window");
 
 const GetsView = () => {
   const navigation = useNavigation();
-  const {t} = useTranslation()
+  const { t } = useTranslation();
   const { user, setUser } = useUser();
 
   const [currentRentsAndReservations, setCurrentRentsAndReservations] =
@@ -222,7 +181,9 @@ const GetsView = () => {
                 ]}
                 onPress={() =>
                   setActiveStatus((prevStatus) =>
-                    prevStatus == status.statusName ? statuses[0].statusName : status.statusName
+                    prevStatus == status.statusName
+                      ? statuses[0].statusName
+                      : status.statusName
                   )
                 }
               >
@@ -264,13 +225,17 @@ const GetsView = () => {
                       {rentOrReservation.announcementTitle}
                     </Text>
                     <Divider style={styles.rentOrReservationDivider} />
-                    <Text
-                      style={styles.rentOrReservationText}
-                    >{`$${rentOrReservation.amount} ${t("sendsGets.for")} ${rentOrReservation.daysInRent} ${t("sendsGets.day")}`}</Text>
+                    <Text style={styles.rentOrReservationText}>{`$${
+                      rentOrReservation.amount
+                    } ${t("sendsGets.for")} ${rentOrReservation.daysInRent} ${t(
+                      "sendsGets.day"
+                    )}`}</Text>
                     <Divider style={styles.rentOrReservationDivider} />
-                    <Text
-                      style={styles.rentOrReservationText}
-                    >{`Status: ${t(`statusNames.${rentOrReservation?.status?.statusName || 'undefined'}`)}`}</Text>
+                    <Text style={styles.rentOrReservationText}>{`Status: ${t(
+                      `statusNames.${
+                        rentOrReservation?.status?.statusName || "undefined"
+                      }`
+                    )}`}</Text>
                     <Progress.Bar
                       progress={rentOrReservation.status.statusCode / 8}
                       height={20}
@@ -292,7 +257,7 @@ const GetsView = () => {
                     activeOpacity={globalStyles.ACTIVE_OPACITY}
                   >
                     <Text style={styles.rentOrReservationButtonText}>
-                    {t("sendsGets.details")}
+                      {t("sendsGets.details")}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -301,7 +266,7 @@ const GetsView = () => {
             {filteredRentsAndReservations.length === 0 && (
               <View style={styles.noItemsContainer}>
                 <Text style={styles.noItemsMessage}>
-                {t("sendsGets.noItemsMessage")}
+                  {t("sendsGets.noItemsMessage")}
                 </Text>
                 <View style={styles.centeredButtonContainer}>
                   <TouchableOpacity
@@ -316,7 +281,9 @@ const GetsView = () => {
                       height={150}
                       fillColor={globalStyles.primaryColor}
                     />
-                    <Text style={styles.noItemsBtn}>{t("sendsGets.NoItems")}</Text>
+                    <Text style={styles.noItemsBtn}>
+                      {t("sendsGets.NoItems")}
+                    </Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -440,7 +407,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     gap: 100,
     // height: height/2
-    width: width - 50
+    width: width - 50,
   },
 
   noItemsMessage: {
@@ -452,7 +419,7 @@ const styles = StyleSheet.create({
     color: globalStyles.textOnSecondaryColor,
     fontFamily: "Poppins_500Medium",
     fontSize: 16,
-    width: "100%"
+    width: "100%",
   },
   centeredButtonContainer: {
     // flex: 1,
@@ -471,6 +438,6 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     fontFamily: "Poppins_500Medium",
     fontSize: 20,
-    textAlign: "center"
+    textAlign: "center",
   },
 });

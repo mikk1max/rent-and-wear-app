@@ -136,6 +136,7 @@
       "lastRentalOptionBookText": "Zarezerwuj",
       "lastRentalOptionFOR": "za",
       "dayText": "dzień",
+      "daysText": "dni",
       "successfulRent": "Pomyślnie wypożyczono",
       "successfulBook": "Pomyślnie zarezerwowano",
       "alerts": {
