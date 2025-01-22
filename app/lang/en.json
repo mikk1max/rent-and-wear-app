@@ -134,6 +134,7 @@
       "lastRentalOptionBookText": "Book it",
       "lastRentalOptionFOR": "for",
       "dayText": "day",
+      "daysText": "days",
       "successfulRent": "Rented successfully",
       "successfulBook": "Booked successfully",
       "alerts": {

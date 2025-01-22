@@ -15,6 +15,7 @@ import {
 } from "react-native";
 import { useCustomFonts } from "../utils/fonts";
 import { useNavigation } from "@react-navigation/native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 // import fetchSVG, { fetchImgURL } from "../utils/fetchSVG";
 import { G, SvgUri } from "react-native-svg";
@@ -514,7 +515,10 @@ const RentItNowView = ({ route }) => {
     if (counter >= 100) {
       clearInterval(intervalRef.current);
       setCounter(100);
-      Alert.alert(`${t("alerts.rentedOrBooked")}`);
+      Alert.alert(
+        `${t("passwordReset.resetPasswordAlert.success")}`,
+        `${t("rentItNow.alerts.rentedOrBooked")}`
+      );
       navigation.goBack();
     }
   }, [counter]);
@@ -536,7 +540,8 @@ const RentItNowView = ({ route }) => {
           { paddingTop: 20 },
         ]}
       >
-        <ScrollView
+        <KeyboardAwareScrollView
+          keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
           nestedScrollEnabled={true}
           // style={mainStyles.scrollBase}
@@ -734,7 +739,7 @@ const RentItNowView = ({ route }) => {
                 activeOpacity={globalStyles.ACTIVE_OPACITY}
               >
                 <Text style={styles.nextStepText}>
-                  {t("rentItNow.nextStep")}
+                  {t("rentItNow.nextStepText")}
                 </Text>
               </TouchableOpacity>
             )}
@@ -795,8 +800,7 @@ const RentItNowView = ({ route }) => {
                         activeOpacity={1}
                       >
                         <Text style={styles.addressListItemText}>
-                          → {addressItem?.adresse}, {addressItem?.street}
-                          {addressItem?.buildingNumber}
+                          {`→  ${addressItem?.adresse}, ${addressItem?.street} ${addressItem?.buildingNumber}`}
                         </Text>
                       </TouchableOpacity>
                     ))}
@@ -1108,7 +1112,7 @@ const RentItNowView = ({ route }) => {
                     style={styles.paymentBLIKTextInput}
                     // onBlur={setValueBLIK}
                     onChangeText={setValueBLIK}
-                    placeholder={t("rentItNow.placeholderBLIK")}
+                    placeholder={t("rentItNow.placeholderBlIK")}
                     placeholderTextColor={"gray"}
                     value={valueBLIK}
                     maxLength={6}
@@ -1151,7 +1155,16 @@ const RentItNowView = ({ route }) => {
                               selectedStartDate,
                               selectedEndDate
                             ) + 1
-                          } ${t("rentItNow.dayText")}(s)`
+                          } ${
+                            getDaysBetweenTwoDates(
+                              selectedStartDate,
+                              selectedEndDate
+                            ) +
+                              1 >
+                            1
+                              ? t("rentItNow.daysText")
+                              : t("rentItNow.dayText")
+                          }`
                         : `${t(
                             "rentItNow.lastRentalOptionBookText"
                           )}: $${get20Percent(
@@ -1162,7 +1175,16 @@ const RentItNowView = ({ route }) => {
                               selectedStartDate,
                               selectedEndDate
                             ) + 1
-                          } ${t("rentItNow.dayText")}(s)`}
+                          } ${
+                            getDaysBetweenTwoDates(
+                              selectedStartDate,
+                              selectedEndDate
+                            ) +
+                              1 >
+                            1
+                              ? t("rentItNow.daysText")
+                              : t("rentItNow.dayText")
+                          }`}
                     </Text>
                   </TouchableOpacity>
                 )}
@@ -1171,7 +1193,7 @@ const RentItNowView = ({ route }) => {
                     <Progress.Bar
                       progress={counter / 100}
                       useNativeDriver={true}
-                      width={350}
+                      width={width - 50}
                       color={globalStyles.accentColor}
                       unfilledColor={globalStyles.textOnAccentColor}
                       borderColor={globalStyles.accentColor}
@@ -1190,7 +1212,7 @@ const RentItNowView = ({ route }) => {
                 )}
               </View>
             )}
-        </ScrollView>
+        </KeyboardAwareScrollView>
       </View>
     </SafeAreaView>
   );
