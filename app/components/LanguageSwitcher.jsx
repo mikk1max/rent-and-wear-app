@@ -17,7 +17,6 @@ export default function LanguageSwitcher({ toggleDropdown }) {
         }}
         disabled={i18n.language === "en" && true}
       >
-        {/* <Icon name="settings" {...iconParams} /> */}
         <Text
           style={[
             styles.dropdownText,
@@ -38,7 +37,6 @@ export default function LanguageSwitcher({ toggleDropdown }) {
         }}
         disabled={i18n.language === "pl" && true}
       >
-        {/* <Icon name="settings" {...iconParams} /> */}
         <Text
           style={[
             styles.dropdownText,

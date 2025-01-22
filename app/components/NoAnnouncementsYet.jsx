@@ -9,11 +9,13 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { globalStyles } from "../utils/style";
+import { useTranslation } from "react-i18next";
 
 const { width, height } = Dimensions.get("window");
 
 const NoAnnouncementsYet = () => {
   const navigation = useNavigation();
+  const { t } = useTranslation();
 
   return (
     <View style={styles.container}>
@@ -21,8 +23,8 @@ const NoAnnouncementsYet = () => {
         source={require("../../assets/images/NoAnnouncementsYet.png")}
         style={styles.image}
       />
-      <Text style={styles.title}>No Items</Text>
-      <Text style={styles.subtitle}>You have no announcements yet!</Text>
+      <Text style={styles.title}>{t("noAnnouncements.title")}</Text>
+      <Text style={styles.subtitle}>{t("noAnnouncements.subtitle")}</Text>
     </View>
   );
 };

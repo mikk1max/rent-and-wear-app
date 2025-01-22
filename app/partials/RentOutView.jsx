@@ -25,6 +25,7 @@ import { ref, onValue, update, get, set, remove } from "firebase/database";
 import { db } from "../../firebase.config";
 import { useUser } from "../components/UserProvider";
 import { useNavigation } from "@react-navigation/native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 import Icon from "../components/Icon";
 import NoAnnouncementsYet from "../components/NoAnnouncementsYet";
@@ -115,13 +116,16 @@ export default function RentOutView() {
   useFocusEffect(
     useCallback(() => {
       const backAction = () => {
-        Alert.alert("Hold on!", "Are you sure you want to exit?", [
+        Alert.alert(`${t("exitApp.title")}`, `${t("exitApp.description")}`, [
           {
-            text: "Cancel",
+            text: `${t("universal.cancelBtn")}`,
             onPress: () => null,
             style: "cancel",
           },
-          { text: "YES", onPress: () => BackHandler.exitApp() },
+          {
+            text: `${t("universal.yesBtn")}`,
+            onPress: () => BackHandler.exitApp(),
+          },
         ]);
         return true;
       };
@@ -166,13 +170,14 @@ export default function RentOutView() {
             },
           ]}
         >
-          <ScrollView
+          <KeyboardAwareScrollView
+            keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}
+            nestedScrollEnabled={true}
             style={mainStyles.scrollBase}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
-            keyboardShouldPersistTaps="handled"
           >
             <View style={styles.announcementsContainer}>
               {filteredAnnouncements &&
@@ -213,7 +218,7 @@ export default function RentOutView() {
                 })}
             </View>
             {filteredAnnouncements.length <= 0 && <NoAnnouncementsYet />}
-          </ScrollView>
+          </KeyboardAwareScrollView>
         </View>
         <TouchableOpacity
           style={[styles.createAnnouncementButton]}

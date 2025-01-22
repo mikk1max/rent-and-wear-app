@@ -4,6 +4,7 @@ import { Card, Divider } from "react-native-elements";
 import { globalStyles } from "../utils/style";
 import { useCustomFonts } from "../utils/fonts";
 import Icon from "./Icon";
+import { useTranslation } from "react-i18next";
 
 const AddressCard = ({
   id,
@@ -22,6 +23,9 @@ const AddressCard = ({
   openAddressForm,
   openDeleteConfirmation,
 }) => {
+
+  const {t} = useTranslation()
+
   // Fonts
   const fontsLoaded = useCustomFonts();
   if (!fontsLoaded) return null;
@@ -37,49 +41,33 @@ const AddressCard = ({
   // Flat and floor numbers
   let flatAndFloorNumber = "";
   let flatAndFloorNumberStyle = styles.displayNone;
-  if (flatOrApartmentNumber != "" && floorNumber != "") {
-    switch (floorNumber) {
-      case "0":
-        flatAndFloorNumber = flatOrApartmentNumber + ", ground floor";
-        break;
-      case "1":
-        flatAndFloorNumber = flatOrApartmentNumber + ", 1st floor";
-        break;
-      case "2":
-        flatAndFloorNumber = flatOrApartmentNumber + ", 2nd floor";
-        break;
-      case "3":
-        flatAndFloorNumber = flatOrApartmentNumber + ", 3rd floor";
-        break;
-      default:
-        flatAndFloorNumber =
-          flatOrApartmentNumber + ", " + floorNumber + "th floor";
-        break;
-    }
+  
+  if (flatOrApartmentNumber && floorNumber) {
+    const floorLabel = getFloorLabel(floorNumber);
+    flatAndFloorNumber = `${flatOrApartmentNumber}, ${floorLabel}`;
     flatAndFloorNumberStyle = styles.textWithIcon;
-  } else if (flatOrApartmentNumber != "" && floorNumber === "") {
+  } else if (flatOrApartmentNumber) {
     flatAndFloorNumber = flatOrApartmentNumber;
     flatAndFloorNumberStyle = styles.textWithIcon;
-  } else if (flatOrApartmentNumber === "" && floorNumber != "") {
-    switch (floorNumber) {
-      case "0":
-        flatAndFloorNumber = "Ground floor";
-        break;
-      case "1" || "-1":
-        flatAndFloorNumber = floorNumber + "st floor";
-        break;
-      case "2" || "-2":
-        flatAndFloorNumber = floorNumber + "nd floor";
-        break;
-      case "3" || "-3":
-        flatAndFloorNumber = floorNumber + "rd floor";
-        break;
-      default:
-        flatAndFloorNumber = floorNumber + "th floor";
-        break;
-    }
+  } else if (floorNumber) {
+    flatAndFloorNumber = getFloorLabel(floorNumber);
     flatAndFloorNumberStyle = styles.textWithIcon;
   }
+  
+  function getFloorLabel(floor) {
+    switch (floor) {
+      case "0":
+        return t("addresses.addressCard.zeroFloor");
+      case "1":
+        return t("addresses.addressCard.firstFloor");
+      case "2":
+        return t("addresses.addressCard.secondFloor");
+      case "3":
+        return t("addresses.addressCard.thirdFloor");
+      default:
+        return `${floor} ${t("addresses.addressCard.anyFloor")}`;
+    }
+  }  
 
   let emailStyle = styles.displayNone;
   if (email != "") {

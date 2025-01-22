@@ -7,6 +7,7 @@ import {
   TextInput,
   Image,
   SafeAreaView,
+  Alert,
 } from "react-native";
 import { useCustomFonts } from "../utils/fonts";
 import { useForm, Controller } from "react-hook-form";
@@ -28,12 +29,14 @@ import {
   reauthenticateWithCredential,
   updatePassword,
 } from "firebase/auth";
-import * as ImagePicker from 'expo-image-picker';
+import * as ImagePicker from "expo-image-picker";
 import { storage } from "../../firebase.config";
-import { ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
+import {
+  ref as storageRef,
+  uploadBytes,
+  getDownloadURL,
+} from "firebase/storage";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-
-
 
 export default function SettingsView() {
   const { t } = useTranslation();
@@ -73,7 +76,9 @@ export default function SettingsView() {
     async function loadUrl() {
       if (user && user.id != null) {
         try {
-          const url = await fetchImgURL(`user-avatars/${user.id}/${user.id}.jpg`);
+          const url = await fetchImgURL(
+            `user-avatars/${user.id}/${user.id}.jpg`
+          );
           setUserProfileImg(url);
         } catch (error) {
           setUserProfileImg(
@@ -101,38 +106,39 @@ export default function SettingsView() {
 
   const uploadImage = async (uri, userId) => {
     if (!uri) return null;
-  
+
     const response = await fetch(uri);
     const blob = await response.blob();
     const filePath = `user-avatars/${userId}/${userId}.jpg`;
-  
+
     const imgRef = storageRef(storage, filePath);
     await uploadBytes(imgRef, blob);
-  
+
     const url = await getDownloadURL(imgRef);
     return url;
   };
-  
+
   const handleEditPicture = async () => {
     try {
       // Prośba o uprawnienia
-      const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (permissionResult.status !== 'granted') {
-        alert("Permission to access media library is required!");
+      const permissionResult =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (permissionResult.status !== "granted") {
+        Alert.alert(t("settings.permissionToLibraryFail"));
         return;
       }
-  
+
       // Wybierz obraz
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         quality: 0.8,
       });
-  
+
       if (!result.canceled) {
         setIsLoading(true);
         const uploadedUrl = await uploadImage(result.assets[0].uri, user.id);
-  
+
         if (uploadedUrl) {
           // Zapisz URL do bazy danych
           saveUser({ ...user, profileImg: uploadedUrl }, "profileImg");
@@ -277,14 +283,14 @@ export default function SettingsView() {
       await updatePassword(auth.currentUser, data.newPassword);
 
       console.log("Password updated successfully!");
-      alert("Password updated successfully!");
+      Alert.alert(t("settings.permissionToLibraryFail"));
 
       setEditablePassword(false);
       setPasswordTextInputStyle([styles.textInput, styles.textInputBlocked]);
       setPasswordButtonsStyle(styles.buttonsHidden);
     } catch (error) {
       console.error("Error updating password: ", error);
-      alert("Error updating password: " + error.message);
+      Alert.alert(`${t("settings.permissionToLibraryFail")}: ${error.message}`);
     }
   };
 
@@ -305,9 +311,9 @@ export default function SettingsView() {
       >
         <View style={styles.mainSection}>
           <KeyboardAwareScrollView
-                        keyboardShouldPersistTaps="handled"
-                        showsVerticalScrollIndicator={false}
-                        nestedScrollEnabled={true}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+            nestedScrollEnabled={true}
             style={mainStyles.scrollBase}
           >
             {/* Profile image */}
@@ -318,10 +324,7 @@ export default function SettingsView() {
                 }}
                 style={styles.userProfileImg}
               />
-              <TouchableOpacity
-                activeOpacity={0.6}
-                onPress={handleEditPicture}
-              >
+              <TouchableOpacity activeOpacity={0.6} onPress={handleEditPicture}>
                 <Text style={styles.imageText}>
                   {t("settings.editPictureText")}
                 </Text>
@@ -336,7 +339,7 @@ export default function SettingsView() {
                 <InputWithLabel
                   control={controlName}
                   name={"name"}
-                  placeholder={"Grzegorz"}
+                  placeholder={t("settings.namePlaceholder")}
                   errors={errorsName}
                   editable={editableName}
                   onEdit={editName}
@@ -346,11 +349,11 @@ export default function SettingsView() {
                   buttonStyle={nameButtonsStyle}
                   label={`${t("settings.nameLabel")}:`}
                   validationRules={{
-                    required: "First Name is required",
+                    required: `${t("settings.nameValidationR")}`,
                     pattern: {
                       value:
                         /^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+(?:\s[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)?$/,
-                      message: "Invalid First Name format",
+                      message: `${t("settings.nameValidationP")}`,
                     },
                   }}
                   value={user.name}
@@ -385,7 +388,7 @@ export default function SettingsView() {
                 <InputWithLabel
                   control={controlSurname}
                   name={"surname"}
-                  placeholder={"Brzęczyszczykiewicz"}
+                  placeholder={t("settings.surnamePlaceholder")}
                   errors={errorsSurname}
                   editable={editableSurname}
                   onEdit={editSurname}
@@ -395,11 +398,11 @@ export default function SettingsView() {
                   buttonStyle={surnameButtonsStyle}
                   label={`${t("settings.surnameLabel")}:`}
                   validationRules={{
-                    required: "Last Name is required",
+                    required: `${t("settings.surnameValidationR")}`,
                     pattern: {
                       value:
                         /^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]*(?:[-'][A-ZĄĆĘŁŃÓŚŹŻ]?[a-ząćęłńóśźż]+)?(?:-[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]*(?:[-'][A-ZĄĆĘŁŃÓŚŹŻ]?[a-ząćęłńóśźż]+)?)?$/,
-                      message: "Invalid Last Name format",
+                      message: `${t("settings.surnameValidationP")}`,
                     },
                   }}
                   value={user.surname}
@@ -434,7 +437,7 @@ export default function SettingsView() {
                 <InputWithLabel
                   control={controlPassword}
                   name={"currentPassword"}
-                  placeholder={"Current Password"}
+                  placeholder={t("settings.passCurrPlaceholder")}
                   errors={errorsPassword}
                   editable={editablePassword}
                   onEdit={editPassword}
@@ -442,9 +445,9 @@ export default function SettingsView() {
                   onCancel={onCancelPassword}
                   inputStyle={passwordTextInputStyle}
                   buttonStyle={passwordButtonsStyle}
-                  label={"Current Password:"}
+                  label={`${t("settings.passCurrLabel")}:`}
                   validationRules={{
-                    required: "Current password is required",
+                    required: `${t("settings.passValidationR")}`,
                   }}
                   value=""
                   isWithEditBtn={true}
@@ -455,17 +458,17 @@ export default function SettingsView() {
                 <InputWithLabel
                   control={controlPassword}
                   name={"newPassword"}
-                  placeholder={"New Password"}
+                  placeholder={t("settings.passNewPlaceholder")}
                   errors={errorsPassword}
                   editable={editablePassword}
                   inputStyle={passwordTextInputStyle}
                   buttonStyle={passwordButtonsStyle}
-                  label={"New Password:"}
+                  label={`${t("settings.passNewLabel")}:`}
                   validationRules={{
-                    required: "New password is required",
+                    required: `${t("settings.passValidationR")}`,
                     minLength: {
                       value: 6,
-                      message: "Password must be at least 6 characters",
+                      message: `${t("settings.passValidationP")}`,
                     },
                   }}
                   value=""
@@ -479,14 +482,18 @@ export default function SettingsView() {
                     activeOpacity={0.8}
                     onPress={handleSubmitPassword(onSubmitPassword)}
                   >
-                    <Text style={styles.buttonText}>Save</Text>
+                    <Text style={styles.buttonText}>
+                      {t("universal.saveBtn")}
+                    </Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.buttonCancel}
                     activeOpacity={0.8}
                     onPress={onCancelPassword}
                   >
-                    <Text style={styles.buttonText}>Cancel</Text>
+                    <Text style={styles.buttonText}>
+                      {t("universal.cancelBtn")}
+                    </Text>
                   </TouchableOpacity>
                 </View>
               </View>

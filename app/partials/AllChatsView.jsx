@@ -16,12 +16,14 @@ import { styles } from "../styles/AllChatsViewStyles";
 import { getUserById } from "../utils/func";
 import Icon from "../components/Icon";
 import NoConversation from "../components/NoConversation";
+import { useTranslation } from "react-i18next";
 
 const AllChatsView = () => {
   const { user } = useUser();
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const [chats, setChats] = useState([]);
-  const [filter, setFilter] = useState("All");
+  const [filter, setFilter] = useState(`${t("chat.allBtn")}`);
   const [refreshing, setRefreshing] = useState(false);
   const [userData, setUserData] = useState({});
   const [height, setHeight] = useState(0); // Height state for icon button
@@ -47,9 +49,9 @@ const AllChatsView = () => {
 
           if (
             (isRentNow || isRentOut) &&
-            (filter === "All" ||
-              (filter === "Rent Now" && isRentNow) ||
-              (filter === "Rent Out" && isRentOut))
+            (filter === `${t("chat.allBtn")}` ||
+              (filter === `${t("chat.rentNowBtn")}` && isRentNow) ||
+              (filter === `${t("chat.rentOutBtn")}` && isRentOut))
           ) {
             filteredChats.push({ id: key, ...chat });
           }
@@ -79,16 +81,14 @@ const AllChatsView = () => {
             )
           ),
         ];
-  
+
         const userInfo = await getUserById(otherParticipantIds);
         setUserData(userInfo); // Store fetched user data
       }
     };
-  
+
     fetchUserData();
   }, [user, chats]);
-  
-  
 
   const handleChatPress = (chatId) => {
     console.log("Navigating to Chat with ID:", chatId);
@@ -113,7 +113,11 @@ const AllChatsView = () => {
   // Render filter buttons
   const renderFilterButtons = () => (
     <View style={styles.filterButtonsContainer}>
-      {["All", "Rent Now", "Rent Out"].map((filterOption) => (
+      {[
+        `${t("chat.allBtn")}`,
+        `${t("chat.rentNowBtn")}`,
+        `${t("chat.rentOutBtn")}`,
+      ].map((filterOption) => (
         <TouchableOpacity
           key={filterOption}
           onPress={() => setFilter(filterOption)}
@@ -157,18 +161,19 @@ const AllChatsView = () => {
   // Render individual chat card
   const renderChat = (chat) => {
     if (!chat) return null;
-  
+
     const firstMessage =
       (chat.messages &&
         Object.values(chat.messages)[Object.values(chat.messages).length - 1]
           ?.text) ||
       "";
-  
+
     // Determine the other participant
     const otherParticipantId =
       chat.userId === user.id ? chat.advertiserId : chat.userId;
-    const otherParticipantName = userData?.[otherParticipantId]?.name || "Unknown";
-  
+    const otherParticipantName =
+      userData?.[otherParticipantId]?.name || "Unknown";
+
     return (
       <TouchableOpacity
         key={chat.id}
@@ -205,7 +210,6 @@ const AllChatsView = () => {
       </TouchableOpacity>
     );
   };
-  
 
   return (
     <SafeAreaView style={mainStyles.whiteBack}>

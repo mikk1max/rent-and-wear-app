@@ -2,8 +2,9 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   sendPasswordResetEmail,
+  fetchSignInMethodsForEmail,
 } from "firebase/auth";
-import { get, ref, set, update } from "firebase/database";
+import { equalTo, get, orderByChild, query, ref, set, update } from "firebase/database";
 import {
   getAuth,
   signOut,
@@ -14,7 +15,6 @@ import { auth, db } from "../../firebase.config";
 
 export const onRegister = async (data, initializeUser) => {
   try {
-    const auth = getAuth();
     const userCredential = await createUserWithEmailAndPassword(
       auth,
       data.email,
@@ -28,6 +28,7 @@ export const onRegister = async (data, initializeUser) => {
       surname: data.surname,
       addresses: "",
       isVerified: false,
+      registrationDate: Date.now()
     });
 
     const userData = {
@@ -37,6 +38,7 @@ export const onRegister = async (data, initializeUser) => {
       surname: data.surname,
       addresses: "",
       isVerified: false,
+      registrationDate: Date.now()
     };
 
     initializeUser(userData);
@@ -48,7 +50,6 @@ export const onRegister = async (data, initializeUser) => {
 
 export const onLogin = async (data, initializeUser) => {
   try {
-    const auth = getAuth();
     const userCredential = await signInWithEmailAndPassword(
       auth,
       data.email,
@@ -71,7 +72,6 @@ export const onLogin = async (data, initializeUser) => {
 
 export const onLogout = async () => {
   try {
-    const auth = getAuth();
     await signOut(auth);
     console.log("User logged out");
   } catch (error) {
@@ -82,7 +82,6 @@ export const onLogout = async () => {
 
 export const onConfirmEmail = async () => {
   try {
-    const auth = getAuth();
     const user = auth.currentUser;
     if (user) {
       await sendEmailVerification(user);
@@ -97,7 +96,6 @@ export const onConfirmEmail = async () => {
 
 export const checkEmailVerification = async () => {
   try {
-    const auth = getAuth();
     const user = auth.currentUser;
 
     if (user) {
@@ -122,26 +120,36 @@ export const checkEmailVerification = async () => {
   }
 };
 export const resetPassword = async (email) => {
-  // If `email` is an object, extract the actual email value
   const emailAddress = typeof email === "object" ? email.resetEmail : email;
 
-  console.log("Email passed to Firebase:", emailAddress); // Debugging log
+  if (!emailAddress || typeof emailAddress !== "string") {
+    throw new Error("Invalid email address.");
+  }
 
   try {
-    if (!emailAddress || typeof emailAddress !== "string") {
-      throw new Error("Invalid email address.");
+    const usersRef = ref(db, "users");
+    const emailQuery = query(usersRef, orderByChild("email"), equalTo(emailAddress));
+    const snapshot = await get(emailQuery);
+
+    if (!snapshot.exists()) {
+      throw new Error("No user found with this email address in the database.");
     }
 
     await sendPasswordResetEmail(auth, emailAddress);
 
-    console.log("Password reset email sent to:", emailAddress);
-    return {
-      message: "A password reset email has been sent to your email address.",
-    };
+    return { message: "A password reset email has been sent to your email address." };
   } catch (error) {
-    console.error("Firebase error details:", error.code, error.message);
+    if (error.code === "PERMISSION_DENIED") {
+      console.error(
+        "Permission denied. Check Firebase rules to ensure read access is allowed for email queries."
+      );
+    } else {
+      console.error("Error details:", error.code, error.message);
+    }
     throw new Error(
       error.message || "Failed to send password reset email. Please try again."
     );
   }
 };
+
+

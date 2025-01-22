@@ -2,9 +2,11 @@ import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { globalStyles } from "../utils/style";
+import { useTranslation } from "react-i18next";
 
 const NoFoundPage = () => {
   const navigation = useNavigation();
+  const { t } = useTranslation();
 
   return (
     <View style={styles.container}>
@@ -12,15 +14,13 @@ const NoFoundPage = () => {
         source={require("../../assets/images/notFound-img.png")}
         style={styles.image}
       />
-      <Text style={styles.title}>Oops!</Text>
-      <Text style={styles.subtitle}>
-      The page you're looking for doesn't exist. The announcement may have been deleted by the advertiser, or it might be temporarily unavailable.
-      </Text>
+      <Text style={styles.title}>{t("notFound.title")}</Text>
+      <Text style={styles.subtitle}>{t("notFound.subtitle")}</Text>
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate("MainApp")}
       >
-        <Text style={styles.buttonText}>Go to Home</Text>
+        <Text style={styles.buttonText}>{t("notFound.goToHome")}</Text>
       </TouchableOpacity>
     </View>
   );

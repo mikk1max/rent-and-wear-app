@@ -135,6 +135,7 @@ dist
 .vscode
 .expo
 .idea
+android
 
 # secrets
 firebaseConfig.js

@@ -3,6 +3,7 @@ import React from "react";
 import { Text, TouchableOpacity, TextInput, View } from "react-native";
 import { Controller } from "react-hook-form";
 import { styles } from "../styles/SettingsViewStyles";
+import { useTranslation } from "react-i18next";
 
 const InputWithLabel = ({
   control,
@@ -19,6 +20,10 @@ const InputWithLabel = ({
   isSecure = false,
   isAutoCorrect = false,
 }) => {
+
+
+  const {t} = useTranslation()
+
   return (
     <View style={styles.inputContainer}>
       <View style={styles.labelContainer}>
@@ -29,7 +34,7 @@ const InputWithLabel = ({
             activeOpacity={0.8}
             onPress={onEdit}
           >
-            <Text style={styles.buttonText}>Edit</Text>
+            <Text style={styles.buttonText}>{t("inputField.editButton")}</Text>
           </TouchableOpacity>
         )}
       </View>

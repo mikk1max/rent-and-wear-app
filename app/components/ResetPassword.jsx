@@ -5,12 +5,16 @@ import {
   SafeAreaView,
   TouchableOpacity,
   StyleSheet,
-  Image
+  Image,
+  Alert
 } from "react-native";
 import { useForm } from "react-hook-form";
 import InputWithLabel from "../components/InputWithLabel";
 import { resetPassword } from "../utils/auth";
 import { globalStyles, styles as mainStyles } from "../utils/style";
+import { useTranslation } from "react-i18next";
+
+let lastPasswordResetTime = null;
 
 export default function ResetPassword() {
   const {
@@ -19,35 +23,57 @@ export default function ResetPassword() {
     formState: { errors },
   } = useForm();
 
+  const { t } = useTranslation();
+
   const handlePasswordReset = async (email) => {
+    const currentTime = new Date().getTime();
+
+    if (lastPasswordResetTime && currentTime - lastPasswordResetTime < 5 * 60 * 1000) {
+      Alert.alert(
+        `${t("passwordReset.resetPasswordAlert.tooSoon")}`,
+        `${t("passwordReset.resetPasswordAlert.tooSoonDescription")}`
+      );
+      return;
+    }
+
     try {
       console.log("Email passed to resetPassword:", email);
       const response = await resetPassword(email);
-      alert(response.message);
+      
+      lastPasswordResetTime = currentTime;
+
+      Alert.alert(
+        `${t("passwordReset.resetPasswordAlert.success")}`,
+        `${t("passwordReset.resetPasswordAlert.successDescription")}`
+      );
     } catch (error) {
       console.error("Reset password error:", error.message);
-      alert(`Error: ${error.message}`);
+      Alert.alert(
+        `${t("passwordReset.resetPasswordAlert.failure")}`,
+        `${t("passwordReset.resetPasswordAlert.failureDescription")}`
+      );
     }
   };
+  
 
   return (
     <SafeAreaView style={globalStyles.whiteBack}>
       <View style={[mainStyles.container, styles.container]}>
         <Image
-                source={require("../../assets/images/NotLogin.png")}
-                style={styles.image}
-              />
+          source={require("../../assets/images/NotLogin.png")}
+          style={styles.image}
+        />
         <InputWithLabel
           control={control}
           name="resetEmail"
-          placeholder="example@gmail.com"
+          placeholder={t("passwordReset.emailPlaceholder")}
           errors={errors}
-          label="Email:"
+          label={`${t("passwordReset.emailLabel")}:`}
           validationRules={{
-            required: "E-mail is required",
+            required: t("passwordReset.emailRequired"),
             pattern: {
               value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$/,
-              message: "Invalid email format",
+              message: t("passwordReset.emailPattern"),
             },
           }}
           inputStyle={styles.inputStyle}
@@ -56,7 +82,9 @@ export default function ResetPassword() {
           style={styles.button}
           onPress={handleSubmit(handlePasswordReset)}
         >
-          <Text style={styles.buttonText}>Send Reset Link</Text>
+          <Text style={styles.buttonText}>
+            {t("passwordReset.sendResetLink")}
+          </Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

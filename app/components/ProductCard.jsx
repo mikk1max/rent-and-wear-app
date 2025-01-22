@@ -5,6 +5,8 @@ import { globalStyles } from "../utils/style";
 import { useCustomFonts } from "../utils/fonts";
 import { useNavigation } from "@react-navigation/native";
 import Icon from "../components/Icon";
+import { cutTitle } from "../utils/func";
+import { useTranslation } from "react-i18next";
 
 const ProductCard = ({
   id,
@@ -20,6 +22,8 @@ const ProductCard = ({
 }) => {
   // Navigation
   const navigation = useNavigation();
+
+    const { t } = useTranslation();
 
   // Fonts
   const fontsLoaded = useCustomFonts();
@@ -71,8 +75,8 @@ const ProductCard = ({
           }}
           style={styles.cardButton}
         >
-          <Text style={styles.textOnButtonName}>{title}</Text>
-          <Text style={styles.textOnButtonPrice}>${pricePerDay} / day</Text>
+          <Text style={styles.textOnButtonName}>{cutTitle(title) || ""}</Text>
+          <Text style={styles.textOnButtonPrice}>${pricePerDay} / {t('productCard.day')}</Text>
         </TouchableOpacity>
       </Card>
     </View>
