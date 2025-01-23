@@ -70,7 +70,7 @@ export const styles = StyleSheet.create({
     width: "50%",
     borderTopLeftRadius: globalStyles.BORDER_RADIUS,
     borderBottomLeftRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: "green",
+    backgroundColor: globalStyles.primaryColor,
     padding: 7,
     alignItems: "center",
   },

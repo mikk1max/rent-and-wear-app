@@ -61,7 +61,7 @@ export default function AuthLoginView() {
           source={require("../../assets/images/loginBackClothes.jpg")}
           style={styles.imgStyles}
         />
-
+  
         <View style={mainStyles.container}>
           <View style={styles.loginPanel}>
             <Text style={styles.loginTitle}>{`${t("login.title")}!`}</Text>
@@ -69,14 +69,14 @@ export default function AuthLoginView() {
               <InputWithLabel
                 control={control}
                 name="email"
-                placeholder="example@gmail.com"
+                placeholder={t("login.emailPlaceholder")}
                 errors={errors}
                 label={`${t("login.emailLabel")}:`}
                 validationRules={{
-                  required: "E-mail is required",
+                  required: t("login.emailRequired"),
                   pattern: {
                     value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$/,
-                    message: "Invalid email format",
+                    message: t("login.emailPattern"),
                   },
                 }}
                 inputStyle={styles.inputStyle}
@@ -84,41 +84,39 @@ export default function AuthLoginView() {
               <InputWithLabel
                 control={control}
                 name="password"
-                placeholder="qwerty123"
+                placeholder={t("login.passwordPlaceholder")}
                 errors={errors}
                 label={`${t("login.passLabel")}:`}
-                secureTextEntry
+                isSecure
                 validationRules={{
-                  required: "Password is required",
+                  required: t("login.passwordRequired"),
                   minLength: {
                     value: 6,
-                    message: "Password must be at least 6 characters",
+                    message: t("login.passwordMinLength"),
                   },
                 }}
                 inputStyle={[styles.inputStyle, { marginBottom: 0 }]}
               />
             </View>
-
+  
             <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
               <TouchableOpacity
                 style={{ paddingHorizontal: 10, paddingVertical: 5 }}
-                onPress={() => setShowResetModal(true)}
+                onPress={() => navigation.navigate("ResetPassword")}
               >
-                <Text style={styles.forgotPass}>{`${t(
-                  "login.forgotPass"
-                )}?`}</Text>
+                <Text style={styles.forgotPass}>{`${t("login.forgotPass")}?`}</Text>
               </TouchableOpacity>
             </View>
-
+  
             <TouchableOpacity
               style={[styles.mainBtns, styles.loginBtn]}
               onPress={handleSubmit(handleLogin)}
             >
               <Text style={styles.mainBtnText}>{t("login.loginBtn")}</Text>
             </TouchableOpacity>
-
-            <Text style={styles.orText}>or</Text>
-
+  
+            <Text style={styles.orText}>{t("login.orText")}</Text>
+  
             <View style={{ gap: 15, flexDirection: "row" }}>
               <TouchableOpacity
                 style={[styles.mainBtns, styles.anotherBtn]}
@@ -135,7 +133,7 @@ export default function AuthLoginView() {
               </TouchableOpacity>
             </View>
           </View>
-
+  
           {/* Error Modal */}
           <ErrorModal
             isVisible={isModalVisible}
@@ -143,11 +141,10 @@ export default function AuthLoginView() {
             title={t("login.modalError.title")}
             message={errorMessage}
           />
-          
         </View>
       </KeyboardAwareScrollView>
     </SafeAreaView>
-  );
+  );  
 }
 
 const styles = StyleSheet.create({

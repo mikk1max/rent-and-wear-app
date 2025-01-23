@@ -304,6 +304,7 @@ export const styles = StyleSheet.create({
   },
 
   advRentAndWear: {
+    textTransform: "uppercase",
     fontFamily: "WorkSans_900Black",
     fontSize: 18,
     color: globalStyles.primaryColor,

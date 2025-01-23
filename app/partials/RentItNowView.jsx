@@ -11,9 +11,11 @@ import {
   ActivityIndicator,
   TextInput,
   Platform,
+  Alert,
 } from "react-native";
 import { useCustomFonts } from "../utils/fonts";
 import { useNavigation } from "@react-navigation/native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 // import fetchSVG, { fetchImgURL } from "../utils/fetchSVG";
 import { G, SvgUri } from "react-native-svg";
@@ -63,12 +65,14 @@ import {
 import { color } from "react-native-elements/dist/helpers";
 
 import * as Progress from "react-native-progress";
+import { useTranslation } from "react-i18next";
 
 // Get the screen dimensions
 const { width } = Dimensions.get("window");
 
 const RentItNowView = ({ route }) => {
   const navigation = useNavigation();
+  const { t } = useTranslation();
 
   const { user, setUser } = useUser();
 
@@ -131,30 +135,30 @@ const RentItNowView = ({ route }) => {
   };
 
   // Pobieranie bieżącego użytkownika
-  useEffect(() => {
-    if (!user) return;
+  // useEffect(() => {
+  //   if (!user) return;
 
-    const usersRef = ref(db, "users");
-    const unsubscribe = onValue(usersRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        const currentUserEntry = Object.entries(data).find(
-          ([key, userData]) => userData.email === user.email
-        );
+  //   const usersRef = ref(db, "users");
+  //   const unsubscribe = onValue(usersRef, (snapshot) => {
+  //     const data = snapshot.val();
+  //     if (data) {
+  //       const currentUserEntry = Object.entries(data).find(
+  //         ([key, userData]) => userData.email === user.email
+  //       );
 
-        if (currentUserEntry) {
-          const [key, userData] = currentUserEntry;
-          setUser({ ...userData, id: key }); // Dodaj klucz jako "id"
-        } else {
-          setUser(null);
-        }
-      } else {
-        setUser(null);
-      }
-    });
+  //       if (currentUserEntry) {
+  //         const [key, userData] = currentUserEntry;
+  //         setUser({ ...userData, id: key }); // Dodaj klucz jako "id"
+  //       } else {
+  //         setUser(null);
+  //       }
+  //     } else {
+  //       setUser(null);
+  //     }
+  //   });
 
-    return () => unsubscribe();
-  }, [user]);
+  //   return () => unsubscribe();
+  // }, [user]);
 
   // Pobieranie ogłoszenia z bazy
   useEffect(() => {
@@ -284,7 +288,7 @@ const RentItNowView = ({ route }) => {
   const resetDates = () => {
     setSelectedStartDate(null);
     setSelectedEndDate(null);
-    setKey((prevKey) => prevKey + 1); // Обновляем key для перерендеринга
+    setKey((prevKey) => prevKey + 1);
   };
 
   const handleDateChange = (date, type) => {
@@ -292,15 +296,15 @@ const RentItNowView = ({ route }) => {
       if (isRangeValid(date, selectedEndDate)) {
         setSelectedStartDate(date);
       } else {
-        alert("Выбранный диапазон включает недоступные даты.");
-        resetDates(); // Сбрасываем даты
+        Alert.alert(`${t("alerts.unavailableDates")}`);
+        resetDates();
       }
     } else {
       if (isRangeValid(selectedStartDate, date)) {
         setSelectedEndDate(date);
       } else {
-        alert("Выбранный диапазон включает недоступные даты.");
-        resetDates(); // Сбрасываем даты
+        Alert.alert(`${t("alerts.unavailableDates")}`);
+        resetDates();
       }
     }
   };
@@ -511,7 +515,10 @@ const RentItNowView = ({ route }) => {
     if (counter >= 100) {
       clearInterval(intervalRef.current);
       setCounter(100);
-      alert("Successfully rented / booked!");
+      Alert.alert(
+        `${t("passwordReset.resetPasswordAlert.success")}`,
+        `${t("rentItNow.alerts.rentedOrBooked")}`
+      );
       navigation.goBack();
     }
   }, [counter]);
@@ -533,38 +540,26 @@ const RentItNowView = ({ route }) => {
           { paddingTop: 20 },
         ]}
       >
-        <ScrollView
+        <KeyboardAwareScrollView
+          keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
           nestedScrollEnabled={true}
           // style={mainStyles.scrollBase}
         >
           <View style={styles.datePickerContainer}>
             <CalendarPicker
-              key={key} // Используем key для перерендеринга
+              key={key}
               startFromMonday={true}
               allowRangeSelection={true}
               allowBackwardRangeSelect={true}
               showDayStragglers={true}
               restrictMonthNavigation={true}
-              months={[
-                "January",
-                "February",
-                "March",
-                "April",
-                "May",
-                "June",
-                "July",
-                "August",
-                "September",
-                "October",
-                "November",
-                "December",
-              ]}
-              weekdays={["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]}
-              previousTitle="Previous"
-              nextTitle="Next"
-              selectMonthTitle="Select month in "
-              selectYearTitle="Select year"
+              months={t("calendar.months", { returnObjects: true })}
+              weekdays={t("calendar.weekdays", { returnObjects: true })}
+              previousTitle={t("calendar.previous")}
+              nextTitle={t("calendar.next")}
+              selectMonthTitle={t("calendar.selectMonthTitle")}
+              selectYearTitle={t("calendar.selectYearTitle")}
               onDateChange={handleDateChange}
               minDate={firstAvailableDate}
               maxDate={lastAvailableDate}
@@ -586,25 +581,16 @@ const RentItNowView = ({ route }) => {
               selectedRangeStartStyle={styles.datePickerSelectedRangeStartStyle}
               selectedRangeEndStyle={styles.datePickerSelectedRangeEndStyle}
               selectedRangeStyle={styles.datePickerSelectedRangeStyle}
-              // selectedDisabledDatesTextStyle={
-              //   styles.datePickerSelectedDisabledDatesTextStyle
-              // }
               disabledDatesTextStyle={styles.datePickerDisabledDatesTextStyle}
-              // todayBackgroundColor="red"
               todayTextStyle={styles.datePickerTodayTextStyle}
               textStyle={styles.datePickerTextStyle}
-              // customDayHeaderStyles={customDayHeaderStyles}
               dayLabelsWrapper={styles.datePickerDayLabelsWrapper}
-              // monthYearHeaderWrapperStyle={
-              //   styles.datePickerMonthYearHeaderWrapperStyle
-              // }
-              // headerWrapperStyle={styles.datePickerHeaderWrapperStyle}
               monthTitleStyle={styles.datePickerMonthTitleStyle}
               yearTitleStyle={styles.datePickerYearTitleStyle}
             />
             <Divider style={styles.dateDivider} />
             <Text style={styles.dateResulText}>
-              From:{" "}
+              {`${t("rentItNow.from")}: `}
               <Text style={{ color: globalStyles.textOnSecondaryColor }}>
                 {selectedStartDate
                   ? selectedStartDate.toLocaleDateString(undefined, {
@@ -612,11 +598,11 @@ const RentItNowView = ({ route }) => {
                       month: "long",
                       day: "numeric",
                     })
-                  : "Choose a start date"}
+                  : `${t("rentItNow.startDate")}`}
               </Text>
             </Text>
             <Text style={styles.dateResulText}>
-              To:{" "}
+              {`${t("rentItNow.to")}: `}
               <Text style={{ color: globalStyles.textOnSecondaryColor }}>
                 {selectedEndDate
                   ? selectedEndDate.toLocaleDateString(undefined, {
@@ -624,22 +610,21 @@ const RentItNowView = ({ route }) => {
                       month: "long",
                       day: "numeric",
                     })
-                  : "Choose an end date"}
+                  : `${t("rentItNow.endDate")}`}
               </Text>
             </Text>
             <Text style={styles.dateResulText}>
-              Total amount:{" "}
+              {`${t("rentItNow.total")}: `}
               <Text style={{ color: globalStyles.textOnSecondaryColor }}>
                 {selectedStartDate && selectedEndDate
                   ? `$${getTotalAmount(selectedStartDate, selectedEndDate)}`
-                  : "Choose start and end dates"}
+                  : `${t("rentItNow.totalAmount")}`}
               </Text>{" "}
               <Text style={{ color: globalStyles.accentColor }}>
                 {rentalOption === "Book" && selectedStartDate && selectedEndDate
-                  ? `($${get20Percent(
-                      selectedStartDate,
-                      selectedEndDate
-                    )} for booking)`
+                  ? `($${get20Percent(selectedStartDate, selectedEndDate)} ${t(
+                      "rentItNow.amountForBooking"
+                    )})`
                   : ""}
               </Text>
             </Text>
@@ -648,27 +633,26 @@ const RentItNowView = ({ route }) => {
               onPress={resetDates}
               activeOpacity={globalStyles.ACTIVE_OPACITY}
             >
-              <Text style={styles.dateResetText}>Reset chosen dates</Text>
+              <Text style={styles.dateResetText}>
+                {t("rentItNow.resetDates")}
+              </Text>
             </TouchableOpacity>
           </View>
 
           <View style={styles.rentalOptionContainer}>
             <Text style={styles.rentalOptionLabel}>
-              Choose a rental option:
+              {`${t("rentItNow.rentalOptionTitle")}: `}
             </Text>
             {rentalOption === "Rent" && (
               <Text style={styles.rentalOptionRentItNowDescription}>
-                You rent with the obligation to pay the entire amount. If you
-                cancel, you won't get your money back.
+                {`${t("rentItNow.rentTermsSubTitle")}`}
               </Text>
             )}
             {/* Wynajmujesz z obowiązkiem zapłaty całej kwoty. Jeśli zrezygnujesz,
             nie dostaniesz pieniędzy z powrotem. */}
             {rentalOption === "Book" && (
               <Text style={styles.rentalOptionBookItDescription}>
-                You reserve this announcement for later. You will pay 20% of the
-                total amount, which you will not get back if you cancel your
-                reservation. From the moment of booking and until{" "}
+                {`${t("rentItNow.rentalOptionBookItDescriptionFirst")} `}
                 <Text style={{ color: globalStyles.accentColor }}>
                   {selectedStartDate
                     ? selectedStartDate.toLocaleDateString(undefined, {
@@ -676,11 +660,9 @@ const RentItNowView = ({ route }) => {
                         month: "long",
                         day: "numeric",
                       })
-                    : "CHOOSE A START DATE"}
+                    : `${t("rentItNow.startDate")}`}
                 </Text>
-                , you must pay the remaining 80% to be able to rent this ad. If
-                you do not pay before this deadline, your reservation will be
-                canceled.
+                {`, ${t("rentItNow.rentalOptionBookItDescriptionLast")}`}
               </Text>
             )}
             {/* Rezerwujesz to ogłoszenie na później. Zapłacisz 20% od całej kwoty,
@@ -714,7 +696,7 @@ const RentItNowView = ({ route }) => {
                       : styles.rentalOptionRentItNowTextNotActive
                   }
                 >
-                  Rent it now
+                  {t("rentItNow.rentItNowBtn")}
                 </Text>
               </TouchableOpacity>
               {isBookingAvailable && (
@@ -735,13 +717,13 @@ const RentItNowView = ({ route }) => {
                         : styles.rentalOptionBookItTextNotActive
                     }
                   >
-                    Book it
+                    {t("rentItNow.bookItBtn")}
                   </Text>
                 </TouchableOpacity>
               )}
               {!isBookingAvailable && (
                 <Text style={styles.rentalOptionBookItDisabled}>
-                  You cannot book these dates
+                  {t("rentItNow.bookItBtn")}
                 </Text>
               )}
             </View>
@@ -756,20 +738,26 @@ const RentItNowView = ({ route }) => {
                 onPress={() => setNextStepActive(true)}
                 activeOpacity={globalStyles.ACTIVE_OPACITY}
               >
-                <Text style={styles.nextStepText}>Next step</Text>
+                <Text style={styles.nextStepText}>
+                  {t("rentItNow.nextStepText")}
+                </Text>
               </TouchableOpacity>
             )}
 
           {isNextStepActive && (
             <View style={styles.addressContainer}>
               <View style={styles.addressLabelWithReset}>
-                <Text style={styles.addressLabel}>Delivery address:</Text>
+                <Text style={styles.addressLabel}>{`${t(
+                  "rentItNow.addressLabel"
+                )}:`}</Text>
                 <TouchableOpacity
                   style={styles.addressResetButton}
                   onPress={() => setAddress(null)}
                   activeOpacity={globalStyles.ACTIVE_OPACITY}
                 >
-                  <Text style={styles.addressResetText}>Reset</Text>
+                  <Text style={styles.addressResetText}>{`${t(
+                    "rentItNow.addressResetText"
+                  )}`}</Text>
                 </TouchableOpacity>
               </View>
 
@@ -782,7 +770,7 @@ const RentItNowView = ({ route }) => {
                   <Text style={styles.addressListText}>
                     {address
                       ? `${address?.adresse}, ${address?.street} ${address?.buildingNumber}`
-                      : "Choose an address"}
+                      : `${t("rentItNow.addressListText")}`}
                   </Text>
                   <Icon
                     name={isAddressListVisible ? "arrow-up" : "arrow-down"}
@@ -812,8 +800,7 @@ const RentItNowView = ({ route }) => {
                         activeOpacity={1}
                       >
                         <Text style={styles.addressListItemText}>
-                          → {addressItem?.adresse}, {addressItem?.street}{" "}
-                          {addressItem?.buildingNumber}
+                          {`→  ${addressItem?.adresse}, ${addressItem?.street} ${addressItem?.buildingNumber}`}
                         </Text>
                       </TouchableOpacity>
                     ))}
@@ -930,7 +917,9 @@ const RentItNowView = ({ route }) => {
               )}
 
               {user?.addresses && !address && (
-                <Text style={styles.addressOrText}>or</Text>
+                <Text style={styles.addressOrText}>
+                  {t("rentItNow.addressOrText")}
+                </Text>
               )}
 
               {!address && (
@@ -940,7 +929,7 @@ const RentItNowView = ({ route }) => {
                   activeOpacity={globalStyles.ACTIVE_OPACITY}
                 >
                   <Text style={styles.addressCreateAnAddressText}>
-                    Create an address
+                    {t("rentItNow.addressCreateAnAddressText")}
                   </Text>
                 </TouchableOpacity>
               )}
@@ -949,7 +938,9 @@ const RentItNowView = ({ route }) => {
 
           {isNextStepActive && (
             <View style={styles.paymentContainer}>
-              <Text style={styles.paymentLabel}>Payment method: </Text>
+              <Text style={styles.paymentLabel}>{`${t(
+                "rentItNow.paymentLabel"
+              )}: `}</Text>
               <View style={styles.paymentMethodButtons}>
                 <TouchableOpacity
                   style={
@@ -968,7 +959,7 @@ const RentItNowView = ({ route }) => {
                         : styles.paymentMethodCardTextNotSelected
                     }
                   >
-                    Credit card
+                    {t("rentItNow.paymentMethodCardText")}
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -988,7 +979,7 @@ const RentItNowView = ({ route }) => {
                         : styles.paymentMethodBLIKTextNotSelected
                     }
                   >
-                    BLIK
+                    {t("rentItNow.paymentMethodBLIKText")}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -1037,8 +1028,8 @@ const RentItNowView = ({ route }) => {
                         }
                       >
                         {cardFormData?.valid
-                          ? "Possibly valid card"
-                          : "Invalid/Incomplete card"}
+                          ? `${t("rentItNow.cardValidText")}`
+                          : `${t("rentItNow.cardNotValidText")}`}
                       </Text>
                     </View>
                     <View style={styles.paymentCardInfo}>
@@ -1049,7 +1040,7 @@ const RentItNowView = ({ route }) => {
                         fillColor={statusToColor(cardFormData?.status.number)}
                       />
                       <Text style={styles.paymentCardInfoText}>
-                        Number:{" "}
+                        {`${t("rentItNow.paymentCardInfoTextNum")}: `}
                         <Text
                           style={{ color: globalStyles.textOnSecondaryColor }}
                         >
@@ -1065,7 +1056,7 @@ const RentItNowView = ({ route }) => {
                         fillColor={statusToColor(cardFormData?.status.expiry)}
                       />
                       <Text style={styles.paymentCardInfoText}>
-                        Expiry:{" "}
+                        {`${t("rentItNow.paymentCardInfoTextExp")}: `}
                         <Text
                           style={{ color: globalStyles.textOnSecondaryColor }}
                         >
@@ -1081,7 +1072,7 @@ const RentItNowView = ({ route }) => {
                         fillColor={statusToColor(cardFormData?.status.cvc)}
                       />
                       <Text style={styles.paymentCardInfoText}>
-                        CVC/CVV:{" "}
+                        {`${t("rentItNow.paymentCardInfoTextCVC")}: `}
                         <Text
                           style={{ color: globalStyles.textOnSecondaryColor }}
                         >
@@ -1097,7 +1088,7 @@ const RentItNowView = ({ route }) => {
                         fillColor="blue"
                       />
                       <Text style={styles.paymentCardInfoText}>
-                        Type:{" "}
+                        {`${t("rentItNow.paymentCardInfoTextType")}: `}
                         <Text
                           style={{ color: globalStyles.textOnSecondaryColor }}
                         >
@@ -1121,7 +1112,7 @@ const RentItNowView = ({ route }) => {
                     style={styles.paymentBLIKTextInput}
                     // onBlur={setValueBLIK}
                     onChangeText={setValueBLIK}
-                    placeholder="Enter the BLIK code"
+                    placeholder={t("rentItNow.placeholderBlIK")}
                     placeholderTextColor={"gray"}
                     value={valueBLIK}
                     maxLength={6}
@@ -1154,24 +1145,46 @@ const RentItNowView = ({ route }) => {
                   >
                     <Text style={styles.finishText}>
                       {rentalOption === "Rent"
-                        ? `Rent it now for $${getTotalAmount(
+                        ? `${t(
+                            "rentItNow.lastRentalOptionRentText"
+                          )}: $${getTotalAmount(
                             selectedStartDate,
                             selectedEndDate
-                          )} for ${
+                          )} ${t("rentItNow.lastRentalOptionFOR")} ${
                             getDaysBetweenTwoDates(
                               selectedStartDate,
                               selectedEndDate
                             ) + 1
-                          } day(s)`
-                        : `Book it for $${get20Percent(
+                          } ${
+                            getDaysBetweenTwoDates(
+                              selectedStartDate,
+                              selectedEndDate
+                            ) +
+                              1 >
+                            1
+                              ? t("rentItNow.daysText")
+                              : t("rentItNow.dayText")
+                          }`
+                        : `${t(
+                            "rentItNow.lastRentalOptionBookText"
+                          )}: $${get20Percent(
                             selectedStartDate,
                             selectedEndDate
-                          )} for ${
+                          )} ${t("rentItNow.lastRentalOptionFOR")} ${
                             getDaysBetweenTwoDates(
                               selectedStartDate,
                               selectedEndDate
                             ) + 1
-                          } day(s)`}
+                          } ${
+                            getDaysBetweenTwoDates(
+                              selectedStartDate,
+                              selectedEndDate
+                            ) +
+                              1 >
+                            1
+                              ? t("rentItNow.daysText")
+                              : t("rentItNow.dayText")
+                          }`}
                     </Text>
                   </TouchableOpacity>
                 )}
@@ -1180,7 +1193,7 @@ const RentItNowView = ({ route }) => {
                     <Progress.Bar
                       progress={counter / 100}
                       useNativeDriver={true}
-                      width={350}
+                      width={width - 50}
                       color={globalStyles.accentColor}
                       unfilledColor={globalStyles.textOnAccentColor}
                       borderColor={globalStyles.accentColor}
@@ -1192,14 +1205,14 @@ const RentItNowView = ({ route }) => {
                       {counter != 100
                         ? `Creating a request: ${counter}%`
                         : rentalOption === "Rent"
-                        ? `Rented successfully`
-                        : `Booked successfully`}
+                        ? `${t("rentItNow.successfulRent")}`
+                        : `${t("rentItNow.successfulBook")}`}
                     </Text>
                   </View>
                 )}
               </View>
             )}
-        </ScrollView>
+        </KeyboardAwareScrollView>
       </View>
     </SafeAreaView>
   );

@@ -62,7 +62,7 @@ export default function AuthRegistrationView() {
         <View style={mainStyles.container}>
           <View style={[styles.registerPanel]}>
             <Text style={styles.loginTitle}>{t("signUp.title")}</Text>
-
+  
             <View style={{ gap: 20 }}>
               <View
                 style={{
@@ -74,15 +74,15 @@ export default function AuthRegistrationView() {
                 <InputWithLabel
                   control={control}
                   name="name"
-                  placeholder="John"
+                  placeholder={t("signUp.namePlaceholder")}
                   errors={errors}
                   label={`${t("signUp.nameLabel")}:`}
                   validationRules={{
-                    required: "First name is required",
+                    required: t("signUp.nameRequired"),
                     pattern: {
                       value:
-                        /^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+(?:\s[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)?$/,
-                      message: "Invalid First Name format",
+                        /^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+(?:\\s[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)?$/,
+                      message: t("signUp.namePattern"),
                     },
                   }}
                   inputStyle={[
@@ -93,15 +93,15 @@ export default function AuthRegistrationView() {
                 <InputWithLabel
                   control={control}
                   name="surname"
-                  placeholder="Doe"
+                  placeholder={t("signUp.surnamePlaceholder")}
                   errors={errors}
                   label={`${t("signUp.surnameLabel")}:`}
                   validationRules={{
-                    required: "Last name is required",
+                    required: t("signUp.surnameRequired"),
                     pattern: {
                       value:
                         /^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]*(?:[-'][A-ZĄĆĘŁŃÓŚŹŻ]?[a-ząćęłńóśźż]+)?(?:-[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]*(?:[-'][A-ZĄĆĘŁŃÓŚŹŻ]?[a-ząćęłńóśźż]+)?)?$/,
-                      message: "Invalid Last Name format",
+                      message: t("signUp.surnamePattern"),
                     },
                   }}
                   inputStyle={[
@@ -113,14 +113,14 @@ export default function AuthRegistrationView() {
               <InputWithLabel
                 control={control}
                 name="email"
-                placeholder="example@gmail.com"
+                placeholder={t("signUp.emailPlaceholder")}
                 errors={errors}
                 label={`${t("signUp.emailLabel")}:`}
                 validationRules={{
-                  required: "E-mail is required",
+                  required: t("signUp.emailRequired"),
                   pattern: {
                     value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$/,
-                    message: "Invalid email format",
+                    message: t("signUp.emailPattern"),
                   },
                 }}
                 inputStyle={styles.inputStyle}
@@ -128,15 +128,14 @@ export default function AuthRegistrationView() {
               <InputWithLabel
                 control={control}
                 name="password"
-                placeholder="Password"
+                placeholder={t("signUp.passwordPlaceholder")}
                 errors={errors}
                 label={`${t("signUp.passLabel")}:`}
-                secureTextEntry
                 validationRules={{
-                  required: "Password is required",
+                  required: t("signUp.passwordRequired"),
                   minLength: {
                     value: 6,
-                    message: "Password must be at least 6 characters",
+                    message: t("signUp.passwordMinLength"),
                   },
                 }}
                 inputStyle={styles.inputStyle}
@@ -152,7 +151,7 @@ export default function AuthRegistrationView() {
               <Text style={{ color: "red" }}>{errorMessage}</Text>
             )}
           </View>
-
+  
           <ErrorModal
             isVisible={isModalVisible}
             onClose={closeModal}
@@ -163,6 +162,7 @@ export default function AuthRegistrationView() {
       </KeyboardAwareScrollView>
     </SafeAreaView>
   );
+  
 }
 
 const styles = StyleSheet.create({

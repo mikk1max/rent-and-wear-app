@@ -49,19 +49,24 @@ export default function WelcomeView({ navigation }) {
             <View style={styles.moveButtons}>
               <TouchableOpacity
                 style={styles.guestBtn}
-                onPress={() => {
-                  onLogin(
-                    {
-                      email: "guest@example.com",
-                      password: "qwerty123",
-                    },
-                    initializeUser
-                  );
-                  navigation.navigate("MainApp");
+                onPress={async () => {
+                  try {
+                    await onLogin(
+                      {
+                        email: "guest@example.com",
+                        password: "qwerty123",
+                      },
+                      initializeUser
+                    );
+                    navigation.replace("MainApp");
+                  } catch (error) {
+                    console.error("Guest login failed:", error);
+                  }
                 }}
               >
                 <Text style={styles.guestBtnText}>{t("welcome.guestBtn")}</Text>
               </TouchableOpacity>
+
               <TouchableOpacity
                 style={styles.logBtn}
                 onPress={() => navigation.navigate("LogIn")}

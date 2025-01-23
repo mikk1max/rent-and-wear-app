@@ -6,7 +6,12 @@ import {
   Alert,
   TouchableOpacity,
 } from "react-native";
-import { GiftedChat, Bubble, InputToolbar, Send } from "react-native-gifted-chat";
+import {
+  GiftedChat,
+  Bubble,
+  InputToolbar,
+  Send,
+} from "react-native-gifted-chat";
 import { ref, onValue, push, set, remove } from "firebase/database";
 import { db } from "../../firebase.config";
 import { useRoute } from "@react-navigation/native";
@@ -14,11 +19,14 @@ import { useUser } from "../components/UserProvider";
 import { globalStyles, styles as mainStyles } from "../utils/style";
 import { fetchImgURL, getRandomAvatarUrl } from "../utils/fetchSVG";
 import Icon from "../components/Icon";
+import Loader from "../components/Loader";
+import { useTranslation } from "react-i18next";
 
 export default function ChatView() {
   const { user, loading } = useUser();
   const route = useRoute();
   const { chatId } = route.params;
+  const { t, i18n } = useTranslation();
 
   const [messages, setMessages] = useState([]);
   const [userAvatars, setUserAvatars] = useState({});
@@ -28,23 +36,21 @@ export default function ChatView() {
   if (loading) {
     return (
       <SafeAreaView style={mainStyles.whiteBack}>
-        <View>
-          <Text>Loading...</Text>
-        </View>
+        <Loader />
       </SafeAreaView>
     );
   }
 
   if (!user || !user.id) {
     console.error("User is not authenticated:", user);
-    Alert.alert("User is not authenticated. Please log in to access the chat.");
+    Alert.alert(t("chat.userNotAuth"));
     return;
   }
 
   useEffect(() => {
     if (!chatId) {
       console.error("Chat ID is missing");
-      Alert.alert("Something went wrong! Please try again later.");
+      Alert.alert(t("universal.somethingWentWrong"));
       return;
     }
 
@@ -97,16 +103,24 @@ export default function ChatView() {
           avatar = await fetchUserAvatar(senderId);
         }
 
+        // Ensure timestamp is valid and in milliseconds
+        const timestamp = data[key].timestamp
+          ? new Date(Number(data[key].timestamp))
+          : null;
+
+        console.log("Timestamp:", data[key].timestamp);
+
         return {
           _id: key,
           text: data[key].text,
-          createdAt: new Date(data[key].timestamp),
+          createdAt: timestamp || new Date(), // Pass the raw Date object here
           user: {
             _id: senderId,
             name:
               senderId === user.id
-                ? user.name || "You"
-                : advertiserName || "Advertiser",
+                ? user.name || (i18n.language === "en" ? "You" : "Ty")
+                : advertiserName ||
+                  (i18n.language === "en" ? "Advertiser" : "Ogłoszeniodawca"),
             avatar,
           },
         };
@@ -175,6 +189,7 @@ export default function ChatView() {
       {/* <View style={[mainStyles.container, {alignItems: "stretch", paddingHorizontal: 10}]}> */}
       <GiftedChat
         messages={messages}
+        locale={`${i18n.language}`}
         onSend={(newMessages) => onSend(newMessages)}
         onInputTextChanged={(text) => handleTyping(!!text)}
         user={{
@@ -184,7 +199,7 @@ export default function ChatView() {
         }}
         showAvatarForEveryMessage={true}
         renderAvatarOnTop={true}
-        placeholder="Type a message..."
+        placeholder={t("chat.inputPlaceholder")}
         scrollToBottom
         scrollToBottomComponent={() => (
           <View style={{ borderRadius: 20 }}>
@@ -210,13 +225,13 @@ export default function ChatView() {
         alwaysShowSend
         renderSend={(props) => (
           <Send {...props}>
-              <Icon
-                name="send"
-                width={40}
-                height={40}
-                fillColor={globalStyles.primaryColor}
-                colorStroke="white"
-              />
+            <Icon
+              name="send"
+              width={40}
+              height={40}
+              fillColor={globalStyles.primaryColor}
+              colorStroke="white"
+            />
           </Send>
         )}
         renderInputToolbar={(props) => (

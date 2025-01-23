@@ -1,73 +1,28 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
-  Dimensions,
-  View,
   Text,
   TouchableOpacity,
   ScrollView,
   SafeAreaView,
   Image,
   StyleSheet,
-  ActivityIndicator,
-  TextInput,
-  Platform,
 } from "react-native";
 import { useCustomFonts } from "../utils/fonts";
 import { useNavigation } from "@react-navigation/native";
+import { Divider } from "react-native-elements";
 
-// import fetchSVG, { fetchImgURL } from "../utils/fetchSVG";
-import { G, SvgUri } from "react-native-svg";
-
-import { globalStyles, styles as mainStyles } from "../utils/style";
-// import { iconParams, styles } from "../styles/AnnouncementViewStyles";
-import { Divider, Rating } from "react-native-elements";
-import OpinionCard from "../components/OpinionCard";
-import Swiper from "react-native-swiper";
-import ImageViewing from "react-native-image-viewing";
-
-import {
-  ref,
-  onValue,
-  update,
-  get,
-  set,
-  remove,
-  goOnline,
-} from "firebase/database";
-import { db, storage } from "../../firebase.config";
+import { ref as sRef, onValue, get } from "firebase/database";
+import { db } from "../../firebase.config";
 import { useUser } from "../components/UserProvider";
-import { getStorage, ref as storageRef, uploadBytes } from "firebase/storage";
-import { getDownloadURL } from "firebase/storage";
 
-import {
-  fetchSvgURL,
-  fetchImgURL,
-  getRandomAvatarUrl,
-} from "../utils/fetchSVG";
-
-import * as ImagePicker from "expo-image-picker";
-import { useForm, Controller } from "react-hook-form";
-import { SelectList } from "react-native-dropdown-select-list";
-import Icon from "../components/Icon";
-
-import CalendarPicker from "react-native-calendar-picker";
-
-import {
-  CreditCardView,
-  CreditCardInput,
-  LiteCreditCardInput,
-  CreditCardFormData,
-  CreditCardFormField,
-  ValidationState,
-} from "react-native-credit-card-input";
-import { color } from "react-native-elements/dist/helpers";
-
-import * as Progress from "react-native-progress";
+import Loader from "../components/Loader";
 
 const GetDetailsView = ({ route }) => {
   const navigation = useNavigation();
 
   const { user, setUser } = useUser();
+
+  const { id } = route.params;
 
   const [currentRentOrReservation, setCurrentRentOrReservation] =
     useState(null);
@@ -77,52 +32,53 @@ const GetDetailsView = ({ route }) => {
   const fontsLoaded = useCustomFonts();
   if (!fontsLoaded) return null;
 
-  const { id } = route.params;
+  if (!db) {
+    console.error("Firebase database is not initialized.");
+    return;
+  }
 
   // Pobieranie bieżącego użytkownika
-  useEffect(() => {
-    if (!user) return;
+  // useEffect(() => {
+  //   if (!user) return;
 
-    const usersRef = ref(db, "users");
-    const unsubscribe = onValue(usersRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        const currentUserEntry = Object.entries(data).find(
-          ([key, userData]) => userData.email === user.email
-        );
+  //   const usersRef = sRef(db, "users");
+  //   const unsubscribe = onValue(usersRef, (snapshot) => {
+  //     const data = snapshot.val();
+  //     if (data) {
+  //       const currentUserEntry = Object.entries(data).find(
+  //         ([key, userData]) => userData.email === user.email
+  //       );
 
-        if (currentUserEntry) {
-          const [key, userData] = currentUserEntry;
-          setUser({ ...userData, id: key }); // Dodaj klucz jako "id"
-        } else {
-          setUser(null);
-        }
-      } else {
-        setUser(null);
-      }
-    });
+  //       if (currentUserEntry) {
+  //         const [key, userData] = currentUserEntry;
+  //         setUser({ ...userData, id: key }); // Dodaj klucz jako "id"
+  //       } else {
+  //         setUser(null);
+  //       }
+  //     } else {
+  //       setUser(null);
+  //     }
+  //   });
 
-    return () => unsubscribe();
-  }, [user]);
+  //   return () => unsubscribe();
+  // }, [user]);
 
   useEffect(() => {
     const fetchDetails = async () => {
-      const announcementsRef = ref(db, "announcements");
-      const usersRef = ref(db, "users");
-
       try {
-        // Загрузка всех объявлений
+        const announcementsRef = sRef(db, "announcements");
+        const usersRef = sRef(db, "users");
+
         const announcementsSnapshot = await get(announcementsRef);
         if (!announcementsSnapshot.exists()) {
           console.log("Announcements not found");
           return;
         }
-        const announcements = announcementsSnapshot.val();
 
+        const announcements = announcementsSnapshot.val();
         let foundRentOrReservation = null;
         let foundAnnouncement = null;
 
-        // Ищем `id` в rentalData и reservationData
         for (const announcementId in announcements) {
           const announcement = announcements[announcementId];
           const rentalData = announcement.rentalData || {};
@@ -146,31 +102,28 @@ const GetDetailsView = ({ route }) => {
         }
 
         setCurrentRentOrReservation(foundRentOrReservation);
-
-        const { category, condition, images, pricePerDay, publicationDate, rating, size, title, advertiserId } = foundAnnouncement;
         setCurrentAnnouncement({
-          category,
-          condition,
-          image: images?.[0] || null,
-          pricePerDay,
-          publicationDate,
-          rating,
-          size,
-          title,
+          ...foundAnnouncement,
+          image: foundAnnouncement.images?.[0] || null,
         });
 
-        console.log("Found announcement:", foundAnnouncement);
-
-        // Загружаем пользователя по `advertiserId`
-        const advertiserSnapshot = await get(ref(usersRef, advertiserId));
-        if (!advertiserSnapshot.exists()) {
-          console.log("Advertiser not found");
-          return;
+        if (foundAnnouncement.advertiserId) {
+          const advertiserSnapshot = await get(
+            sRef(usersRef, foundAnnouncement.advertiserId)
+          );
+          if (advertiserSnapshot.exists()) {
+            setCurrentAdvertiser({
+              ...advertiserSnapshot.val(),
+              id: foundAnnouncement.advertiserId,
+            });
+          } else {
+            console.log(
+              `Advertiser with ID ${foundAnnouncement.advertiserId} not found`
+            );
+          }
+        } else {
+          console.log("No advertiser ID found in announcement");
         }
-        const advertiser = advertiserSnapshot.val();
-        setCurrentAdvertiser({ ...advertiser, id: advertiserId });
-
-        console.log("Advertiser data:", advertiser);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -181,18 +134,83 @@ const GetDetailsView = ({ route }) => {
     }
   }, [id]);
 
-
   // console.log(currentRentOrReservation);
   // console.log(currentAnnouncement);
   // console.log(currentAdvertiser);
 
+  if (!currentRentOrReservation || !currentAnnouncement || !currentAdvertiser) {
+    return <Loader />;
+  }
+
   return (
-    <View>
-      <Text>GetDetailsView</Text>
-    </View>
+    <SafeAreaView style={styles.container}>
+      <ScrollView>
+        <Image
+          source={{ uri: currentAnnouncement.image }}
+          style={styles.image}
+        />
+        <Text style={styles.title}>{currentAnnouncement.title}</Text>
+        <Divider style={styles.divider} />
+        <Text>Category: {currentAnnouncement.category.subcategoryName}</Text>
+        <Text>Condition: {currentAnnouncement.condition}</Text>
+        <Text>Size: {currentAnnouncement.size}</Text>
+        <Text>Price per day: ${currentAnnouncement.pricePerDay}</Text>
+        <Divider style={styles.divider} />
+        <Text>Rented by: {currentRentOrReservation.borrowerId}</Text>
+        <Text>Days in Rent: {currentRentOrReservation.daysInRent}</Text>
+        <Text>Status: {currentRentOrReservation.status.statusName}</Text>
+        <Divider style={styles.divider} />
+        {currentAdvertiser ? (
+          <>
+            <Text>Advertiser: {currentAdvertiser.name}</Text>
+            <Text>Email: {currentAdvertiser.email}</Text>
+          </>
+        ) : (
+          <Text>Advertiser data not available.</Text>
+        )}
+
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+        >
+          <Text style={styles.backButtonText}>Go Back</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 export default GetDetailsView;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+    backgroundColor: "#fff",
+  },
+  image: {
+    width: "100%",
+    height: 200,
+    marginBottom: 16,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 8,
+  },
+  divider: {
+    marginVertical: 8,
+  },
+  backButton: {
+    marginTop: 16,
+    padding: 12,
+    backgroundColor: "#007BFF",
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  backButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+});
