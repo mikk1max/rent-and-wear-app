@@ -63,34 +63,6 @@ const AnnouncementView = ({ route }) => {
   const { t, i18n } = useTranslation();
   const { id } = route.params;
 
-  // Pobieranie bieżącego użytkownika
-  // useEffect(() => {
-  //   if (!user || !user.email) return;
-
-  //   const usersRef = ref(db, "users");
-  //   const unsubscribe = onValue(usersRef, (snapshot) => {
-  //     const data = snapshot.val();
-  //     if (data) {
-  //       const currentUserEntry = Object.entries(data).find(
-  //         ([key, userData]) => userData.email === user.email
-  //       );
-
-  //       if (currentUserEntry) {
-  //         const [key, userData] = currentUserEntry;
-  //         setUser({ ...userData, id: key }); // Assign unique ID
-  //       } else {
-  //         console.warn("No matching user found in the database.");
-  //         setUser(null);
-  //       }
-  //     } else {
-  //       console.warn("No user data found in the database.");
-  //       setUser(null);
-  //     }
-  //   });
-
-  //   return () => unsubscribe();
-  // }, [user]);
-
   // Pobieranie ogłoszenia z bazy
   useEffect(() => {
     setLoading(true);
@@ -511,7 +483,16 @@ const AnnouncementView = ({ route }) => {
             <TouchableOpacity
               style={styles.annBookRentButton}
               activeOpacity={0.8}
-              onPress={() => onChatPress(announcement)}
+              onPress={() => {
+                if (user?.isVerified) {
+                  onChatPress(announcement);
+                } else {
+                  Alert.alert(
+                    t("verification.requiredTitle"),
+                    t("verification.requiredMessage")
+                  );
+                }
+              }}
             >
               <Text style={styles.annBookRentButtonText}>
                 {t("announcement.sendMessage")}

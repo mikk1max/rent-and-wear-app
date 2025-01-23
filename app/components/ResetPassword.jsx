@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
-  Alert
+  Alert,
 } from "react-native";
 import { useForm } from "react-hook-form";
 import InputWithLabel from "../components/InputWithLabel";
@@ -14,7 +14,7 @@ import { resetPassword } from "../utils/auth";
 import { globalStyles, styles as mainStyles } from "../utils/style";
 import { useTranslation } from "react-i18next";
 
-let lastPasswordResetTime = null;
+let passwordResetTimestamps = {};
 
 export default function ResetPassword() {
   const {
@@ -25,10 +25,14 @@ export default function ResetPassword() {
 
   const { t } = useTranslation();
 
-  const handlePasswordReset = async (email) => {
+  const handlePasswordReset = async (data) => {
+    const email = data.resetEmail;
     const currentTime = new Date().getTime();
 
-    if (lastPasswordResetTime && currentTime - lastPasswordResetTime < 5 * 60 * 1000) {
+    if (
+      passwordResetTimestamps[email] &&
+      currentTime - passwordResetTimestamps[email] < 5 * 60 * 1000
+    ) {
       Alert.alert(
         `${t("passwordReset.resetPasswordAlert.tooSoon")}`,
         `${t("passwordReset.resetPasswordAlert.tooSoonDescription")}`
@@ -39,8 +43,8 @@ export default function ResetPassword() {
     try {
       console.log("Email passed to resetPassword:", email);
       const response = await resetPassword(email);
-      
-      lastPasswordResetTime = currentTime;
+
+      passwordResetTimestamps[email] = currentTime;
 
       Alert.alert(
         `${t("passwordReset.resetPasswordAlert.success")}`,
@@ -54,7 +58,6 @@ export default function ResetPassword() {
       );
     }
   };
-  
 
   return (
     <SafeAreaView style={globalStyles.whiteBack}>
