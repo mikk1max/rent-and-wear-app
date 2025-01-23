@@ -22,9 +22,11 @@ import {
   goOnline,
 } from "firebase/database";
 import { db } from "../../firebase.config";
+import { useTranslation } from "react-i18next";
 
 const AllCategories = ({ route, navigation }) => {
   const fontsLoaded = useCustomFonts();
+  const {t} = useTranslation()
 
   const [categories, setCategories] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -101,7 +103,8 @@ const AllCategories = ({ route, navigation }) => {
                 key={`Category_${categoryItem.categoryName}`}
               >
                 <Text style={styles.iconsTitle}>
-                  {categoryItem.categoryName}
+                  {/* {categoryItem.categoryName} */}
+                  {t(`allCategories.${categoryItem.categoryName}`)}
                 </Text>
                 <ScrollView
                   style={[mainStyles.scrollBase, styles.iconsScrollContainer]}
@@ -146,7 +149,7 @@ const styles = StyleSheet.create({
   iconsTitle: {
     fontFamily: "Poppins_500Medium",
     fontSize: 20,
-    color: globalStyles.primaryColor,
+    color: globalStyles.textOnSecondaryColor,
   },
   iconBtn: {
     backgroundColor: globalStyles.secondaryColor,

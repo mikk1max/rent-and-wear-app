@@ -29,7 +29,7 @@ const ErrorModal = ({ isVisible, onClose, title, message }) => {
             {message}
           </Text>
           <TouchableOpacity onPress={onClose} style={styles.modalButton}>
-            <Text style={styles.modalButtonText}>{t("error.closeButton")}</Text>
+            <Text style={styles.modalButtonText}>{t("universal.closeBtn")}</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>

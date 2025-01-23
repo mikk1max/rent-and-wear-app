@@ -35,7 +35,7 @@ export const styles = StyleSheet.create({
 
   modalFormTitle: {
     fontFamily: "WorkSans_900Black",
-    fontSize: 18,
+    fontSize: 22,
     color: globalStyles.primaryColor,
   },
 

@@ -12,41 +12,57 @@
       "editBtn": "Edit",
       "saveBtn": "Save",
       "cancelBtn": "Cancel",
-      "deleteBtn": "Delete"
-    },
-    "error": {
-      "closeButton": "Close"
+      "deleteBtn": "Delete",
+      "closeBtn": "Close",
+      "yesBtn": "YES",
+      "somethingWentWrong": "Something went wrong! Please try again later."
     },
     "welcome": {
       "guestBtn": "Continue as a Guest",
       "loginBtn": "Log in / Sign up"
     },
+    "productCard": {
+      "day": "day"
+    },
     "login": {
-      "title": "Welcome back",
-      "emailLabel": "E-mail",
+      "title": "Login",
+      "emailLabel": "Email Address",
+      "emailPlaceholder": "example@gmail.com",
+      "emailRequired": "E-mail is required",
+      "emailPattern": "Invalid email format",
       "passLabel": "Password",
-      "forgotPass": "Forgot password",
-      "loginBtn": "Log in",
+      "passwordPlaceholder": "qwerty123",
+      "passwordRequired": "Password is required",
+      "passwordMinLength": "Password must be at least 6 characters",
+      "forgotPass": "Forgot Password",
+      "loginBtn": "Log In",
+      "orText": "or",
       "signUpBtn": "Sign Up",
-      "googleBtn": "Login with Google",
       "modalError": {
-        "title": "Login Failed",
-        "closeBtn": "Try again"
-      },
-      "resetPassTitle": "Reset Password",
-      "resetPassBtn": "Send Reset Link",
-      "cancelBtn": "Cancel"
+        "title": "Error"
+      }
     },
     "signUp": {
-      "title": "Create Account",
-      "nameLabel": "Name",
-      "surnameLabel": "Surname",
-      "emailLabel": "E-mail",
+      "title": "Sign Up",
+      "nameLabel": "First Name",
+      "namePlaceholder": "John",
+      "nameRequired": "First name is required",
+      "namePattern": "Invalid First Name format",
+      "surnameLabel": "Last Name",
+      "surnamePlaceholder": "Doe",
+      "surnameRequired": "Last name is required",
+      "surnamePattern": "Invalid Last Name format",
+      "emailLabel": "Email Address",
+      "emailPlaceholder": "example@gmail.com",
+      "emailRequired": "E-mail is required",
+      "emailPattern": "Invalid email format",
       "passLabel": "Password",
+      "passwordPlaceholder": "qwerty123",
+      "passwordRequired": "Password is required",
+      "passwordMinLength": "Password must be at least 6 characters",
       "signUpBtn": "Sign Up",
       "modalError": {
-        "title": "Sign Up Failed",
-        "closeBtn": "Try again"
+        "title": "Error"
       }
     },
     "rentNow": {
@@ -64,49 +80,342 @@
         "completed": "Verification completed",
         "uncompleted": "Not verified yet"
       },
-      "language": "Language",
-      "settings": "Settings",
+      "chats": "Chats",
       "addresses": "Addresses",
+      "settings": "Settings",
+      "language": "Language",
       "sends": "Sends",
       "gets": "Gets",
-      "logout": "Log out"
+      "logout": "Log out",
+      "login": "Log in / Sign up",
+      "notLogTitle": "Not Logged In",
+      "notLogSubTitle": "Sign up or log in to access all the app's features!"
+    },
+    "sendsGets": {
+      "details": "Details",
+      "noItemsMessage": "No items found! Please check your filters.",
+      "NoItems": "No items found",
+      "for": "for a",
+      "day": "-day period"
+    },
+    "rentItNow": {
+      "from": "From",
+      "to": "To",
+      "total": "Total amount",
+      "startDate": "Choose a start date",
+      "endDate": "Choose an end date",
+      "totalAmount": "Choose date period first",
+      "amountForBooking": "for booking",
+      "resetDates": "Reset chosen dates",
+      "rentalOptionTitle": "Choose a rental option",
+      "rentTermsSubTitle": "You are renting with a commitment to pay the full amount. Please note that cancellations are non-refundable.",
+      "rentalOptionBookItDescriptionFirst": "You are reserving this listing for future use. A non-refundable payment of 20% of the total amount is required. This fee will not be refunded if you cancel your reservation. From the moment of booking until",
+      "rentalOptionBookItDescriptionLast": "you must pay the remaining 80% by the specified deadline to confirm the rental. Failure to pay the balance before the deadline will result in the cancellation of your reservation.",
+      "rentItNowBtn": "Rent it now",
+      "bookItBtn": "Book it",
+      "rentalOptionBookItDisabled": "You cannot book these dates",
+      "nextStepText": "Next step",
+      "addressLabel": "Delivery address",
+      "addressResetText": "Clear",
+      "addressListText": "Choose an address",
+      "addressOrText": "or",
+      "addressCreateAnAddressText": "Create new address",
+      "paymentLabel": "Payment method",
+      "paymentMethodCardText": "Card",
+      "paymentMethodBLIKText": "BLIK",
+      "placeholderBlIK": "Enter the BLIK code",
+      "cardValidText": "Card appears valid",
+      "cardNotValidText": "Card is invalid or incomplete",
+      "paymentCardInfoTextNum": "Number",
+      "paymentCardInfoTextExp": "Expiry",
+      "paymentCardInfoTextCVC": "CVC / CVV",
+      "paymentCardInfoTextType": "Type",
+      "lastRentalOptionRentText": "Rent it now",
+      "lastRentalOptionBookText": "Book it",
+      "lastRentalOptionFOR": "for",
+      "dayText": "day",
+      "daysText": "days",
+      "successfulRent": "Rented successfully",
+      "successfulBook": "Booked successfully",
+      "alerts": {
+        "unavailableDates": "Wybrany zakres obejmuje niedostępne daty.",
+        "rentedOrBooked": "Pomyślnie wynajęto / zarezerwowano!"
+      }
+    },
+    "allCategories": {
+      "Headwear": "Headwear",
+      "Outerwear": "Outerwear",
+      "Dresses": "Dresses",
+      "Tops": "Tops",
+      "Bottoms": "Bottoms",
+      "Footwear": "Footwear",
+      "Accessories": "Accessories"
+    },
+    "calendar": {
+      "months": [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December"
+      ],
+      "weekdays": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+      "previous": "Previous",
+      "next": "Next",
+      "selectMonthTitle": "Select month in ",
+      "selectYearTitle": "Select year"
+    },
+    "createAnnouncement": {
+      "imagesLabel": "Add images",
+      "annTitleLabel": "Title",
+      "titleRequired": "Title is required!",
+      "titlePattern": "Min 14 and max 70 characters.",
+      "titlePlaceholder": "e.g. Black pants with good price",
+      "categoryLabel": "Category",
+      "selectValidCategory": "Please select a valid category",
+      "chooseCategory": "Choose a category",
+      "sizeLabel": "Size",
+      "sizeRequired": "Size is required!",
+      "sizePattern": "Min 1 and max 40 characters.",
+      "sizePlaceholder": "e.g. XS or 123/45",
+      "conditionLabel": "Condition",
+      "conditionRequired": "Condition is required!",
+      "conditionPattern": "Min 3 and max 40 characters.",
+      "conditionPlaceholder": "e.g. Almost new",
+      "priceLabel": "Price per day in PLN",
+      "priceRequired": "Price is required!",
+      "pricePattern": "Invalid price format!",
+      "pricePlaceholder": "e.g. 7.99",
+      "descriptionLabel": "Description",
+      "descriptionRequired": "Description is required!",
+      "descriptionPattern": "Min 40 and max 9000 characters.",
+      "descriptionPlaceholder": "Description of your announcement",
+      "createButton": "Create",
+      "cancelButton": "Cancel",
+      "defaultTitle": "No title",
+      "defaultSubcategory": "Unknown",
+      "defaultCondition": "Unknown"
+    },
+    "chat": {
+      "userNotAuth": "User is not authenticated. Please log in to access the chat.",
+      "allBtn": "All",
+      "rentNowBtn": "Rent Now",
+      "rentOutBtn": "Rent Out",
+      "inputPlaceholder": "Type a message..."
     },
     "settings": {
       "titleLabel": "Settings",
       "editPictureText": "Edit profile picture",
       "nameLabel": "Name",
+      "namePlaceholder": "John",
+      "nameValidationR": "First Name is required",
+      "nameValidationP": "Invalid First Name format",
       "surnameLabel": "Surname",
-      "emailLabel": "E-mail"
+      "surnamePlaceholder": "Smith",
+      "surnameValidationR": "Last  Name is required",
+      "surnameValidationP": "Invalid Last Name format",
+      "passCurrLabel": "Current Password",
+      "passNewLabel": "New Password",
+      "passCurrPlaceholder": "qwerty123",
+      "passNewPlaceholder": "qwerty123",
+      "passValidationR": "Password is required",
+      "passValidationP": "Password must be at least 6 characters",
+      "permissionToLibraryFail": "Permission to access media library is required!",
+      "passwordUpdateSuccessful": "Password updated successfully!",
+      "passwordUpdateFailure": "Error updating password"
     },
     "addresses": {
       "titleLabel": "Addresses",
       "newAddressBtn": "New address",
+      "editAddressFor": "Edit address for",
+      "deleteAddressFor": "Delete address for",
       "modalAddEdit": {
         "addresseeLabel": "Addressee",
-        "phoneLabel": "Phone number",
-        "emailLabel": "E-mail",
+        "addresseePlaceholder": "Bob Smith / Macrosoft Sp. z o. o.",
+        "addresseeValidationR": "Addressee is required",
+
+        "phoneLabel": "Phone Number",
+        "phonePlaceholder": "+48987654321 / 987654321",
+        "phoneValidationP": "Invalid phone number format",
+
+        "emailLabel": "Email",
+        "emailPlaceholder": "example@gmail.com",
+        "emailValidationP": "Invalid e-mail format",
+
         "streetLabel": "Street",
-        "buildingLabel": "Building number",
-        "apartmentLabel": "Flat/Apartment number",
-        "floorLabel": "Floor number",
-        "postalCodeLabel": "Postal code",
+        "streetPlaceholder": "str. Simple Avenue",
+        "streetValidationR": "Street is required",
+
+        "buildingLabel": "Building Number",
+        "buildingPlaceholder": "38Y",
+        "buildingValidationR": "Building number is required",
+        "buildingValidationP": "Invalid building number format",
+
+        "apartmentLabel": "Flat/Apartment Number",
+        "apartmentPlaceholder": "22",
+
+        "floorLabel": "Floor Number",
+        "floorPlaceholder": "2",
+        "floorValidationP": "Invalid floor number format",
+
+        "postalCodeLabel": "Postal Code",
+        "postalCodePlaceholder": "12345",
+        "postalCodeValidationR": "Postal code is required",
+        "postalCodeValidationP": "Invalid postal code format",
+
         "cityLabel": "City",
-        "countryLabel": "Country"
+        "cityPlaceholder": "New York",
+        "cityValidationR": "City is required",
+
+        "countryLabel": "Country",
+        "countryPlaceholder": "Poland",
+        "countryValidationR": "Country is required"
+      },
+      "addressCard": {
+        "zeroFloor": "ground floor",
+        "firstFloor": "1st floor",
+        "secondFloor": "2st floor",
+        "thirdFloor": "3rd floor",
+        "anyFloor": "th floor"
       }
     },
     "announcement": {
-      "categoryLabel": "Category",
-      "price": ["$", "day"],
-      "sizeLabel": "Size",
-      "conditionLabel": "Condition",
-      "descLabel": "Description",
-      "ownerLabel": "Advertiser",
-      "opinionsLabel": "Opinion",
-      "writeYourOpinionBtn": "Write your opinion",
-      "onModerationText": "On moderation",
-      "yourOpinionLabel": "Your opinion",
-      "bookItBtn": "Book it",
-      "rentItNow": "Rent it now"
+      "yourAd": "Your announcement",
+      "category": "Category",
+      "day": "day",
+      "size": "Size",
+      "condition": "Condition",
+      "description": "Description",
+      "advertiser": "Advertiser",
+      "advertiserInfoOn": "On",
+      "advertiserInfoFrom": "from",
+      "opinions": "Opinions",
+      "writeOpinion": "Write your opinion",
+      "sendMessage": "SEND MESSAGE",
+      "rentNow": "RENT IT NOW"
+    },
+    "searchBar": {
+      "placeholder": "Search here"
+    },
+    "passwordReset": {
+      "emailLabel": "Email",
+      "emailPlaceholder": "example@gmail.com",
+      "emailRequired": "E-mail is required",
+      "emailPattern": "Invalid email format",
+      "sendResetLink": "Send Reset Link",
+      "resetPasswordAlert": {
+        "success": "Success",
+        "successDescription": "A password reset email has been sent to your email address.",
+        "failure": "Error",
+        "failureDescription": "Failed to send password reset email. Please try again later.",
+        "tooSoon": "Reset Request Sent",
+        "tooSoonDescription": "You have already requested a password reset. Please try again in 5 minutes."
+      }
+    },
+    "subcategoryNames": {
+      "beanie": "Beanie",
+      "cap": "Cap",
+      "hat": "Hat",
+      "headphones": "Headphones",
+      "coat": "Coat",
+      "vest": "Vest",
+      "down-jacket": "Down jacket",
+      "raincoat": "Raincoat",
+      "dress": "Dress",
+      "sweater": "Sweater",
+      "classic-costume": "Classic costume",
+      "woman-classic-costume": "Woman classic costume",
+      "party-costume": "Party costume",
+      "jersey": "Jersey",
+      "t-shirt": "T-shirt",
+      "short-sleeves-shirt": "Short sleeves shirt",
+      "blouse": "Blouse",
+      "pants": "Pants",
+      "shorts": "Shorts",
+      "short-skirt": "Short skirt",
+      "sport-pants": "Sport pants",
+      "formal-shoes": "Formal shoes",
+      "sneakers": "Sneakers",
+      "high-heel": "High heel",
+      "slippers": "Slippers",
+      "socks": "Socks",
+      "gloves": "Gloves",
+      "belt": "Belt",
+      "jewelry": "Jewelry",
+      "scarf": "Scarf",
+      "sunglasses": "Sunglasses"
+    },
+    "statusNames": {
+      "All": "All",
+      "Pending": "Pending",
+      "Reserved": "Reserved",
+      "Rented": "Rented",
+      "Sent for use": "Sent for use",
+      "In use": "In use",
+      "Sent back": "Sent back",
+      "Done": "Done",
+      "Canceled": "Canceled"
+    },
+    "notFound": {
+      "title": "Oops!",
+      "subtitle": "The page you're looking for doesn't exist. The announcement may have been deleted by the advertiser, or it might be temporarily unavailable.",
+      "goToHome": "Go to Home"
+    },
+    "noItemsFound": {
+      "title": "No Items Found",
+      "subtitle": "Change your filters or try more later ;)"
+    },
+    "noChats": {
+      "title": "No Chats",
+      "subtitle": "You have no chat rooms yet!"
+    },
+    "noAnnouncements": {
+      "title": "No Items",
+      "subtitle": "You have no announcements yet!"
+    },
+    "noAddresses": {
+      "title": "No Addresses",
+      "subtitle": "You have no saved addresses yet!"
+    },
+    "inputField": {
+      "editButton": "Edit"
+    },
+    "card": {
+      "productPrice": "${price} / rent",
+      "viewDetails": "View Details"
+    },
+    "viewTitles": {
+      "settings": "Settings",
+      "addresses": "Addresses",
+      "categories": "Categories",
+      "chats": "Chats",
+      "chat": "Chat",
+      "createAnnouncement": "Create Announcement",
+      "rentItem": "Rent {{item}}",
+      "myGets": "My Gets",
+      "mySends": "My Sends",
+      "sendDetails": "Details",
+      "getDetails": "Details",
+      "passwordReset": "Password Reset"
+    },
+    "exitApp": {
+      "title": "Hold on!",
+      "description": "Are you sure you want to exit?"
+    },
+    "error": {
+      "waitTitle": "Please Wait",
+      "waitMessage": "You can request a verification link only once every 5 minutes."
+    },
+    "verification": {
+      "requiredTitle": "Verification Required",
+      "requiredMessage": "You need to be a verified user to create an announcement."
     }
   }
 }

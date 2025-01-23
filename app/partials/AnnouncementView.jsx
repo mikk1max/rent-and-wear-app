@@ -22,7 +22,7 @@ import { Divider, Rating } from "react-native-elements";
 import OpinionCard from "../components/OpinionCard";
 import Swiper from "react-native-swiper";
 import ImageViewing from "react-native-image-viewing";
-import NotFound from "../components/NotFound"
+import NotFound from "../components/NotFound";
 
 import {
   ref,
@@ -44,6 +44,7 @@ import {
 
 import Icon from "../components/Icon";
 import Loader from "../components/Loader";
+import { useTranslation } from "react-i18next";
 
 const AnnouncementView = ({ route }) => {
   const navigation = useNavigation();
@@ -59,36 +60,36 @@ const AnnouncementView = ({ route }) => {
   const [advertiserAvatar, setAdvertiserAvatar] = useState();
   // const [visibleOpinions, setVisibleOpinions] = useState(2);
   // const [opinionsToDisplay, setOpinionsToDisplay] = useState([]);
-
+  const { t, i18n } = useTranslation();
   const { id } = route.params;
 
   // Pobieranie bieżącego użytkownika
-  useEffect(() => {
-    if (!user || !user.email) return;
+  // useEffect(() => {
+  //   if (!user || !user.email) return;
 
-    const usersRef = ref(db, "users");
-    const unsubscribe = onValue(usersRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        const currentUserEntry = Object.entries(data).find(
-          ([key, userData]) => userData.email === user.email
-        );
+  //   const usersRef = ref(db, "users");
+  //   const unsubscribe = onValue(usersRef, (snapshot) => {
+  //     const data = snapshot.val();
+  //     if (data) {
+  //       const currentUserEntry = Object.entries(data).find(
+  //         ([key, userData]) => userData.email === user.email
+  //       );
 
-        if (currentUserEntry) {
-          const [key, userData] = currentUserEntry;
-          setUser({ ...userData, id: key }); // Assign unique ID
-        } else {
-          console.warn("No matching user found in the database.");
-          setUser(null);
-        }
-      } else {
-        console.warn("No user data found in the database.");
-        setUser(null);
-      }
-    });
+  //       if (currentUserEntry) {
+  //         const [key, userData] = currentUserEntry;
+  //         setUser({ ...userData, id: key }); // Assign unique ID
+  //       } else {
+  //         console.warn("No matching user found in the database.");
+  //         setUser(null);
+  //       }
+  //     } else {
+  //       console.warn("No user data found in the database.");
+  //       setUser(null);
+  //     }
+  //   });
 
-    return () => unsubscribe();
-  }, [user]);
+  //   return () => unsubscribe();
+  // }, [user]);
 
   // Pobieranie ogłoszenia z bazy
   useEffect(() => {
@@ -148,7 +149,9 @@ const AnnouncementView = ({ route }) => {
   useEffect(() => {
     const fetchProfileImg = async () => {
       try {
-        const url = await fetchImgURL(`user-avatars/${advertiserId}/${advertiserId}.jpg`);
+        const url = await fetchImgURL(
+          `user-avatars/${advertiserId}/${advertiserId}.jpg`
+        );
         setAdvertiserAvatar(url);
       } catch {
         const randomUrl = await getRandomAvatarUrl();
@@ -192,16 +195,7 @@ const AnnouncementView = ({ route }) => {
     );
   }
 
-  if (!announcement) {
-    // Obsługa braku danych
-    return (
-      <SafeAreaView style={mainStyles.whiteBack}>
-        <NotFound />
-      </SafeAreaView>
-    );
-  }
-
-  if (!advertiser) {
+  if (!announcement || !advertiser) {
     // Obsługa braku danych
     return (
       <SafeAreaView style={mainStyles.whiteBack}>
@@ -212,20 +206,22 @@ const AnnouncementView = ({ route }) => {
 
   const displayedPublicationDate = new Date(
     announcement.publicationDate
-  ).toLocaleDateString(undefined, {
+  ).toLocaleDateString(i18n.language, {
     weekday: "long",
     year: "numeric",
     month: "long",
     day: "numeric",
   });
 
-  const displayedAdvertiserRegistrationDate = new Date(
-    advertiser.registrationDate
-  ).toLocaleDateString(undefined, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
+  const displayedAdvertiserRegistrationDate = advertiser.registrationDate
+    ? new Date(advertiser.registrationDate).toLocaleDateString(i18n.language, {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      })
+    : i18n.language === "pl"
+    ? "Data ukryta"
+    : "Date hidden";
 
   const openImage = (index) => {
     setCurrentIndex(index); // Ustaw aktualny indeks
@@ -345,7 +341,9 @@ const AnnouncementView = ({ route }) => {
           <View style={styles.annDateWithTitle}>
             {announcement.advertiserId === user.id && (
               <View style={styles.annOwnerPlate}>
-                <Text style={styles.annOwnerText}>Your announcement</Text>
+                <Text style={styles.annOwnerText}>
+                  {t("announcement.yourAd")}
+                </Text>
                 <View style={styles.annOwnerButtons}>
                   <TouchableOpacity
                     style={styles.annOwnerEditButton}
@@ -378,7 +376,7 @@ const AnnouncementView = ({ route }) => {
             <Text style={styles.annTitle}>{announcement.title}</Text>
             <View style={styles.annCategoryContainer}>
               <Text style={styles.annPublicationDateAndCategory}>
-                Category:
+                {t("announcement.category")}:
               </Text>
               <View style={styles.annCategory}>
                 <Icon
@@ -388,14 +386,16 @@ const AnnouncementView = ({ route }) => {
                   fillColor={globalStyles.textOnPrimaryColor}
                 />
                 <Text style={styles.annCategoryText}>
-                  {announcement.category.subcategoryName}
+                  {t(
+                    `subcategoryNames.${announcement.category.subcategoryIcon}`
+                  )}
                 </Text>
               </View>
             </View>
           </View>
           <View style={styles.annPriceWithRating}>
             <Text style={styles.annPrice}>
-              ${announcement.pricePerDay} / day
+              ${announcement.pricePerDay} / {t("announcement.day")}
             </Text>
             <Rating
               type={"custom"}
@@ -410,11 +410,13 @@ const AnnouncementView = ({ route }) => {
           </View>
           <View style={styles.annSizeWithCondition}>
             <View style={styles.annSize}>
-              <Text style={styles.annSizeLabel}>Size:</Text>
+              <Text style={styles.annSizeLabel}>{t("announcement.size")}:</Text>
               <Text style={styles.annSizeValue}>{announcement.size}</Text>
             </View>
             <View style={styles.annCondition}>
-              <Text style={styles.annConditionLabel}>Condition:</Text>
+              <Text style={styles.annConditionLabel}>
+                {t("announcement.condition")}:
+              </Text>
               <Text style={styles.annConditionValue}>
                 {announcement.condition}
               </Text>
@@ -422,14 +424,16 @@ const AnnouncementView = ({ route }) => {
           </View>
           <Divider style={styles.divider} />
           <View style={styles.annDescription}>
-            <Text style={styles.annDescriptionLabel}>Description:</Text>
+            <Text style={styles.annDescriptionLabel}>
+              {t("announcement.description")}:
+            </Text>
             <Text style={styles.annDescriptionValue}>
               {announcement.description}
             </Text>
           </View>
           <Divider style={styles.divider} />
           <View style={styles.advertiser}>
-            <Text style={styles.advLabel}>Advertiser:</Text>
+            <Text style={styles.advLabel}>{t("announcement.advertiser")}:</Text>
             <View style={styles.advImageWithData}>
               <Image
                 source={{ uri: advertiserAvatar }}
@@ -462,20 +466,24 @@ const AnnouncementView = ({ route }) => {
               </View>
             </View>
             <Text style={styles.advRegistrationDate}>
-              On <Text style={styles.advRentAndWear}>RENT&WEAR</Text> from{" "}
+              {`${t("announcement.advertiserInfoOn")} `}
+              <Text style={styles.advRentAndWear}>{` ${t(
+                "brand.name"
+              )} `}</Text>
+              {` ${t("announcement.advertiserInfoFrom")} `}
               {displayedAdvertiserRegistrationDate}.
             </Text>
           </View>
           <Divider style={styles.divider} />
           <View style={styles.opinions}>
-            <Text style={styles.opinLabel}>Opinions:</Text>
+            <Text style={styles.opinLabel}>{t("announcement.opinions")}:</Text>
             <TouchableOpacity
               style={styles.opinWriteOpinionButton}
               activeOpacity={0.8}
               onPress={() => console.log("Write your opinion.")}
             >
               <Text style={styles.opinWriteOpinionButtonText}>
-                Write your opinion
+                {t("announcement.writeOpinion")}
               </Text>
               <Icon name="plus-with-border" {...iconParams} />
               {/* <Text style={styles.opinWriteOpinionButtonIcon}>▲</Text> */}
@@ -505,19 +513,30 @@ const AnnouncementView = ({ route }) => {
               activeOpacity={0.8}
               onPress={() => onChatPress(announcement)}
             >
-              <Text style={styles.annBookRentButtonText}>SEND MESSAGE</Text>
+              <Text style={styles.annBookRentButtonText}>
+                {t("announcement.sendMessage")}
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.annBookRentButton}
               activeOpacity={0.8}
-              onPress={() =>
-                navigation.navigate("RentItNowView", {
-                  id: id,
-                  title: announcement.title,
-                })
-              }
+              onPress={() => {
+                if (user?.isVerified) {
+                  navigation.navigate("RentItNowView", {
+                    id: id,
+                    title: announcement.title,
+                  });
+                } else {
+                  Alert.alert(
+                    t("verification.requiredTitle"),
+                    t("verification.requiredMessage")
+                  );
+                }
+              }}
             >
-              <Text style={styles.annBookRentButtonText}>RENT IT NOW</Text>
+              <Text style={styles.annBookRentButtonText}>
+                {t("announcement.rentNow")}
+              </Text>
             </TouchableOpacity>
           </View>
         )}

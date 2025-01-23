@@ -16,6 +16,7 @@ import Swiper from "../components/Swiper";
 import IconButton from "../components/IconButton";
 import { useCustomFonts } from "../utils/fonts";
 import ProductCard from "../components/ProductCard";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 import { globalStyles, styles as mainStyles } from "../utils/style";
 import { styles } from "../styles/RentNowViewStyles";
@@ -58,30 +59,30 @@ const RentNowView = () => {
   const { user, setUser } = useUser();
   // console.log(user);
 
-  useEffect(() => {
-    if (!user) return;
+  // useEffect(() => {
+  //   if (!user) return;
 
-    const usersRef = ref(db, "users");
-    const unsubscribe = onValue(usersRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        const currentUserEntry = Object.entries(data).find(
-          ([key, userData]) => userData.email === user.email
-        );
+  //   const usersRef = ref(db, "users");
+  //   const unsubscribe = onValue(usersRef, (snapshot) => {
+  //     const data = snapshot.val();
+  //     if (data) {
+  //       const currentUserEntry = Object.entries(data).find(
+  //         ([key, userData]) => userData.email === user.email
+  //       );
 
-        if (currentUserEntry) {
-          const [key, userData] = currentUserEntry;
-          setUser({ ...userData, id: key }); // Dodaj klucz jako "id"
-        } else {
-          setUser(null);
-        }
-      } else {
-        setUser(null);
-      }
-    });
+  //       if (currentUserEntry) {
+  //         const [key, userData] = currentUserEntry;
+  //         setUser({ ...userData, id: key }); // Dodaj klucz jako "id"
+  //       } else {
+  //         setUser(null);
+  //       }
+  //     } else {
+  //       setUser(null);
+  //     }
+  //   });
 
-    return () => unsubscribe();
-  }, [user]);
+  //   return () => unsubscribe();
+  // }, [user]);
 
   const [announcementPreviews, setAnnouncementPreviews] = useState([[]]);
   useEffect(() => {
@@ -91,14 +92,16 @@ const RentNowView = () => {
       (snapshot) => {
         const data = snapshot.val();
         if (data) {
-          const announcementPreviewsArray = Object.keys(data).map((key) => ({
-            id: key,
-            mainImage: data[key].images[0],
-            title: data[key].title,
-            category: data[key].category,
-            pricePerDay: data[key].pricePerDay,
-            advertiserId: data[key].advertiserId,
-          }));
+          const announcementPreviewsArray = Object.keys(data || {}).map(
+            (key) => ({
+              id: key,
+              mainImage: data[key]?.images?.[0] || "default_image_url",
+              title: data[key]?.title || "Untitled",
+              category: data[key]?.category || {},
+              pricePerDay: data[key]?.pricePerDay || 0,
+              advertiserId: data[key]?.advertiserId || null,
+            })
+          );
           setAnnouncementPreviews(announcementPreviewsArray);
         } else {
           setAnnouncementPreviews([]);
@@ -158,13 +161,13 @@ const RentNowView = () => {
   useFocusEffect(
     useCallback(() => {
       const backAction = () => {
-        Alert.alert("Hold on!", "Are you sure you want to go back?", [
+        Alert.alert(`${t("exitApp.title")}`, `${t("exitApp.description")}`, [
           {
-            text: "Cancel",
+            text: `${t("universal.cancelBtn")}`,
             onPress: () => null,
             style: "cancel",
           },
-          { text: "YES", onPress: () => BackHandler.exitApp() },
+          { text: `${t("universal.yesBtn")}`, onPress: () => BackHandler.exitApp() },
         ]);
         return true;
       };
@@ -234,8 +237,10 @@ const RentNowView = () => {
             },
           ]}
         >
-          <ScrollView
+          <KeyboardAwareScrollView
+            keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}
+            nestedScrollEnabled={true}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
@@ -282,10 +287,12 @@ const RentNowView = () => {
                     mainImage={announcementPreview.mainImage}
                     title={announcementPreview.title}
                     categoryName={
-                      announcementPreview?.category?.subcategoryName
+                      announcementPreview?.category?.subcategoryName ||
+                      "Unknown"
                     }
                     categoryIcon={
-                      announcementPreview?.category?.subcategoryIcon
+                      announcementPreview?.category?.subcategoryIcon ||
+                      "default_icon"
                     }
                     pricePerDay={announcementPreview.pricePerDay}
                     currentUserId={user?.id}
@@ -297,7 +304,7 @@ const RentNowView = () => {
             </View>
 
             {filteredAnnouncements.length <= 0 && <NoItemsFound />}
-          </ScrollView>
+          </KeyboardAwareScrollView>
         </View>
       </View>
     </SafeAreaView>

@@ -4,6 +4,7 @@ import { Card } from "react-native-elements";
 import { globalStyles } from "../utils/style";
 import { useCustomFonts } from "../utils/fonts";
 import ProgressBarLine from "./ProgressBarLine";
+import { useTranslation } from "react-i18next";
 
 const AdSendCard = ({
   productName,
@@ -15,6 +16,8 @@ const AdSendCard = ({
 }) => {
   const fontsLoaded = useCustomFonts();
   if (!fontsLoaded) return null;
+
+  const { t } = useTranslation();
 
   const onPress = () => console.log(`Link to product: ${productLink}`);
 
@@ -39,14 +42,14 @@ const AdSendCard = ({
         </View>
 
         <Text style={styles.productPrice}>
-          ${productPrice.toFixed(2)} / rent
+          {t("card.productPrice", { price: productPrice.toFixed(2) })}
         </Text>
       </View>
 
       <ProgressBarLine progressValue={progressValue} />
 
       <TouchableOpacity onPress={onPress} style={styles.cardButton}>
-        <Text style={styles.buttonText}>View Details</Text>
+        <Text style={styles.buttonText}>{t("card.viewDetails")}</Text>
       </TouchableOpacity>
     </Card>
   );
