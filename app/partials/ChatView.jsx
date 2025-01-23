@@ -161,7 +161,7 @@ export default function ChatView() {
 
       if (!user.id && newMessages.length > 0) {
         const firstMessage = newMessages[0];
-        user.id = firstMessage.user._id; // Assign the user ID from the first message
+        user.id = firstMessage.user._id;
       }
 
       const chatRef = ref(db, `chats/${chatId}/messages`);
