@@ -10,7 +10,7 @@ import ChatView from "./app/partials/ChatView";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { getLocales } from "expo-localization";
 
-i18n.changeLanguage(getLocales()[2].languageCode ?? "en");
+i18n.changeLanguage(getLocales()[0].languageCode ?? "en");
 // console.log("Język urządzenia:", getLocales()[0].languageCode);
 
 
