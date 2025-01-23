@@ -19,7 +19,7 @@ export const UserProvider = ({ children }) => {
         const userRef = ref(db, `users/${firebaseUser.uid}`);
         onValue(userRef, (snapshot) => {
           const userData = snapshot.val();
-          setUser({ ...userData, uid: firebaseUser.uid });
+          setUser({ ...userData, id: firebaseUser.uid });
         });
       } else {
         setUser(null);

@@ -78,32 +78,32 @@ const CreateAnnouncementView = () => {
   } = useForm();
 
   // Pobieranie bieżącego użytkownika
-  useEffect(() => {
-    if (!user) return;
+  // useEffect(() => {
+  //   if (!user) return;
 
-    const usersRef = ref(db, "users");
-    const unsubscribe = onValue(usersRef, (snapshot) => {
-      const data = snapshot.val();
-      if (!data) {
-        console.error("No users data found");
-        return;
-      }
+  //   const usersRef = ref(db, "users");
+  //   const unsubscribe = onValue(usersRef, (snapshot) => {
+  //     const data = snapshot.val();
+  //     if (!data) {
+  //       console.error("No users data found");
+  //       return;
+  //     }
 
-      const currentUserEntry = Object.entries(data).find(
-        ([key, userData]) => userData?.email === user?.email
-      );
+  //     const currentUserEntry = Object.entries(data).find(
+  //       ([key, userData]) => userData?.email === user?.email
+  //     );
 
-      if (currentUserEntry) {
-        const [key, userData] = currentUserEntry;
-        setUser({ ...userData, id: key });
-      } else {
-        console.warn("User not found in the database");
-        setUser(null);
-      }
-    });
+  //     if (currentUserEntry) {
+  //       const [key, userData] = currentUserEntry;
+  //       setUser({ ...userData, id: key });
+  //     } else {
+  //       console.warn("User not found in the database");
+  //       setUser(null);
+  //     }
+  //   });
 
-    return () => unsubscribe();
-  }, [user]);
+  //   return () => unsubscribe();
+  // }, [user]);
 
   // Pobieranie kategorii
   useEffect(() => {
