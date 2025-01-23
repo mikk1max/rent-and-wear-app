@@ -415,7 +415,7 @@
     },
     "verification": {
       "requiredTitle": "Verification Required",
-      "requiredMessage": "You need to be a verified user to create an announcement."
+      "requiredMessage": "You need to be a verified user to unlock this function."
     }
   }
 }

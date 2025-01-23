@@ -403,7 +403,7 @@
     },
     "verification": {
       "requiredTitle": "Wymagana weryfikacja",
-      "requiredMessage": "Musisz być zweryfikowanym użytkownikiem, aby utworzyć ogłoszenie."
+      "requiredMessage": "Musisz być zweryfikowanym użytkownikiem, aby odblokować dostęp do tej funkcji."
     },
     "viewTitles": {
       "settings": "Ustawienia",
