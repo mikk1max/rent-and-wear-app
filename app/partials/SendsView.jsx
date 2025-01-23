@@ -83,31 +83,31 @@ const SendsView = () => {
   const fontsLoaded = useCustomFonts();
   if (!fontsLoaded) return null;
 
-  // Pobieranie bieżącego użytkownika
-  useEffect(() => {
-    if (!user) return;
+  // // Pobieranie bieżącego użytkownika
+  // useEffect(() => {
+  //   if (!user) return;
 
-    const usersRef = ref(db, "users");
-    const unsubscribe = onValue(usersRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        const currentUserEntry = Object.entries(data).find(
-          ([key, userData]) => userData.email === user.email
-        );
+  //   const usersRef = ref(db, "users");
+  //   const unsubscribe = onValue(usersRef, (snapshot) => {
+  //     const data = snapshot.val();
+  //     if (data) {
+  //       const currentUserEntry = Object.entries(data).find(
+  //         ([key, userData]) => userData.email === user.email
+  //       );
 
-        if (currentUserEntry) {
-          const [key, userData] = currentUserEntry;
-          setUser({ ...userData, id: key }); // Dodaj klucz jako "id"
-        } else {
-          setUser(null);
-        }
-      } else {
-        setUser(null);
-      }
-    });
+  //       if (currentUserEntry) {
+  //         const [key, userData] = currentUserEntry;
+  //         setUser({ ...userData, id: key }); // Dodaj klucz jako "id"
+  //       } else {
+  //         setUser(null);
+  //       }
+  //     } else {
+  //       setUser(null);
+  //     }
+  //   });
 
-    return () => unsubscribe();
-  }, [user]);
+  //   return () => unsubscribe();
+  // }, [user]);
 
   // Pobieranie statusów
   useEffect(() => {

@@ -64,32 +64,32 @@ const AnnouncementView = ({ route }) => {
   const { id } = route.params;
 
   // Pobieranie bieżącego użytkownika
-  useEffect(() => {
-    if (!user || !user.email) return;
+  // useEffect(() => {
+  //   if (!user || !user.email) return;
 
-    const usersRef = ref(db, "users");
-    const unsubscribe = onValue(usersRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        const currentUserEntry = Object.entries(data).find(
-          ([key, userData]) => userData.email === user.email
-        );
+  //   const usersRef = ref(db, "users");
+  //   const unsubscribe = onValue(usersRef, (snapshot) => {
+  //     const data = snapshot.val();
+  //     if (data) {
+  //       const currentUserEntry = Object.entries(data).find(
+  //         ([key, userData]) => userData.email === user.email
+  //       );
 
-        if (currentUserEntry) {
-          const [key, userData] = currentUserEntry;
-          setUser({ ...userData, id: key }); // Assign unique ID
-        } else {
-          console.warn("No matching user found in the database.");
-          setUser(null);
-        }
-      } else {
-        console.warn("No user data found in the database.");
-        setUser(null);
-      }
-    });
+  //       if (currentUserEntry) {
+  //         const [key, userData] = currentUserEntry;
+  //         setUser({ ...userData, id: key }); // Assign unique ID
+  //       } else {
+  //         console.warn("No matching user found in the database.");
+  //         setUser(null);
+  //       }
+  //     } else {
+  //       console.warn("No user data found in the database.");
+  //       setUser(null);
+  //     }
+  //   });
 
-    return () => unsubscribe();
-  }, [user]);
+  //   return () => unsubscribe();
+  // }, [user]);
 
   // Pobieranie ogłoszenia z bazy
   useEffect(() => {
