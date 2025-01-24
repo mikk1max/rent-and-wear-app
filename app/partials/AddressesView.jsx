@@ -27,27 +27,16 @@ const AddressesView = () => {
   if (!fontsLoaded) return null;
 
   const { user, setUser } = useUser();
+  console.log(user); // {"addresses": [{"adresse": "Maksym Shepeta", "buildingNumber": "60", "city": "Lublin", "country": "Polska", "email": "maksim.shepeta@gmail.com", "flatOrApartmentNumber": "503", "floorNumber": "0", "id": "0", "isDefault": true, "phoneNumber": "987654321", "postalCode": "20-632", "street": "ul. Testowa"}], "email": "maksim.shepeta@gmail.com", "id": "PGB7yqddkcciSLxyBSN93oe7ppd2", "isVerified": true, "name": "Maxwell", "profileImg": "https://firebasestorage.googleapis.com/v0/b/rent-clothes-253cf.firebasestorage.app/o/user-avatars%2FPGB7yqddkcciSLxyBSN93oe7ppd2%2FPGB7yqddkcciSLxyBSN93oe7ppd2.jpg?alt=media&token=94dd2805-894b-4a98-8855-f3db4e59499b", "registrationDate": 1737305410775, "rentalOrReservationData": {"1737509927004": {"announcementId": "1737505522915", "type": "Book"}, "1737581282170": {"announcementId": "1737457814004", "type": "Rent"}}, "surname": "Soft"}
 
-  const [addresses, setAddresses] = useState([[]]);
+  const [addresses, setAddresses] = useState([]);
 
-  const userId = user?.id;
-  // useEffect(() => {
-  //   const addressesRef = ref(db, `users/${userId}/addresses`);
-  //   const unsubscribe = onValue(addressesRef, (snapshot) => {
-  //     const data = snapshot.val();
-  //     if (data) {
-  //       const addressesArray = Object.keys(data).map((key) => ({
-  //         id: key,
-  //         ...data[key],
-  //       }));
-  //       setAddresses(addressesArray);
-  //     } else {
-  //       setAddresses([]);
-  //     }
-  //   });
-
-  //   return () => unsubscribe();
-  // }, [userId]);
+  useEffect(() => {
+    if (user?.addresses) {
+      setAddresses(user.addresses);
+    }
+  }, [user]);
+  
 
   const getAddressById = (addresses, addressId) => {
     return addresses.find((address) => address.id === addressId);
@@ -57,7 +46,7 @@ const AddressesView = () => {
   const findAndUnsetDefaultAddress = async () => {
     try {
       // Referencja do wszystkich adresów użytkownika
-      const addressesRef = ref(db, `users/${userId}/addresses`);
+      const addressesRef = ref(db, `users/${user.id}/addresses`);
       const snapshot = await get(addressesRef);
       const data = snapshot.val();
 
@@ -70,7 +59,7 @@ const AddressesView = () => {
         if (addressToUnset) {
           const [addressId] = addressToUnset;
           // Zmieniamy isDefault na false dla znalezionego adresu
-          await update(ref(db, `users/${userId}/addresses/${addressId}`), {
+          await update(ref(db, `users/${user.id}/addresses/${addressId}`), {
             isDefault: false,
           });
           console.log(`Unset isDefault for address ID: ${addressId}`);
@@ -91,7 +80,7 @@ const AddressesView = () => {
       // if (addresses[addressId].isDefault === true) {
       try {
         // Zmieniamy isDefault na false dla wskazanego addressId
-        await update(ref(db, `users/${userId}/addresses/${addressId}`), {
+        await update(ref(db, `users/${user.id}/addresses/${addressId}`), {
           isDefault: false,
         });
         console.log(`Unset isDefault for address ID: ${addressId}`);
@@ -102,7 +91,7 @@ const AddressesView = () => {
       findAndUnsetDefaultAddress();
       try {
         // Zmieniamy isDefault na true dla wskazanego addressId
-        await update(ref(db, `users/${userId}/addresses/${addressId}`), {
+        await update(ref(db, `users/${user.id}/addresses/${addressId}`), {
           isDefault: true,
         });
         console.log(`Set isDefault for address ID: ${addressId}`);
@@ -150,7 +139,8 @@ const AddressesView = () => {
       setCurrentAddress(getAddressById(addresses, addressId));
       setCurrentAddressId(addressId);
       setFormTitle(
-        `${t("addresses.editAddressFor")} ` + getAddressById(addresses, addressId).adresse
+        `${t("addresses.editAddressFor")} ` +
+          getAddressById(addresses, addressId).adresse
       );
     } else {
       setCurrentAddress(emptyAddress);
@@ -216,7 +206,7 @@ const AddressesView = () => {
     try {
       const addressRef = ref(
         db,
-        `users/${userId}/addresses/${currentAddressId}`
+        `users/${user.id}/addresses/${currentAddressId}`
       );
 
       // Aktualizujemy adres na nowy
@@ -230,7 +220,7 @@ const AddressesView = () => {
   // Funkcja do tworzenia nowego adresu
   const createAddress = async (currentAddress) => {
     try {
-      const addressesRef = ref(db, `users/${userId}/addresses`);
+      const addressesRef = ref(db, `users/${user.id}/addresses`);
       const snapshot = await get(addressesRef);
       const data = snapshot.val();
 
@@ -246,7 +236,7 @@ const AddressesView = () => {
 
       // Tworzymy nowy adres o ID newAddressId
       await set(
-        ref(db, `users/${userId}/addresses/${newAddressId}`),
+        ref(db, `users/${user.id}/addresses/${newAddressId}`),
         currentAddress
       );
       console.log(`New address added with ID ${newAddressId}`);
@@ -273,7 +263,7 @@ const AddressesView = () => {
     try {
       const addressRef = ref(
         db,
-        `users/${userId}/addresses/${currentAddressId}`
+        `users/${user.id}/addresses/${currentAddressId}`
       );
 
       // Aktualizujemy adres na nowy
@@ -300,28 +290,31 @@ const AddressesView = () => {
           <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.addressesWithButton}>
               <View style={styles.addresses}>
-                {addresses.map((address) => (
-                  <AddressCard
-                    key={addresses.indexOf(address)}
-                    id={address.id}
-                    adresse={address.adresse}
-                    phoneNumber={address.phoneNumber}
-                    email={address.email}
-                    street={address.street}
-                    buildingNumber={address.buildingNumber}
-                    flatOrApartmentNumber={address.flatOrApartmentNumber}
-                    floorNumber={address.floorNumber}
-                    postalCode={address.postalCode}
-                    city={address.city}
-                    country={address.country}
-                    isDefault={address.isDefault}
-                    selectAsDefaultAddress={setOrUnsetDefaultAddress}
-                    openAddressForm={openAddressForm}
-                    openDeleteConfirmation={openDeleteConfirmation}
-                  />
-                ))}
+                {addresses.length > 0 ? (
+                  addresses.map((address) => (
+                    <AddressCard
+                      key={address.id}
+                      id={address.id}
+                      adresse={address.adresse}
+                      phoneNumber={address.phoneNumber}
+                      email={address.email}
+                      street={address.street}
+                      buildingNumber={address.buildingNumber}
+                      flatOrApartmentNumber={address.flatOrApartmentNumber}
+                      floorNumber={address.floorNumber}
+                      postalCode={address.postalCode}
+                      city={address.city}
+                      country={address.country}
+                      isDefault={address.isDefault}
+                      selectAsDefaultAddress={setOrUnsetDefaultAddress}
+                      openAddressForm={openAddressForm}
+                      openDeleteConfirmation={openDeleteConfirmation}
+                    />
+                  ))
+                ) : (
+                  <NoAddressesYet />
+                )}
               </View>
-              {addresses.length <= 0 && <NoAddressesYet />}
               <TouchableOpacity
                 onPress={() => openAddressForm()}
                 style={styles.newAddressButton}
@@ -370,14 +363,18 @@ const AddressesView = () => {
                 <Controller
                   control={control}
                   rules={{
-                    required: `${t("addresses.modalAddEdit.addresseeValidationR")}: `,
+                    required: `${t(
+                      "addresses.modalAddEdit.addresseeValidationR"
+                    )}: `,
                   }}
                   render={({ field: { onChange, onBlur, value } }) => (
                     <TextInput
                       style={styles.modalTextInput}
                       onBlur={onBlur}
                       onChangeText={onChange}
-                      placeholder={t("addresses.modalAddEdit.addresseePlaceholder")}
+                      placeholder={t(
+                        "addresses.modalAddEdit.addresseePlaceholder"
+                      )}
                       value={value}
                       autoCapitalize="none"
                       autoComplete="name"
@@ -391,7 +388,9 @@ const AddressesView = () => {
 
               {/* Phone number */}
               <View style={styles.modalInputContainer}>
-                <Text style={styles.modalLabel}>{`${t("addresses.modalAddEdit.phoneLabel")}`}</Text>
+                <Text style={styles.modalLabel}>{`${t(
+                  "addresses.modalAddEdit.phoneLabel"
+                )}`}</Text>
                 {errors.phoneNumber && (
                   <Text style={styles.modalTextError}>
                     {errors.phoneNumber.message}
@@ -402,7 +401,9 @@ const AddressesView = () => {
                   rules={{
                     pattern: {
                       value: /^(?:\+48\d{9}|\d{9})$/,
-                      message: `${t("addresses.modalAddEdit.phoneValidationP")}`,
+                      message: `${t(
+                        "addresses.modalAddEdit.phoneValidationP"
+                      )}`,
                     },
                   }}
                   render={({ field: { onChange, onBlur, value } }) => (
@@ -410,7 +411,9 @@ const AddressesView = () => {
                       style={styles.modalTextInput}
                       onBlur={onBlur}
                       onChangeText={onChange}
-                      placeholder={`${t("addresses.modalAddEdit.phonePlaceholder")}`}
+                      placeholder={`${t(
+                        "addresses.modalAddEdit.phonePlaceholder"
+                      )}`}
                       value={value}
                       autoCapitalize="none"
                       autoComplete="tel"
@@ -424,7 +427,9 @@ const AddressesView = () => {
 
               {/* E-mail */}
               <View style={styles.modalInputContainer}>
-                <Text style={styles.modalLabel}>{`${t("addresses.modalAddEdit.emailLabel")}: `}</Text>
+                <Text style={styles.modalLabel}>{`${t(
+                  "addresses.modalAddEdit.emailLabel"
+                )}: `}</Text>
                 {errors.email && (
                   <Text style={styles.modalTextError}>
                     {errors.email.message}
@@ -459,7 +464,8 @@ const AddressesView = () => {
               {/* Street */}
               <View style={styles.modalInputContainer}>
                 <Text style={styles.modalLabel}>
-                {`${t("addresses.modalAddEdit.streetLabel")}: `}<Text style={{ color: "red" }}>*</Text>
+                  {`${t("addresses.modalAddEdit.streetLabel")}: `}
+                  <Text style={{ color: "red" }}>*</Text>
                 </Text>
                 {errors.street && (
                   <Text style={styles.modalTextError}>
@@ -476,7 +482,9 @@ const AddressesView = () => {
                       style={styles.modalTextInput}
                       onBlur={onBlur}
                       onChangeText={onChange}
-                      placeholder={t("addresses.modalAddEdit.streetPlaceholder")}
+                      placeholder={t(
+                        "addresses.modalAddEdit.streetPlaceholder"
+                      )}
                       value={value}
                       autoCapitalize="words"
                       autoComplete="street-address"
@@ -491,7 +499,8 @@ const AddressesView = () => {
               {/* Building number */}
               <View style={styles.modalInputContainer}>
                 <Text style={styles.modalLabel}>
-                {`${t("addresses.modalAddEdit.buildingLabel")}: `}<Text style={{ color: "red" }}>*</Text>
+                  {`${t("addresses.modalAddEdit.buildingLabel")}: `}
+                  <Text style={{ color: "red" }}>*</Text>
                 </Text>
                 {errors.buildingNumber && (
                   <Text style={styles.modalTextError}>
@@ -512,7 +521,9 @@ const AddressesView = () => {
                       style={styles.modalTextInput}
                       onBlur={onBlur}
                       onChangeText={onChange}
-                      placeholder={t("addresses.modalAddEdit.buildingPlaceholder")}
+                      placeholder={t(
+                        "addresses.modalAddEdit.buildingPlaceholder"
+                      )}
                       value={value}
                       autoCapitalize="characters"
                       autoComplete="off"
@@ -526,7 +537,9 @@ const AddressesView = () => {
 
               {/* Flar of Apartment number */}
               <View style={styles.modalInputContainer}>
-                <Text style={styles.modalLabel}>{`${t("addresses.modalAddEdit.apartmentLabel")}: `}</Text>
+                <Text style={styles.modalLabel}>{`${t(
+                  "addresses.modalAddEdit.apartmentLabel"
+                )}: `}</Text>
                 {errors.flatOrApartmentNumber && (
                   <Text style={styles.modalTextError}>
                     {errors.flatOrApartmentNumber.message}
@@ -539,7 +552,9 @@ const AddressesView = () => {
                       style={styles.modalTextInput}
                       onBlur={onBlur}
                       onChangeText={onChange}
-                      placeholder={t("addresses.modalAddEdit.apartmentPlaceholder")}
+                      placeholder={t(
+                        "addresses.modalAddEdit.apartmentPlaceholder"
+                      )}
                       value={value}
                       autoCapitalize="none"
                       autoComplete="off"
@@ -553,7 +568,9 @@ const AddressesView = () => {
 
               {/* Floor number */}
               <View style={styles.modalInputContainer}>
-                <Text style={styles.modalLabel}>{`${t("addresses.modalAddEdit.floorLabel")}: `}</Text>
+                <Text style={styles.modalLabel}>{`${t(
+                  "addresses.modalAddEdit.floorLabel"
+                )}: `}</Text>
                 {errors.floorNumber && (
                   <Text style={styles.modalTextError}>
                     {errors.floorNumber.message}
@@ -587,7 +604,8 @@ const AddressesView = () => {
               {/* Postal code */}
               <View style={styles.modalInputContainer}>
                 <Text style={styles.modalLabel}>
-                {`${t("addresses.modalAddEdit.postalCodeLabel")}: `}<Text style={{ color: "red" }}>*</Text>
+                  {`${t("addresses.modalAddEdit.postalCodeLabel")}: `}
+                  <Text style={{ color: "red" }}>*</Text>
                 </Text>
                 {errors.postalCode && (
                   <Text style={styles.modalTextError}>
@@ -600,7 +618,9 @@ const AddressesView = () => {
                     required: t("addresses.modalAddEdit.postalCodeValidationR"),
                     pattern: {
                       value: /^[0-9]{2}-[0-9]{3}$/,
-                      message: t("addresses.modalAddEdit.postalCodeValidationP"),
+                      message: t(
+                        "addresses.modalAddEdit.postalCodeValidationP"
+                      ),
                     },
                   }}
                   render={({ field: { onChange, onBlur, value } }) => (
@@ -608,7 +628,9 @@ const AddressesView = () => {
                       style={styles.modalTextInput}
                       onBlur={onBlur}
                       onChangeText={onChange}
-                      placeholder={t("addresses.modalAddEdit.postalCodePlaceholder")}
+                      placeholder={t(
+                        "addresses.modalAddEdit.postalCodePlaceholder"
+                      )}
                       value={value}
                       autoCapitalize="none"
                       autoComplete="postal-code"
@@ -623,7 +645,8 @@ const AddressesView = () => {
               {/* City */}
               <View style={styles.modalInputContainer}>
                 <Text style={styles.modalLabel}>
-                {`${t("addresses.modalAddEdit.cityLabel")}: `}<Text style={{ color: "red" }}>*</Text>
+                  {`${t("addresses.modalAddEdit.cityLabel")}: `}
+                  <Text style={{ color: "red" }}>*</Text>
                 </Text>
                 {errors.city && (
                   <Text style={styles.modalTextError}>
@@ -655,7 +678,8 @@ const AddressesView = () => {
               {/* Country */}
               <View style={styles.modalInputContainer}>
                 <Text style={styles.modalLabel}>
-                {`${t("addresses.modalAddEdit.countryLabel")}: `}<Text style={{ color: "red" }}>*</Text>
+                  {`${t("addresses.modalAddEdit.countryLabel")}: `}
+                  <Text style={{ color: "red" }}>*</Text>
                 </Text>
                 {errors.country && (
                   <Text style={styles.modalTextError}>
@@ -672,7 +696,9 @@ const AddressesView = () => {
                       style={styles.modalTextInput}
                       onBlur={onBlur}
                       onChangeText={onChange}
-                      placeholder={t("addresses.modalAddEdit.countryPlaceholder")}
+                      placeholder={t(
+                        "addresses.modalAddEdit.countryPlaceholder"
+                      )}
                       value={value}
                       autoCapitalize="words"
                       autoComplete="country"
@@ -690,14 +716,18 @@ const AddressesView = () => {
                   activeOpacity={0.8}
                   onPress={handleSubmit(onSubmit)}
                 >
-                  <Text style={styles.modalButtonText}>{`${t("universal.saveBtn")}`}</Text>
+                  <Text style={styles.modalButtonText}>{`${t(
+                    "universal.saveBtn"
+                  )}`}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.modalCancelButton}
                   activeOpacity={0.8}
                   onPress={onCancel}
                 >
-                  <Text style={styles.modalButtonText}>{`${t("universal.cancelBtn")}`}</Text>
+                  <Text style={styles.modalButtonText}>{`${t(
+                    "universal.cancelBtn"
+                  )}`}</Text>
                 </TouchableOpacity>
               </View>
             </KeyboardAwareScrollView>
@@ -722,7 +752,9 @@ const AddressesView = () => {
                 activeOpacity={0.8}
                 onPress={confirmAddressDeletion}
               >
-                <Text style={styles.modalButtonText}>{`${t("universal.deleteBtn")}`}</Text>
+                <Text style={styles.modalButtonText}>{`${t(
+                  "universal.deleteBtn"
+                )}`}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.modalRejectButton}

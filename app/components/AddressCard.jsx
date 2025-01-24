@@ -53,6 +53,10 @@ const AddressCard = ({
     flatAndFloorNumber = getFloorLabel(floorNumber);
     flatAndFloorNumberStyle = styles.textWithIcon;
   }
+
+  if (!flatOrApartmentNumber && floorNumber) {
+    flatAndFloorNumberStyle = [styles.textWithIcon, styles.textCapitalized];
+  }
   
   function getFloorLabel(floor) {
     switch (floor) {
@@ -65,7 +69,7 @@ const AddressCard = ({
       case "3":
         return t("addresses.addressCard.thirdFloor");
       default:
-        return `${floor} ${t("addresses.addressCard.anyFloor")}`;
+        return `${floor}${t("addresses.addressCard.anyFloor")}`;
     }
   }  
 
@@ -142,7 +146,7 @@ const AddressCard = ({
         {/* Flat number + Floor number */}
         <View style={flatAndFloorNumberStyle}>
           <Icon name="door" width={15} height={15} colorStroke={globalStyles.primaryColor}  />
-          <Text style={styles.text}>{flatAndFloorNumber}</Text>
+          <Text style={[styles.text, flatAndFloorNumberStyle]}>{flatAndFloorNumber}</Text>
         </View>
 
         {/* Postal code + City + Country */}
@@ -216,8 +220,12 @@ const styles = StyleSheet.create({
     gap: 5,
   },
 
+  textCapitalized: {
+    textTransform: "capitalize"
+  },
+
   text: {
-    width: "auto",
+    width: "100%",
     fontFamily: "Poppins_500Medium",
     fontSize: 14,
     color: globalStyles.textOnSecondaryColor,

@@ -992,8 +992,6 @@ const RentItNowView = ({ route }) => {
                     expiry={cardFormData?.values.expiry}
                     cvc={cardFormData?.values.cvc}
                     style={styles.paymentCardView}
-                    // fontFamily="WorkSans_900Black"
-                    // imageFront={{uri: "https://www.regions.com/-/media/Images/DotCom/Products/business-credit-cards/Business-CC-Spotlight.jpg?revision=89e59129-eafa-4011-a1e4-3ff611246586&la=en&h=480&w=850&hash=BBF4484733C1953A05CC29FC21CA2EF7"}}
                   />
                   <LiteCreditCardInput
                     autoFocus
