@@ -42,31 +42,6 @@ const UserProfileView = () => {
 
   const toggleDropdown = () => setDropdownVisible(!isDropdownVisible);
 
-  // useEffect(() => {
-  //   if (!user) return;
-
-  //   const usersRef = ref(db, "users");
-  //   const unsubscribe = onValue(usersRef, (snapshot) => {
-  //     const data = snapshot.val();
-  //     if (data) {
-  //       const currentUserEntry = Object.entries(data).find(
-  //         ([key, userData]) => userData.email === user.email
-  //       );
-
-  //       if (currentUserEntry) {
-  //         const [key, userData] = currentUserEntry;
-  //         setUser({ ...userData, id: key }); // Dodaj klucz jako "id"
-  //       } else {
-  //         setUser(null);
-  //       }
-  //     } else {
-  //       setUser(null);
-  //     }
-  //   });
-
-  //   return () => unsubscribe();
-  // }, [user]);
-
   useEffect(() => {
     const fetchProfileImg = async () => {
       try {
@@ -90,7 +65,10 @@ const UserProfileView = () => {
             onPress: () => null,
             style: "cancel",
           },
-          { text: `${t("universal.yesBtn")}`, onPress: () => BackHandler.exitApp() },
+          {
+            text: `${t("universal.yesBtn")}`,
+            onPress: () => BackHandler.exitApp(),
+          },
         ]);
         return true;
       };
@@ -158,7 +136,7 @@ const UserProfileView = () => {
     return fullName.slice(0, 20) + "...";
   };
 
-  const handleVerifyEmail = () => {
+  const handleVerifyEmail = async () => {
     const now = Date.now();
     if (
       lastVerificationAttempt &&
@@ -172,8 +150,23 @@ const UserProfileView = () => {
       return;
     }
 
-    onConfirmEmail();
-    setLastVerificationAttempt(now);
+    try {
+      await onConfirmEmail();
+
+      setLastVerificationAttempt(now);
+
+      Alert.alert(
+        t("userProfile.verificationSuccess.title"),
+        t("userProfile.verificationSuccess.message")
+      );
+    } catch (error) {
+      Alert.alert(
+        t("userProfile.verificationError.title"),
+        t("userProfile.verificationError.message"),
+        [{ text: t("universal.okBtn") }]
+      );
+      console.error("Verification error:", error.message);
+    }
   };
 
   const handleModalClose = () => {
@@ -211,7 +204,7 @@ const UserProfileView = () => {
               disabled={user.isVerified || user.email === "guest@example.com"}
             >
               <View style={styles.verificationContent}>
-                {user.isVerified !== undefined && user.isVerified !== null && (
+                {user.isVerified && (
                   <Icon
                     name={user.isVerified ? "verification" : "not-verified"}
                     width={15}
