@@ -50,11 +50,14 @@ import { useForm, Controller } from "react-hook-form";
 import { SelectList } from "react-native-dropdown-select-list";
 import Icon from "../components/Icon";
 import { useTranslation } from "react-i18next";
+import Loader from "../components/Loader";
 
-const CreateAnnouncementView = () => {
+const CreateAnnouncementView = ({ route }) => {
   const navigation = useNavigation();
   const { t } = useTranslation();
   const { user, setUser } = useUser();
+  const { id } = route.params || {}
+  const isEditMode = !!id;
 
   // const [image, setImage] = useState<string | null >(null);
   const [currentAnnouncement, setCurrentAnnouncement] = useState();
@@ -65,6 +68,7 @@ const CreateAnnouncementView = () => {
   const [category, setCategory] = useState("");
   const [categoryError, setCategoryError] = useState();
   const [isCategoryListVisible, setCategoryListVisible] = useState(false);
+  const [announcement, setAnnouncement] = useState(null)
 
   const scrollViewRef = useRef(null);
 
@@ -76,6 +80,33 @@ const CreateAnnouncementView = () => {
     setValue,
     formState: { errors },
   } = useForm();
+
+  useEffect(() => {
+    if (isEditMode) {
+      const fetchAnnouncement = async () => {
+        const announcementRef = ref(db, `announcements/${id}`);
+        const snapshot = await get(announcementRef);
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          setAnnouncement(data);
+          setImages(data.images || []);
+
+          // Pre-fill form fields
+          setValue("title", data.title || "");
+          setValue("description", data.description || "");
+          setValue("price", data.pricePerDay?.toString() || "0");
+          setValue("condition", data.condition || "Unknown");
+          setValue("size", data.size || "");
+          
+        }
+        setLoading(false);
+      };
+
+      fetchAnnouncement();
+    } else {
+      setLoading(false);
+    }
+  }, [id, isEditMode]);
 
   // Pobieranie bieżącego użytkownika
   // useEffect(() => {
@@ -155,9 +186,52 @@ const CreateAnnouncementView = () => {
     }
   };
 
-  const deleteImage = (img) => {
-    setImages(images.filter((item) => item != img));
+  const deleteImageFromStorage = async (imageUrl) => {
+    try {
+      const fileName = imageUrl.split("/").pop();
+      const imageRef = storageRef(storage, `announcement-images/${fileName}`);
+      await remove(imageRef);
+      console.log("Obraz został usunięty:", fileName);
+    } catch (error) {
+      console.error("Nie udało się usunąć obrazu:", error);
+    }
   };
+  
+  
+  const deleteImage = (img) => {
+    const imageUrl = images.find((image) => image === img); // Znajdź URL
+    setImages(images.filter((item) => item !== img)); // Usuń lokalnie
+    if (imageUrl) deleteImageFromStorage(imageUrl); // Usuń z Firebase
+  };
+  
+  
+
+  const handleSave = async (data) => {
+    try {
+      const newAnnouncement = {
+        ...announcement,
+        ...data,
+        images,
+        pricePerDay: parseFloat(data.price),
+        advertiserId: user.id,
+        publicationDate: isEditMode ? announcement.publicationDate : Date.now(),
+      };
+  
+      const announcementRef = ref(db, `announcements/${isEditMode ? id : Date.now()}`);
+  
+      if (isEditMode) {
+        await update(announcementRef, newAnnouncement);
+      } else {
+        await set(announcementRef, newAnnouncement);
+      }
+  
+      navigation.goBack();
+    } catch (error) {
+      console.error("Błąd podczas zapisu ogłoszenia:", error);
+      Alert.alert("Błąd", "Nie udało się zapisać ogłoszenia. Spróbuj ponownie.");
+    }
+  };
+  
 
   const uploadImagesToStorage = async (announcementId, images) => {
     const storage = getStorage();
@@ -257,6 +331,10 @@ const CreateAnnouncementView = () => {
     height: 22,
     fillColor: globalStyles.primaryColor,
   };
+
+  if (loading) {
+    return <Loader/>
+  }
 
   return (
     <SafeAreaView style={mainStyles.whiteBack}>
@@ -563,7 +641,7 @@ const CreateAnnouncementView = () => {
           <View style={styles.buttonsContainer}>
             <TouchableOpacity
               style={styles.createButton}
-              onPress={handleSubmit(onSubmit)}
+              onPress={ isEditMode ? handleSubmit(handleSave) : handleSubmit(onSubmit)}
             >
               <Text style={styles.createText}>
                 {t("createAnnouncement.createButton")}
