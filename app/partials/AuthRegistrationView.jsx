@@ -38,7 +38,8 @@ export default function AuthRegistrationView() {
       await onRegister(data, initializeUser);
       navigation.navigate("MainApp");
     } catch (error) {
-      setErrorMessage(error.message);
+      setErrorMessage(t("signUp.modalError.description"));
+      setIsModalVisible(true);
     }
   };
 
@@ -147,9 +148,6 @@ export default function AuthRegistrationView() {
             >
               <Text style={styles.mainBtnText}>{t("signUp.signUpBtn")}</Text>
             </TouchableOpacity>
-            {errorMessage && (
-              <Text style={{ color: "red" }}>{errorMessage}</Text>
-            )}
           </View>
   
           <ErrorModal

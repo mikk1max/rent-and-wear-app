@@ -319,7 +319,10 @@ const AnnouncementView = ({ route }) => {
                 <View style={styles.annOwnerButtons}>
                   <TouchableOpacity
                     style={styles.annOwnerEditButton}
-                    onPress={() => console.log("Edit announcement")}
+                    onPress={() => {
+                      console.log("Edit announcement")
+                      navigation.navigate("CreateAnnouncementView", {id: announcement.id})
+                    }}
                   >
                     <Icon
                       name="edit-pencil"
