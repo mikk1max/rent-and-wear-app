@@ -62,7 +62,8 @@
       "passwordMinLength": "Password must be at least 6 characters",
       "signUpBtn": "Sign Up",
       "modalError": {
-        "title": "Error"
+        "title": "Error",
+        "description": "Something went wrong! Try again later."
       }
     },
     "rentNow": {
@@ -89,7 +90,15 @@
       "logout": "Log out",
       "login": "Log in / Sign up",
       "notLogTitle": "Not Logged In",
-      "notLogSubTitle": "Sign up or log in to access all the app's features!"
+      "notLogSubTitle": "Sign up or log in to access all the app's features!",
+      "verificationSuccess": {
+        "title": "Verification Link Sent",
+        "message": "A verification link has been sent to your email address. Please check your inbox."
+      },
+      "verificationError": {
+        "title": "Verification Failed",
+        "message": "We couldn't send the verification link. Please try again later."
+      }
     },
     "sendsGets": {
       "details": "Details",

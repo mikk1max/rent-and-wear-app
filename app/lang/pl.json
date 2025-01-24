@@ -64,6 +64,7 @@
       "signUpBtn": "Zarejestruj się",
       "modalError": {
         "title": "Błąd rejestracji",
+        "description": "Coś poszło nie tak! Spróbuj ponownie później",
         "closeBtn": "Spróbuj ponownie"
       }
     },
@@ -91,7 +92,15 @@
       "logout": "Wyloguj się",
       "login": "Zaloguj się / Zarejestruj się",
       "notLogTitle": "Nie zalogowano",
-      "notLogSubTitle": "Zarejestruj się lub zaloguj, aby uzyskać dostęp do wszystkich funkcji aplikacji!"
+      "notLogSubTitle": "Zarejestruj się lub zaloguj, aby uzyskać dostęp do wszystkich funkcji aplikacji!",
+      "verificationSuccess": {
+        "title": "Link weryfikacyjny wysłany",
+        "message": "Link weryfikacyjny został wysłany na Twój adres e-mail. Sprawdź swoją skrzynkę odbiorczą."
+      },
+      "verificationError": {
+        "title": "Błąd weryfikacji",
+        "message": "Nie udało się wysłać linku weryfikacyjnego. Spróbuj ponownie później."
+      }
     },
     "sendsGets": {
       "details": "Szczegóły",
@@ -410,7 +419,7 @@
       "addresses": "Adresy",
       "categories": "Kategorie",
       "chats": "Czaty",
-      "chat": "Czat", 
+      "chat": "Czat",
       "createAnnouncement": "Utwórz Ogłoszenie",
       "rentItem": "Wynajmij {{item}}",
       "myGets": "Moje odbiory",
