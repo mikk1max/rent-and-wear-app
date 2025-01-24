@@ -31,23 +31,23 @@ const AddressesView = () => {
   const [addresses, setAddresses] = useState([[]]);
 
   const userId = user?.id;
-  // useEffect(() => {
-  //   const addressesRef = ref(db, `users/${userId}/addresses`);
-  //   const unsubscribe = onValue(addressesRef, (snapshot) => {
-  //     const data = snapshot.val();
-  //     if (data) {
-  //       const addressesArray = Object.keys(data).map((key) => ({
-  //         id: key,
-  //         ...data[key],
-  //       }));
-  //       setAddresses(addressesArray);
-  //     } else {
-  //       setAddresses([]);
-  //     }
-  //   });
+  useEffect(() => {
+    const addressesRef = ref(db, `users/${userId}/addresses`);
+    const unsubscribe = onValue(addressesRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const addressesArray = Object.keys(data).map((key) => ({
+          id: key,
+          ...data[key],
+        }));
+        setAddresses(addressesArray);
+      } else {
+        setAddresses([]);
+      }
+    });
 
-  //   return () => unsubscribe();
-  // }, [userId]);
+    return () => unsubscribe();
+  }, [userId]);
 
   const getAddressById = (addresses, addressId) => {
     return addresses.find((address) => address.id === addressId);

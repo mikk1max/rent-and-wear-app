@@ -151,8 +151,6 @@ const CreateAnnouncementView = () => {
     console.log(result);
 
     if (!result.canceled) {
-      // setImage(result.assets[0].uri);
-      // console.log(image);
       setImages([...images, result.assets[0].uri]);
     }
   };
@@ -209,10 +207,6 @@ const CreateAnnouncementView = () => {
         size: data.size || "",
         condition: data.condition || "Unknown",
         images: [],
-        // status: {
-        //   code: 0,
-        //   messege: "Available for rent",
-        // },
         rentalData: {
           borrowerId: "",
           startDate: null,

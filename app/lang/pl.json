@@ -282,10 +282,10 @@
       },
       "addressCard": {
         "zeroFloor": "parter",
-        "firstFloor": "1 piętro",
-        "secondFloor": "2 piętro",
-        "thirdFloor": "3 piętro",
-        "anyFloor": "piętro"
+        "firstFloor": "1. piętro",
+        "secondFloor": "2. piętro",
+        "thirdFloor": "3. piętro",
+        "anyFloor": ". piętro"
       }
     },
     "announcement": {
@@ -356,12 +356,12 @@
     },
     "statusNames": {
       "All": "Wszystkie",
-      "Pending": "Oczekujące",
+      "Pending": "Oczekuje na potwierdzenie",
       "Reserved": "Zarezerwowane",
       "Rented": "Wynajęte",
       "Sent for use": "Wysłane do użycia",
       "In use": "W użyciu",
-      "Sent back": "Odesłane",
+      "Sent back": "Odesłane z powrotem",
       "Done": "Zakończone",
       "Canceled": "Anulowane"
     },
@@ -379,7 +379,7 @@
       "subtitle": "Nie masz jeszcze żadnych czatów!"
     },
     "noAnnouncements": {
-      "title": "Brak przedmiotów",
+      "title": "Brak ogłoszeń",
       "subtitle": "Nie masz jeszcze żadnych ogłoszeń!"
     },
     "noAddresses": {
