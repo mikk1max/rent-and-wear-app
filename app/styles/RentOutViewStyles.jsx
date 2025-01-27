@@ -46,7 +46,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.primaryColor,
+    backgroundColor: globalStyles.accentColor,
   },
   createAnnouncementText: {
     fontFamily: "WorkSans_900Black",

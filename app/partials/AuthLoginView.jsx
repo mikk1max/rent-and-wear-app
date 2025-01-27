@@ -103,6 +103,7 @@ export default function AuthLoginView() {
               <TouchableOpacity
                 style={{ paddingHorizontal: 10, paddingVertical: 5 }}
                 onPress={() => navigation.navigate("ResetPassword")}
+                activeOpacity={globalStyles.ACTIVE_OPACITY}
               >
                 <Text style={styles.forgotPass}>{`${t("login.forgotPass")}?`}</Text>
               </TouchableOpacity>
@@ -111,6 +112,7 @@ export default function AuthLoginView() {
             <TouchableOpacity
               style={[styles.mainBtns, styles.loginBtn]}
               onPress={handleSubmit(handleLogin)}
+              activeOpacity={globalStyles.ACTIVE_OPACITY}
             >
               <Text style={styles.mainBtnText}>{t("login.loginBtn")}</Text>
             </TouchableOpacity>
@@ -121,6 +123,7 @@ export default function AuthLoginView() {
               <TouchableOpacity
                 style={[styles.mainBtns, styles.anotherBtn]}
                 onPress={() => navigation.navigate("Registration")}
+                activeOpacity={globalStyles.ACTIVE_OPACITY}
               >
                 <Text
                   style={[

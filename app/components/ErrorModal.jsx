@@ -22,14 +22,16 @@ const ErrorModal = ({ isVisible, onClose, title, message }) => {
     >
       <SafeAreaView style={styles.modalContainer}>
         <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>
-            {title}
-          </Text>
-          <Text style={styles.modalMessage}>
-            {message}
-          </Text>
-          <TouchableOpacity onPress={onClose} style={styles.modalButton}>
-            <Text style={styles.modalButtonText}>{t("universal.closeBtn")}</Text>
+          <Text style={styles.modalTitle}>{title}</Text>
+          <Text style={styles.modalMessage}>{message}</Text>
+          <TouchableOpacity
+            onPress={onClose}
+            style={styles.modalButton}
+            activeOpacity={globalStyles.ACTIVE_OPACITY}
+          >
+            <Text style={styles.modalButtonText}>
+              {t("universal.closeBtn")}
+            </Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>

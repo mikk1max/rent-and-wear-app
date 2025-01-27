@@ -134,32 +134,6 @@ const RentItNowView = ({ route }) => {
     return differenceInDays;
   };
 
-  // Pobieranie bieżącego użytkownika
-  // useEffect(() => {
-  //   if (!user) return;
-
-  //   const usersRef = ref(db, "users");
-  //   const unsubscribe = onValue(usersRef, (snapshot) => {
-  //     const data = snapshot.val();
-  //     if (data) {
-  //       const currentUserEntry = Object.entries(data).find(
-  //         ([key, userData]) => userData.email === user.email
-  //       );
-
-  //       if (currentUserEntry) {
-  //         const [key, userData] = currentUserEntry;
-  //         setUser({ ...userData, id: key }); // Dodaj klucz jako "id"
-  //       } else {
-  //         setUser(null);
-  //       }
-  //     } else {
-  //       setUser(null);
-  //     }
-  //   });
-
-  //   return () => unsubscribe();
-  // }, [user]);
-
   // Pobieranie ogłoszenia z bazy
   useEffect(() => {
     const announcementsRef = ref(db, `announcements/${id}`);
@@ -797,7 +771,7 @@ const RentItNowView = ({ route }) => {
                             : styles.addressListItemWithBorder
                         }
                         onPress={() => selectAddress(addressItem)}
-                        activeOpacity={1}
+                        activeOpacity={globalStyles.ACTIVE_OPACITY}
                       >
                         <Text style={styles.addressListItemText}>
                           {`→  ${addressItem?.adresse}, ${addressItem?.street} ${addressItem?.buildingNumber}`}

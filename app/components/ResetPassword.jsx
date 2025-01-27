@@ -84,6 +84,7 @@ export default function ResetPassword() {
         <TouchableOpacity
           style={styles.button}
           onPress={handleSubmit(handlePasswordReset)}
+          activeOpacity={globalStyles.ACTIVE_OPACITY}
         >
           <Text style={styles.buttonText}>
             {t("passwordReset.sendResetLink")}
