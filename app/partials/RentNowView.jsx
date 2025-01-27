@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useContext } from "react";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { BackHandler, Alert } from "react-native";
 import {
@@ -34,6 +34,7 @@ import { db } from "../../firebase.config";
 import { useUser } from "../components/UserProvider";
 import { useTranslation } from "react-i18next";
 import NoItemsFound from "../components/NoItemsFound";
+import { IconContext } from "../components/IconProvider";
 
 // Get the screen dimensions
 const { width } = Dimensions.get("window");
@@ -48,41 +49,7 @@ const RentNowView = () => {
 
   if (!fontsLoaded) return null;
 
-  const [icons, setIcons] = useState([
-    "t-shirt",
-    "dress",
-    "shorts",
-    "coat",
-    "sneakers",
-  ]);
-
   const { user, setUser } = useUser();
-  // console.log(user);
-
-  // useEffect(() => {
-  //   if (!user) return;
-
-  //   const usersRef = ref(db, "users");
-  //   const unsubscribe = onValue(usersRef, (snapshot) => {
-  //     const data = snapshot.val();
-  //     if (data) {
-  //       const currentUserEntry = Object.entries(data).find(
-  //         ([key, userData]) => userData.email === user.email
-  //       );
-
-  //       if (currentUserEntry) {
-  //         const [key, userData] = currentUserEntry;
-  //         setUser({ ...userData, id: key }); // Dodaj klucz jako "id"
-  //       } else {
-  //         setUser(null);
-  //       }
-  //     } else {
-  //       setUser(null);
-  //     }
-  //   });
-
-  //   return () => unsubscribe();
-  // }, [user]);
 
   const [announcementPreviews, setAnnouncementPreviews] = useState([[]]);
   useEffect(() => {
@@ -118,7 +85,7 @@ const RentNowView = () => {
   // console.log(announcementPreviews);
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeIcon, setActiveIcon] = useState(null);
+  const { changeIcon, icons, activeIcon, setActiveIcon } = useContext(IconContext);
 
   const handleSearch = (text) => {
     setSearchQuery(text);
@@ -131,7 +98,7 @@ const RentNowView = () => {
         .includes(searchQuery.toLowerCase());
 
       const matchCategory = activeIcon
-        ? announcementPreview.category.subcategoryName?.toLowerCase() ===
+        ? announcementPreview.category.subcategoryIcon?.toLowerCase() ===
           activeIcon.toLowerCase()
         : true;
 
@@ -147,13 +114,13 @@ const RentNowView = () => {
   const handleButtonPress = (iconName) => {
     setActiveIcon((prev) => {
       const newActiveIcon = prev === iconName ? null : iconName;
-      console.log(
-        `${
-          newActiveIcon
-            ? `${iconName} button pressed`
-            : `${iconName} button unpressed`
-        }`
-      );
+      // console.log(
+      //   `${
+      //     newActiveIcon
+      //       ? `${iconName} button pressed`
+      //       : `${iconName} button unpressed`
+      //   }`
+      // );
       return newActiveIcon;
     });
   };
@@ -180,14 +147,6 @@ const RentNowView = () => {
       return () => backHandler.remove();
     }, [])
   );
-
-  const changeIcon = (icon) => {
-    console.log(icons);
-    if (!icon) return;
-    const updatedIcons = [icon, ...icons.slice(0, -1)];
-    setIcons(updatedIcons);
-    handleButtonPress(icon);
-  };
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -253,12 +212,9 @@ const RentNowView = () => {
               </Text>
               <TouchableOpacity
                 onPress={() =>
-                  navigation.navigate("Categories", {
-                    recentIcons: icons,
-                    changeIcon: changeIcon,
-                    changeActiveIcon: setActiveIcon,
-                  })
+                  navigation.navigate("Categories")
                 }
+                activeOpacity={globalStyles.ACTIVE_OPACITY}
               >
                 <Text style={styles.allCategoriesTextBtn}>
                   {t("rentNow.allCategoriesBtn")}
@@ -278,6 +234,7 @@ const RentNowView = () => {
                 ))}
             </View>
 
+{ console.log(activeIcon)}
             <View style={styles.announcementsContainer}>
               {filteredAnnouncements &&
                 filteredAnnouncements?.map((announcementPreview) => (
@@ -292,7 +249,7 @@ const RentNowView = () => {
                     }
                     categoryIcon={
                       announcementPreview?.category?.subcategoryIcon ||
-                      "default_icon"
+                      "t-shirt"
                     }
                     pricePerDay={announcementPreview.pricePerDay}
                     currentUserId={user?.id}

@@ -18,7 +18,7 @@ const IconButton = ({ filePath, ...props }) => {
       <TouchableOpacity
         style={[styles.iconBtn, { backgroundColor }]}
         onPress={props.onPress}
-        activeOpacity={0.8}
+        activeOpacity={globalStyles.ACTIVE_OPACITY}
       >
         <Icon
           name={props.iconName}

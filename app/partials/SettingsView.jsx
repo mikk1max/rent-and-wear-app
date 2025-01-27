@@ -18,7 +18,7 @@ import { auth, db } from "../../firebase.config";
 
 import { fetchImgURL } from "../utils/fetchSVG";
 
-import { styles as mainStyles } from "../utils/style";
+import { globalStyles, styles as mainStyles } from "../utils/style";
 import { styles } from "../styles/SettingsViewStyles";
 import InputWithLabel from "../components/InputWithLabel";
 
@@ -46,31 +46,6 @@ export default function SettingsView() {
 
   const fontsLoaded = useCustomFonts();
   if (!fontsLoaded) return null;
-
-  // useEffect(() => {
-  //   if (!user) return;
-
-  //   const usersRef = ref(db, "users");
-  //   const unsubscribe = onValue(usersRef, (snapshot) => {
-  //     const data = snapshot.val();
-  //     if (data) {
-  //       const currentUserEntry = Object.entries(data).find(
-  //         ([key, userData]) => userData.email === user.email
-  //       );
-
-  //       if (currentUserEntry) {
-  //         const [key, userData] = currentUserEntry;
-  //         setUser({ ...userData, id: key }); // Dodaj klucz jako "id"
-  //       } else {
-  //         setUser(null);
-  //       }
-  //     } else {
-  //       setUser(null);
-  //     }
-  //   });
-
-  //   return () => unsubscribe();
-  // }, [user]);
 
   useEffect(() => {
     async function loadUrl() {
@@ -324,7 +299,10 @@ export default function SettingsView() {
                 }}
                 style={styles.userProfileImg}
               />
-              <TouchableOpacity activeOpacity={0.6} onPress={handleEditPicture}>
+              <TouchableOpacity
+                activeOpacity={globalStyles.ACTIVE_OPACITY}
+                onPress={handleEditPicture}
+              >
                 <Text style={styles.imageText}>
                   {t("settings.editPictureText")}
                 </Text>
@@ -364,7 +342,7 @@ export default function SettingsView() {
                 <View style={[nameButtonsStyle, { marginBottom: 20 }]}>
                   <TouchableOpacity
                     style={styles.buttonSave}
-                    activeOpacity={0.8}
+                    activeOpacity={globalStyles.ACTIVE_OPACITY}
                     onPress={handleSubmitName(onSubmitName)}
                   >
                     <Text style={styles.buttonText}>
@@ -373,7 +351,7 @@ export default function SettingsView() {
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.buttonCancel}
-                    activeOpacity={0.8}
+                    activeOpacity={globalStyles.ACTIVE_OPACITY}
                     onPress={onCancelName}
                   >
                     <Text style={styles.buttonText}>
@@ -413,7 +391,7 @@ export default function SettingsView() {
                 <View style={[surnameButtonsStyle, { marginBottom: 20 }]}>
                   <TouchableOpacity
                     style={styles.buttonSave}
-                    activeOpacity={0.8}
+                    activeOpacity={globalStyles.ACTIVE_OPACITY}
                     onPress={handleSubmitSurname(onSubmitSurname)}
                   >
                     <Text style={styles.buttonText}>
@@ -422,7 +400,7 @@ export default function SettingsView() {
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.buttonCancel}
-                    activeOpacity={0.8}
+                    activeOpacity={globalStyles.ACTIVE_OPACITY}
                     onPress={onCancelSurname}
                   >
                     <Text style={styles.buttonText}>
@@ -479,7 +457,7 @@ export default function SettingsView() {
                 <View style={[passwordButtonsStyle, { marginBottom: 20 }]}>
                   <TouchableOpacity
                     style={styles.buttonSave}
-                    activeOpacity={0.8}
+                    activeOpacity={globalStyles.ACTIVE_OPACITY}
                     onPress={handleSubmitPassword(onSubmitPassword)}
                   >
                     <Text style={styles.buttonText}>
@@ -488,7 +466,7 @@ export default function SettingsView() {
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.buttonCancel}
-                    activeOpacity={0.8}
+                    activeOpacity={globalStyles.ACTIVE_OPACITY}
                     onPress={onCancelPassword}
                   >
                     <Text style={styles.buttonText}>

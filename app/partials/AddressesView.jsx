@@ -27,8 +27,6 @@ const AddressesView = () => {
   if (!fontsLoaded) return null;
 
   const { user, setUser } = useUser();
-  console.log(user); // {"addresses": [{"adresse": "Maksym Shepeta", "buildingNumber": "60", "city": "Lublin", "country": "Polska", "email": "maksim.shepeta@gmail.com", "flatOrApartmentNumber": "503", "floorNumber": "0", "id": "0", "isDefault": true, "phoneNumber": "987654321", "postalCode": "20-632", "street": "ul. Testowa"}], "email": "maksim.shepeta@gmail.com", "id": "PGB7yqddkcciSLxyBSN93oe7ppd2", "isVerified": true, "name": "Maxwell", "profileImg": "https://firebasestorage.googleapis.com/v0/b/rent-clothes-253cf.firebasestorage.app/o/user-avatars%2FPGB7yqddkcciSLxyBSN93oe7ppd2%2FPGB7yqddkcciSLxyBSN93oe7ppd2.jpg?alt=media&token=94dd2805-894b-4a98-8855-f3db4e59499b", "registrationDate": 1737305410775, "rentalOrReservationData": {"1737509927004": {"announcementId": "1737505522915", "type": "Book"}, "1737581282170": {"announcementId": "1737457814004", "type": "Rent"}}, "surname": "Soft"}
-
   const [addresses, setAddresses] = useState([]);
 
   useEffect(() => {
@@ -36,7 +34,6 @@ const AddressesView = () => {
       setAddresses(user.addresses);
     }
   }, [user]);
-  
 
   const getAddressById = (addresses, addressId) => {
     return addresses.find((address) => address.id === addressId);
@@ -293,7 +290,7 @@ const AddressesView = () => {
                 {addresses.length > 0 ? (
                   addresses.map((address) => (
                     <AddressCard
-                      key={address.id}
+                      key={`AddressCard_${address.id}`}
                       id={address.id}
                       adresse={address.adresse}
                       phoneNumber={address.phoneNumber}
@@ -318,7 +315,7 @@ const AddressesView = () => {
               <TouchableOpacity
                 onPress={() => openAddressForm()}
                 style={styles.newAddressButton}
-                activeOpacity={0.8}
+                activeOpacity={globalStyles.ACTIVE_OPACITY}
               >
                 <Text style={styles.newAddressButtonText}>
                   {t("addresses.newAddressBtn")}
@@ -713,7 +710,7 @@ const AddressesView = () => {
               <View style={styles.modalButtons}>
                 <TouchableOpacity
                   style={styles.modalSaveButton}
-                  activeOpacity={0.8}
+                  activeOpacity={globalStyles.ACTIVE_OPACITY}
                   onPress={handleSubmit(onSubmit)}
                 >
                   <Text style={styles.modalButtonText}>{`${t(
@@ -722,7 +719,7 @@ const AddressesView = () => {
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.modalCancelButton}
-                  activeOpacity={0.8}
+                  activeOpacity={globalStyles.ACTIVE_OPACITY}
                   onPress={onCancel}
                 >
                   <Text style={styles.modalButtonText}>{`${t(
@@ -749,7 +746,7 @@ const AddressesView = () => {
             <View style={styles.modalButtons}>
               <TouchableOpacity
                 style={styles.modalDeleteButton}
-                activeOpacity={0.8}
+                activeOpacity={globalStyles.ACTIVE_OPACITY}
                 onPress={confirmAddressDeletion}
               >
                 <Text style={styles.modalButtonText}>{`${t(
@@ -758,7 +755,7 @@ const AddressesView = () => {
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.modalRejectButton}
-                activeOpacity={0.8}
+                activeOpacity={globalStyles.ACTIVE_OPACITY}
                 onPress={rejectAddressDeletion}
               >
                 <Text

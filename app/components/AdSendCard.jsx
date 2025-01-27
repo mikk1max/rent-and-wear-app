@@ -48,7 +48,11 @@ const AdSendCard = ({
 
       <ProgressBarLine progressValue={progressValue} />
 
-      <TouchableOpacity onPress={onPress} style={styles.cardButton}>
+      <TouchableOpacity
+        onPress={onPress}
+        style={styles.cardButton}
+        activeOpacity={globalStyles.ACTIVE_OPACITY}
+      >
         <Text style={styles.buttonText}>{t("card.viewDetails")}</Text>
       </TouchableOpacity>
     </Card>
