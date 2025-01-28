@@ -27,6 +27,7 @@ const AddressesView = () => {
   if (!fontsLoaded) return null;
 
   const { user, setUser } = useUser();
+  
   const [addresses, setAddresses] = useState([]);
 
   useEffect(() => {

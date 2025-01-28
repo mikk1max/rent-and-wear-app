@@ -459,7 +459,7 @@ const RentItNowView = ({ route }) => {
       paymentMethod: selectedPaymentMethod,
       status: { statusCode: 1, statusName: "Pending" },
     };
-    const dataId = Date.now();
+    const dataId = "ROR_" + Date.now();
     const dataInUser = { announcementId: announcement.id, type: rentalOption };
     if (rentalOption === "Rent") {
       await createRentalOrReservationData(dataId, data, "rentalData");

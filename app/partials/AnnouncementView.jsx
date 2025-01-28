@@ -19,7 +19,8 @@ import { G, SvgUri } from "react-native-svg";
 
 import { globalStyles, styles as mainStyles } from "../utils/style";
 import { iconParams, styles } from "../styles/AnnouncementViewStyles";
-import { Divider, Rating } from "react-native-elements";
+import { Divider } from "react-native-elements";
+import { Rating } from "react-native-ratings";
 import OpinionCard from "../components/OpinionCard";
 import Swiper from "react-native-swiper";
 import ImageViewing from "react-native-image-viewing";
@@ -485,7 +486,7 @@ const AnnouncementView = ({ route }) => {
                   ratingColor={globalStyles.accentColor}
                   tintColor={globalStyles.backgroundColor}
                   ratingBackgroundColor={globalStyles.secondaryColor}
-                  startingValue={advertiser.rating}
+                  startingValue={advertiser.rating ? advertiser.rating : 0}
                   readonly
                 />
               </View>
@@ -502,33 +503,27 @@ const AnnouncementView = ({ route }) => {
           <Divider style={styles.divider} />
           <View style={styles.opinions}>
             <Text style={styles.opinLabel}>{t("announcement.opinions")}:</Text>
-            <TouchableOpacity
-              style={styles.opinWriteOpinionButton}
-              activeOpacity={globalStyles.ACTIVE_OPACITY}
-              onPress={() => console.log("Write your opinion.")}
-            >
-              <Text style={styles.opinWriteOpinionButtonText}>
-                {t("announcement.writeOpinion")}
-              </Text>
-              <Icon name="plus-with-border" {...iconParams} />
-              {/* <Text style={styles.opinWriteOpinionButtonIcon}>▲</Text> */}
-            </TouchableOpacity>
             <View style={styles.opinList}>
               {announcement &&
-                announcement?.opinions?.map((opinion) => (
+                announcement?.opinions &&
+                Object.entries(announcement?.opinions).map(([key, value]) => (
+                  // announcement?.opinions?.map((opinion) => (
                   <OpinionCard
-                    key={"OpinionCard_" + opinion.id}
-                    id={opinion.id}
-                    authorId={opinion.authorId}
+                    key={`AnnouncementView_OpinionCard_${key}`}
+                    id={key}
+                    authorId={value?.authorId}
                     userId={user.id}
-                    rate={opinion.rate}
-                    publicationDate={opinion.date}
-                    text={opinion.text}
-                    moderationStatus={opinion.moderationStatus}
+                    rate={value?.rate}
+                    publicationDate={value?.date}
+                    text={value?.text}
+                    moderationStatus={value?.moderationStatus}
                   />
                 ))}
               {/* {opinionsToDisplay} */}
             </View>
+            {/* <OpinionCard 
+              id={announcement?.opinions?.}
+            /> */}
           </View>
         </ScrollView>
         {announcement.advertiserId != user.id && (

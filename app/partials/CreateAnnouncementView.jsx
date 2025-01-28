@@ -87,7 +87,6 @@ const CreateAnnouncementView = ({ route }) => {
           setValue("price", data.pricePerDay?.toString() || "0");
           setValue("condition", data.condition || "Unknown");
           setValue("size", data.size || "");
-
           setCategory(data.category || {});
         }
         setLoading(false);
@@ -186,9 +185,7 @@ const CreateAnnouncementView = ({ route }) => {
       console.error("Error removing image:", error);
     }
   };
-  
-  
-  
+
   const deleteImage = (img) => {
     const imageUrl = images.find((image) => image === img);
     // console.log("img -> " + img);
@@ -199,9 +196,6 @@ const CreateAnnouncementView = ({ route }) => {
       deleteImageFromStorage(announcementId, imageUrl); // Pass correct URL to delete function
     }
   };
-  
-  
-  
 
   const handleSave = async (data) => {
     setLoading(true);
@@ -303,25 +297,11 @@ const CreateAnnouncementView = ({ route }) => {
         size: data.size || "",
         condition: data.condition || "Unknown",
         images: [],
-        rentalData: {
-          borrowerId: "",
-          startDate: null,
-          endDate: null,
-          daysInRent: null,
-          amount: null,
-        },
-        reservationData: [
-          {
-            borrowerId: "",
-            startDate: null,
-            endDate: null,
-            daysInRent: null,
-            amount: null,
-          },
-        ],
-        opinions: [],
+        rentalData: null,
+        reservationData: null,
+        opinions: null,
       };
-      let announcementId = announcement.publicationDate;
+      let announcementId = "ANN_" + announcement.publicationDate;
 
       await createAnnouncementInDatabase(announcementId, announcement);
 
