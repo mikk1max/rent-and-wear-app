@@ -159,6 +159,24 @@ const GetsView = () => {
       rentOrReservation.status.statusName === activeStatus
   );
 
+  const returnProgressValue = (statusCode) => {
+    if (statusCode === 8) {
+      return 1;
+    } else {
+      return statusCode / 7;
+    }
+  };
+
+  const returnProgressColor = (statusCode) => {
+    if (statusCode === 8) {
+      return globalStyles.redColor;
+    } else if (statusCode === 7) {
+      return "green";
+    } else {
+      return globalStyles.accentColor;
+    }
+  };
+
   // console.log(currentRentsAndReservations);
   // console.log(statuses);
 
@@ -237,10 +255,14 @@ const GetsView = () => {
                       }`
                     )}`}</Text>
                     <Progress.Bar
-                      progress={rentOrReservation.status.statusCode / 8}
+                      progress={returnProgressValue(
+                        rentOrReservation.status.statusCode
+                      )}
                       height={20}
                       width={330}
-                      color={globalStyles.accentColor}
+                      color={returnProgressColor(
+                        rentOrReservation.status.statusCode
+                      )}
                       borderColor={globalStyles.primaryColor}
                       unfilledColor={globalStyles.textOnPrimaryColor}
                       // borderWidth={2}
