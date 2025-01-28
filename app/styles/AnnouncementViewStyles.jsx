@@ -378,4 +378,63 @@ export const styles = StyleSheet.create({
     fontSize: 18,
     color: globalStyles.textOnPrimaryColor,
   },
+
+
+  modalBackground: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // lekko przyciemnione tło,
+    alignItems: "center",
+    justifyContent: "flex-end",
+  },
+
+  modalCardMini: {
+    alignItems: "center",
+    paddingVertical: 40,
+    paddingHorizontal: 25,
+    borderRadius: globalStyles.BORDER_RADIUS,
+    alignItems: "center",
+    backgroundColor: globalStyles.backgroundColor,
+    justifyContent: "center",
+    gap: 15,
+  },
+
+  modalFormTitle: {
+    fontFamily: "WorkSans_900Black",
+    fontSize: 22,
+    color: globalStyles.primaryColor,
+  },
+
+  modalButtons: {
+    marginVertical: 15,
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+
+  modalDeleteButton: {
+    width: "50%",
+    borderTopLeftRadius: globalStyles.BORDER_RADIUS,
+    borderBottomLeftRadius: globalStyles.BORDER_RADIUS,
+    backgroundColor: globalStyles.redColor,
+    padding: 7,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  modalRejectButton: {
+    width: "50%",
+    borderTopRightRadius: globalStyles.BORDER_RADIUS,
+    borderBottomRightRadius: globalStyles.BORDER_RADIUS,
+    borderColor: globalStyles.redColor,
+    borderWidth: 3,
+    padding: 7,
+    backgroundColor: globalStyles.backgroundColor,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  modalButtonText: {
+    fontFamily: "Poppins_500Medium",
+    fontSize: 14,
+    color: globalStyles.textOnPrimaryColor,
+  },
 });

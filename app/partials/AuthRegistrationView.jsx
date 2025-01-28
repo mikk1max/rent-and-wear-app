@@ -145,6 +145,7 @@ export default function AuthRegistrationView() {
             <TouchableOpacity
               style={[styles.mainBtns, styles.registerBtn]}
               onPress={handleSubmit(handleRegister)}
+              activeOpacity={globalStyles.ACTIVE_OPACITY}
             >
               <Text style={styles.mainBtnText}>{t("signUp.signUpBtn")}</Text>
             </TouchableOpacity>

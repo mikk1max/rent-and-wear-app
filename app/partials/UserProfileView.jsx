@@ -23,6 +23,7 @@ import Icon from "../components/Icon";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "../components/LanguageSwitcher";
 import ErrorModal from "../components/ErrorModal";
+import { isEmpty } from "lodash";
 
 const FIVE_MINUTES_IN_MS = 5 * 60 * 1000;
 
@@ -200,11 +201,11 @@ const UserProfileView = () => {
                   ? handleVerifyEmail
                   : null
               }
-              activeOpacity={0.9}
+              activeOpacity={globalStyles.ACTIVE_OPACITY}
               disabled={user.isVerified || user.email === "guest@example.com"}
             >
               <View style={styles.verificationContent}>
-                {user.isVerified && (
+                {!isEmpty(user) && (
                   <Icon
                     name={user.isVerified ? "verification" : "not-verified"}
                     width={15}
@@ -266,7 +267,7 @@ const UserProfileView = () => {
               <TouchableOpacity
                 style={[styles.buttonBase]}
                 onPress={() => navigation.navigate("Chats")}
-                activeOpacity={0.9}
+                activeOpacity={globalStyles.ACTIVE_OPACITY}
               >
                 <Icon name="chat" {...iconParams} colorStroke="transparent" />
                 <Text style={styles.buttonText}>{t("userProfile.chats")}</Text>
@@ -278,7 +279,7 @@ const UserProfileView = () => {
                   { backgroundColor: globalStyles.textOnSecondaryColor },
                 ]}
                 onPress={() => navigation.navigate("AddressesView")}
-                activeOpacity={0.9}
+                activeOpacity={globalStyles.ACTIVE_OPACITY}
               >
                 <Icon name="addresses" {...iconParams} />
                 <Text style={styles.buttonText}>
@@ -289,7 +290,7 @@ const UserProfileView = () => {
               <TouchableOpacity
                 style={[styles.buttonBase]}
                 onPress={() => navigation.navigate("SettingsView")}
-                activeOpacity={0.9}
+                activeOpacity={globalStyles.ACTIVE_OPACITY}
               >
                 <Icon name="settings" {...iconParams} />
                 <Text style={styles.buttonText}>
@@ -303,7 +304,7 @@ const UserProfileView = () => {
                   { backgroundColor: globalStyles.textOnSecondaryColor },
                 ]}
                 onPress={toggleDropdown}
-                activeOpacity={0.9}
+                activeOpacity={globalStyles.ACTIVE_OPACITY}
               >
                 <Icon name="language" {...iconParams} />
                 <Text style={styles.buttonText}>
@@ -319,7 +320,7 @@ const UserProfileView = () => {
                 <TouchableOpacity
                   style={[styles.buttonBase, styles.buttonRent]}
                   onPress={() => navigation.navigate("SendsView")}
-                  activeOpacity={0.9}
+                  activeOpacity={globalStyles.ACTIVE_OPACITY}
                 >
                   <Icon
                     name="sends"
@@ -334,7 +335,7 @@ const UserProfileView = () => {
                 <TouchableOpacity
                   style={[styles.buttonBase, styles.buttonRent]}
                   onPress={() => navigation.navigate("GetsView")}
-                  activeOpacity={0.9}
+                  activeOpacity={globalStyles.ACTIVE_OPACITY}
                 >
                   <Icon
                     name="gets"
@@ -351,7 +352,7 @@ const UserProfileView = () => {
               <TouchableOpacity
                 style={[styles.buttonBase, styles.buttonLogOut]}
                 onPress={handleLogout}
-                activeOpacity={0.9}
+                activeOpacity={globalStyles.ACTIVE_OPACITY}
               >
                 <Icon name="logout" {...iconParams} />
                 <Text style={styles.buttonText}>{t("userProfile.logout")}</Text>
@@ -404,7 +405,7 @@ const UserProfileView = () => {
                   { backgroundColor: globalStyles.textOnSecondaryColor },
                 ]}
                 onPress={toggleDropdown}
-                activeOpacity={0.9}
+                activeOpacity={globalStyles.ACTIVE_OPACITY}
               >
                 <Icon name="language" {...iconParams} />
                 <Text style={styles.buttonText}>
@@ -430,7 +431,7 @@ const UserProfileView = () => {
                 <TouchableOpacity
                   style={[styles.buttonLOGIN]}
                   onPress={handleLogout}
-                  activeOpacity={0.9}
+                  activeOpacity={globalStyles.ACTIVE_OPACITY}
                 >
                   {/* <Icon name="logout" {...iconParams} /> */}
                   <Text style={styles.buttonText}>

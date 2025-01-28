@@ -16,6 +16,7 @@ export default function LanguageSwitcher({ toggleDropdown }) {
           toggleDropdown();
         }}
         disabled={i18n.language === "en" && true}
+        activeOpacity={globalStyles.ACTIVE_OPACITY}
       >
         <Text
           style={[
@@ -36,6 +37,7 @@ export default function LanguageSwitcher({ toggleDropdown }) {
           toggleDropdown();
         }}
         disabled={i18n.language === "pl" && true}
+        activeOpacity={globalStyles.ACTIVE_OPACITY}
       >
         <Text
           style={[

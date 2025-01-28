@@ -28,6 +28,28 @@ export const getUserById = async (userIds) => {
   }
 };
 
+export const findUserById = async (userId) => {
+  try {
+    if (!userId) {
+      console.error("User ID is required");
+      return null;
+    }
+
+    const userRef = ref(db, `users/${userId}`);
+    const snapshot = await get(userRef);
+
+    if (snapshot.exists()) {
+      return { id: userId, ...snapshot.val() };
+    } else {
+      console.log(`User with ID ${userId} not found`);
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    return null;
+  }
+};
+
 export const cutTitle = (title) => {
   return title?.length > 20 ? title.slice(0, 16) + "..." : title
 }

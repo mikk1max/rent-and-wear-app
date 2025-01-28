@@ -19,6 +19,7 @@ const NoFoundPage = () => {
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate("MainApp")}
+        activeOpacity={globalStyles.ACTIVE_OPACITY}
       >
         <Text style={styles.buttonText}>{t("notFound.goToHome")}</Text>
       </TouchableOpacity>

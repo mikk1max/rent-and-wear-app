@@ -74,6 +74,7 @@ const ProductCard = ({
             navigation.navigate("AnnouncementView", { id: id, title: title });
           }}
           style={styles.cardButton}
+          activeOpacity={globalStyles.ACTIVE_OPACITY}
         >
           <Text style={styles.textOnButtonName}>{cutTitle(title) || ""}</Text>
           <Text style={styles.textOnButtonPrice}>${pricePerDay} / {t('productCard.day')}</Text>
