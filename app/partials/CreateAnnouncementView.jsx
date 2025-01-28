@@ -56,7 +56,7 @@ const CreateAnnouncementView = ({ route }) => {
   const navigation = useNavigation();
   const { t } = useTranslation();
   const { user, setUser } = useUser();
-  const { id } = route.params || {}
+  const { id } = route.params || {};
   const isEditMode = !!id;
 
   // const [image, setImage] = useState<string | null >(null);
@@ -68,7 +68,7 @@ const CreateAnnouncementView = ({ route }) => {
   const [category, setCategory] = useState("");
   const [categoryError, setCategoryError] = useState();
   const [isCategoryListVisible, setCategoryListVisible] = useState(false);
-  const [announcement, setAnnouncement] = useState(null)
+  const [announcement, setAnnouncement] = useState(null);
 
   const scrollViewRef = useRef(null);
 
@@ -97,7 +97,6 @@ const CreateAnnouncementView = ({ route }) => {
           setValue("price", data.pricePerDay?.toString() || "0");
           setValue("condition", data.condition || "Unknown");
           setValue("size", data.size || "");
-          
         }
         setLoading(false);
       };
@@ -196,15 +195,12 @@ const CreateAnnouncementView = ({ route }) => {
       console.error("Nie udało się usunąć obrazu:", error);
     }
   };
-  
-  
+
   const deleteImage = (img) => {
     const imageUrl = images.find((image) => image === img); // Znajdź URL
     setImages(images.filter((item) => item !== img)); // Usuń lokalnie
     if (imageUrl) deleteImageFromStorage(imageUrl); // Usuń z Firebase
   };
-  
-  
 
   const handleSave = async (data) => {
     try {
@@ -216,22 +212,27 @@ const CreateAnnouncementView = ({ route }) => {
         advertiserId: user.id,
         publicationDate: isEditMode ? announcement.publicationDate : Date.now(),
       };
-  
-      const announcementRef = ref(db, `announcements/${isEditMode ? id : Date.now()}`);
-  
+
+      const announcementRef = ref(
+        db,
+        `announcements/${isEditMode ? id : Date.now()}`
+      );
+
       if (isEditMode) {
         await update(announcementRef, newAnnouncement);
       } else {
         await set(announcementRef, newAnnouncement);
       }
-  
+
       navigation.goBack();
     } catch (error) {
       console.error("Błąd podczas zapisu ogłoszenia:", error);
-      Alert.alert("Błąd", "Nie udało się zapisać ogłoszenia. Spróbuj ponownie.");
+      Alert.alert(
+        "Błąd",
+        "Nie udało się zapisać ogłoszenia. Spróbuj ponownie."
+      );
     }
   };
-  
 
   const uploadImagesToStorage = async (announcementId, images) => {
     const storage = getStorage();
@@ -281,25 +282,11 @@ const CreateAnnouncementView = ({ route }) => {
         size: data.size || "",
         condition: data.condition || "Unknown",
         images: [],
-        rentalData: {
-          borrowerId: "",
-          startDate: null,
-          endDate: null,
-          daysInRent: null,
-          amount: null,
-        },
-        reservationData: [
-          {
-            borrowerId: "",
-            startDate: null,
-            endDate: null,
-            daysInRent: null,
-            amount: null,
-          },
-        ],
-        opinions: [],
+        rentalData: null,
+        reservationData: null,
+        opinions: null,
       };
-      let announcementId = announcement.publicationDate;
+      let announcementId = "ANN_" + announcement.publicationDate;
 
       // 1. Создание записи в Realtime Database
       await createAnnouncementInDatabase(announcementId, announcement);
@@ -333,7 +320,7 @@ const CreateAnnouncementView = ({ route }) => {
   };
 
   if (loading) {
-    return <Loader/>
+    return <Loader />;
   }
 
   return (
@@ -482,7 +469,9 @@ const CreateAnnouncementView = ({ route }) => {
                           {...iconOptions}
                         />
                         <Text style={styles.categoryListItemText}>
-                          {t(`subcategoryNames.${subcategoryItem?.subcategoryIcon}`)}
+                          {t(
+                            `subcategoryNames.${subcategoryItem?.subcategoryIcon}`
+                          )}
                         </Text>
                       </TouchableOpacity>
                     ))}
@@ -641,7 +630,9 @@ const CreateAnnouncementView = ({ route }) => {
           <View style={styles.buttonsContainer}>
             <TouchableOpacity
               style={styles.createButton}
-              onPress={ isEditMode ? handleSubmit(handleSave) : handleSubmit(onSubmit)}
+              onPress={
+                isEditMode ? handleSubmit(handleSave) : handleSubmit(onSubmit)
+              }
             >
               <Text style={styles.createText}>
                 {t("createAnnouncement.createButton")}
@@ -688,7 +679,7 @@ const styles = StyleSheet.create({
     fontFamily: "WorkSans_900Black",
     fontSize: 18,
     color: globalStyles.textOnSecondaryColor,
-    marginTop: 10
+    marginTop: 10,
   },
 
   imagesList: {

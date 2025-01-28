@@ -219,8 +219,4 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: globalStyles.textOnSecondaryColor,
   },
-
-  displayNone: {
-    display: "none",
-  },
 });
