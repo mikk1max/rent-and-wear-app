@@ -42,30 +42,6 @@ export default function RentOutView() {
 
   // Pobieranie bieżącego użytkownika
   const { user, setUser } = useUser();
-  // useEffect(() => {
-  //   if (!user) return;
-
-  //   const usersRef = ref(db, "users");
-  //   const unsubscribe = onValue(usersRef, (snapshot) => {
-  //     const data = snapshot.val();
-  //     if (data) {
-  //       const currentUserEntry = Object.entries(data).find(
-  //         ([key, userData]) => userData.email === user.email
-  //       );
-
-  //       if (currentUserEntry) {
-  //         const [key, userData] = currentUserEntry;
-  //         setUser({ ...userData, id: key }); // Dodaj klucz jako "id"
-  //       } else {
-  //         setUser(null);
-  //       }
-  //     } else {
-  //       setUser(null);
-  //     }
-  //   });
-
-  //   return () => unsubscribe();
-  // }, [user]);
 
   const [announcementPreviews, setAnnouncementPreviews] = useState([[]]);
   useEffect(() => {
@@ -233,6 +209,7 @@ export default function RentOutView() {
               );
             }
           }}
+          activeOpacity={globalStyles.ACTIVE_OPACITY}
         >
           <Icon name="plus" height={50} width={50} />
         </TouchableOpacity>

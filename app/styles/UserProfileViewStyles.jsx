@@ -123,7 +123,7 @@ export const styles = StyleSheet.create({
   },
   buttonLOGIN: {
     flexDirection: "row",
-    backgroundColor: globalStyles.primaryColor,
+    backgroundColor: globalStyles.accentColor,
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 8,

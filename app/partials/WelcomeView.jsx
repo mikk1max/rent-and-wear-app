@@ -26,8 +26,6 @@ export default function WelcomeView({ navigation }) {
     console.log("Zainicjalizowano użytkownika:", user);
   };
 
-  // console.log(t("brand.name"));
-
   return (
     <View style={{ flex: 1 }}>
       <>{Platform.OS === "ios" && <StatusBar barStyle="dark-content" />}</>
@@ -63,6 +61,7 @@ export default function WelcomeView({ navigation }) {
                     console.error("Guest login failed:", error);
                   }
                 }}
+                activeOpacity={globalStyles.ACTIVE_OPACITY}
               >
                 <Text style={styles.guestBtnText}>{t("welcome.guestBtn")}</Text>
               </TouchableOpacity>
@@ -70,6 +69,7 @@ export default function WelcomeView({ navigation }) {
               <TouchableOpacity
                 style={styles.logBtn}
                 onPress={() => navigation.navigate("LogIn")}
+                activeOpacity={globalStyles.ACTIVE_OPACITY}
               >
                 <Text style={styles.logBtnText}>{t("welcome.loginBtn")}</Text>
               </TouchableOpacity>

@@ -9,6 +9,7 @@ import {
   StyleSheet,
   ActivityIndicator,
   Alert,
+  Modal,
 } from "react-native";
 import { useCustomFonts } from "../utils/fonts";
 import { useNavigation } from "@react-navigation/native";
@@ -34,7 +35,7 @@ import {
   set,
   remove,
 } from "firebase/database";
-import { db } from "../../firebase.config";
+import { db, storage } from "../../firebase.config";
 import { useUser } from "../components/UserProvider";
 
 import {
@@ -46,6 +47,7 @@ import {
 import Icon from "../components/Icon";
 import Loader from "../components/Loader";
 import { useTranslation } from "react-i18next";
+import { deleteObject, listAll, ref as storageRef } from "firebase/storage";
 
 const AnnouncementView = ({ route }) => {
   const navigation = useNavigation();
@@ -61,6 +63,9 @@ const AnnouncementView = ({ route }) => {
   const [advertiserAvatar, setAdvertiserAvatar] = useState();
   // const [visibleOpinions, setVisibleOpinions] = useState(2);
   // const [opinionsToDisplay, setOpinionsToDisplay] = useState([]);
+  const [isModalDeleteVisible, setModalDeleteVisible] = useState(false);
+  const [confirmationTitle, setConfirmationTitle] = useState("");
+
   const { t, i18n } = useTranslation();
   const { id } = route.params;
 
@@ -271,7 +276,45 @@ const AnnouncementView = ({ route }) => {
       });
   };
 
-  // console.log(announcement?.opinions);
+  const showDeleteModal = () => {
+    setConfirmationTitle(announcement.title);
+    setModalDeleteVisible(true);
+  };
+
+  const rejectAnnouncementDeletion = () => {
+    setModalDeleteVisible(false);
+  };
+
+  const confirmAnnouncementDeletion = async () => {
+    try {
+      if (announcement.id) {
+        const folderPath = `announcement-images/${announcement.id}`;
+
+        const folderRef = storageRef(storage, folderPath);
+
+        const folderContents = await listAll(folderRef);
+        const deletePromises = folderContents.items.map((fileRef) =>
+          deleteObject(fileRef)
+        );
+
+        await Promise.all(deletePromises);
+        console.log(`All files in folder ${folderPath} have been deleted.`);
+      }
+
+      const announcementRef = ref(db, `announcements/${announcement.id}`);
+      await remove(announcementRef);
+
+      setModalDeleteVisible(false);
+      navigation.goBack();
+    } catch (error) {
+      console.error("Error deleting announcement:", error);
+      Alert.alert(
+        "Error",
+        "Could not delete the announcement. Please try again."
+      );
+      setModalDeleteVisible(false);
+    }
+  };
 
   return (
     <SafeAreaView style={mainStyles.whiteBack}>
@@ -288,6 +331,7 @@ const AnnouncementView = ({ route }) => {
                     key={"SwiperImage_" + index}
                     style={styles.annSlide}
                     onPress={() => openImage(index)}
+                    activeOpacity={globalStyles.ACTIVE_OPACITY}
                   >
                     <Image
                       source={{ uri: image }}
@@ -328,6 +372,7 @@ const AnnouncementView = ({ route }) => {
                         id: announcement.id,
                       });
                     }}
+                    activeOpacity={globalStyles.ACTIVE_OPACITY}
                   >
                     <Icon
                       name="edit-pencil"
@@ -338,7 +383,8 @@ const AnnouncementView = ({ route }) => {
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.annOwnerDeleteButton}
-                    onPress={() => console.log("Delete announcement")}
+                    onPress={showDeleteModal}
+                    activeOpacity={globalStyles.ACTIVE_OPACITY}
                   >
                     <Icon
                       name="trash"
@@ -421,7 +467,7 @@ const AnnouncementView = ({ route }) => {
               />
               <View style={styles.advData}>
                 <TouchableOpacity
-                  activeOpacity={0.8}
+                  activeOpacity={globalStyles.ACTIVE_OPACITY}
                   onPress={() =>
                     console.log(
                       `Write to ${advertiser.name} ${advertiser.surname}`
@@ -484,9 +530,9 @@ const AnnouncementView = ({ route }) => {
           <View style={styles.annBookRentButtons}>
             <TouchableOpacity
               style={styles.annBookRentButton}
-              activeOpacity={0.8}
+              activeOpacity={globalStyles.ACTIVE_OPACITY}
               onPress={() => {
-                if (user?.isVerified) {
+                if (user?.email !== "guest@example.com") {
                   onChatPress(announcement);
                 } else {
                   Alert.alert(
@@ -502,7 +548,7 @@ const AnnouncementView = ({ route }) => {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.annBookRentButton}
-              activeOpacity={0.8}
+              activeOpacity={globalStyles.ACTIVE_OPACITY}
               onPress={() => {
                 if (user?.isVerified) {
                   navigation.navigate("RentItNowView", {
@@ -524,6 +570,46 @@ const AnnouncementView = ({ route }) => {
           </View>
         )}
       </View>
+
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={isModalDeleteVisible}
+        onRequestClose={rejectAnnouncementDeletion}
+      >
+        <View style={styles.modalBackground}>
+          <View style={styles.modalCardMini}>
+            <Text style={styles.modalFormTitle}>
+              {`${t("announcement.confirmDeleteTitle")}`}
+            </Text>
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={styles.modalDeleteButton}
+                activeOpacity={globalStyles.ACTIVE_OPACITY}
+                onPress={confirmAnnouncementDeletion}
+              >
+                <Text style={styles.modalButtonText}>{`${t(
+                  "universal.deleteBtn"
+                )}`}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.modalRejectButton}
+                activeOpacity={globalStyles.ACTIVE_OPACITY}
+                onPress={rejectAnnouncementDeletion}
+              >
+                <Text
+                  style={[
+                    styles.modalButtonText,
+                    { color: globalStyles.redColor },
+                  ]}
+                >
+                  {`${t("universal.cancelBtn")}`}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };

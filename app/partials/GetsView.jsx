@@ -39,32 +39,6 @@ const GetsView = () => {
   const fontsLoaded = useCustomFonts();
   if (!fontsLoaded) return null;
 
-  // Pobieranie bieżącego użytkownika
-  // useEffect(() => {
-  //   if (!user) return;
-
-  //   const usersRef = ref(db, "users");
-  //   const unsubscribe = onValue(usersRef, (snapshot) => {
-  //     const data = snapshot.val();
-  //     if (data) {
-  //       const currentUserEntry = Object.entries(data).find(
-  //         ([key, userData]) => userData.email === user.email
-  //       );
-
-  //       if (currentUserEntry) {
-  //         const [key, userData] = currentUserEntry;
-  //         setUser({ ...userData, id: key }); // Dodaj klucz jako "id"
-  //       } else {
-  //         setUser(null);
-  //       }
-  //     } else {
-  //       setUser(null);
-  //     }
-  //   });
-
-  //   return () => unsubscribe();
-  // }, [user]);
-
   // Pobieranie statusów
   useEffect(() => {
     const statusesRef = ref(db, `statuses`);
@@ -204,6 +178,7 @@ const GetsView = () => {
                       : status.statusName
                   )
                 }
+                activeOpacity={globalStyles.ACTIVE_OPACITY}
               >
                 <Text
                   style={
@@ -296,6 +271,7 @@ const GetsView = () => {
                     onPress={() =>
                       navigation.navigate("MainApp", { screen: "RentNow" })
                     }
+                    activeOpacity={globalStyles.ACTIVE_OPACITY}
                   >
                     <Icon
                       name="open-box"

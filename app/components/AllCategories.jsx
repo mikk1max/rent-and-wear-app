@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   SafeAreaView,
   StyleSheet,
@@ -23,8 +23,9 @@ import {
 } from "firebase/database";
 import { db } from "../../firebase.config";
 import { useTranslation } from "react-i18next";
+import { IconContext } from "./IconProvider";
 
-const AllCategories = ({ route, navigation }) => {
+const AllCategories = ({ navigation }) => {
   const fontsLoaded = useCustomFonts();
   const {t} = useTranslation()
 
@@ -75,17 +76,15 @@ const AllCategories = ({ route, navigation }) => {
     fillColor: globalStyles.primaryColor,
   };
 
-  const { changeIcon } = route.params;
-  const { recentIcons } = route.params;
-  const { changeActiveIcon } = route.params;
-
   if (!fontsLoaded) return null;
 
+  const { changeIcon, icons, setActiveIcon } = useContext(IconContext);
+
   const handleCategoryPress = (icon) => {
-    if (changeIcon && !recentIcons.some((item) => item === icon)) {
+    if (changeIcon && !icons.includes(icon)) {
       changeIcon(icon);
     }
-    changeActiveIcon(icon);
+    setActiveIcon(icon);
     navigation.goBack();
   };
 
@@ -118,6 +117,7 @@ const AllCategories = ({ route, navigation }) => {
                       onPress={() =>
                         handleCategoryPress(subcategoryItem.subcategoryIcon)
                       }
+                      activeOpacity={globalStyles.ACTIVE_OPACITY}
                     >
                       <Icon
                         name={subcategoryItem.subcategoryIcon}
