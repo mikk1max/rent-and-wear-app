@@ -200,7 +200,7 @@ const AllChatsView = () => {
             <Text style={styles.chatTitle}>
               Chat with {otherParticipantName}
             </Text>
-            <Text style={styles.chatPreview}>{firstMessage}</Text>
+            <Text style={styles.chatPreview} numberOfLines={1}>{firstMessage}</Text>
           </View>
         </TouchableOpacity>
         <View>
