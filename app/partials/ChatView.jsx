@@ -61,8 +61,10 @@ export default function ChatView() {
     // Fetch advertiser name
     const unsubscribeChat = onValue(chatRef, (snapshot) => {
       const data = snapshot.val();
+      console.log(data);
+      
       if (data) {
-        setAdvertiserName(data.advertiserName || "Unknown");
+        setAdvertiserName(data.advertiserName || t("chat.noUserName"));
       }
     });
 
@@ -108,7 +110,7 @@ export default function ChatView() {
           ? new Date(Number(data[key].timestamp))
           : null;
 
-        console.log("Timestamp:", data[key].timestamp);
+        // console.log("Timestamp:", data[key].timestamp);
 
         return {
           _id: key,

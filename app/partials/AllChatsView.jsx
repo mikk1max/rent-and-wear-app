@@ -29,10 +29,9 @@ const AllChatsView = () => {
   const [height, setHeight] = useState(0); // Height state for icon button
   const prevHeightRef = useRef(height); // Using useRef to keep track of previous height
 
-  // Fetch chats from Firebase
   const fetchChats = useCallback(() => {
     return new Promise((resolve) => {
-      if (!user?.id) return resolve(); // Resolve early if there's no user ID
+      if (!user?.id) return resolve();
 
       const chatsRef = ref(db, "chats");
       const unsubscribe = onValue(chatsRef, (snapshot) => {
@@ -55,6 +54,20 @@ const AllChatsView = () => {
           ) {
             filteredChats.push({ id: key, ...chat });
           }
+        });
+
+        filteredChats.sort((a, b) => {
+          const lastMessageA =
+            a.messages &&
+            Object.values(a.messages)[Object.values(a.messages).length - 1];
+          const lastMessageB =
+            b.messages &&
+            Object.values(b.messages)[Object.values(b.messages).length - 1];
+
+          if (lastMessageA && lastMessageB) {
+            return lastMessageB.timestamp - lastMessageA.timestamp;
+          }
+          return 0;
         });
 
         setChats(filteredChats);
@@ -125,6 +138,7 @@ const AllChatsView = () => {
             styles.filterButton,
             filter === filterOption && styles.activeFilterButton,
           ]}
+          activeOpacity={globalStyles.ACTIVE_OPACITY}
         >
           <Text
             style={
@@ -172,32 +186,37 @@ const AllChatsView = () => {
     const otherParticipantId =
       chat.userId === user.id ? chat.advertiserId : chat.userId;
     const otherParticipantName =
-      userData?.[otherParticipantId]?.name || "Unknown";
+      userData?.[otherParticipantId]?.name || t("chat.noUserName");
 
     return (
-      <TouchableOpacity
-        key={chat.id}
-        onPress={() => handleChatPress(chat.id)}
-        style={styles.chatCard}
-        activeOpacity={0.7}
-        onLayout={handleLayout}
-      >
-        <View style={{ flexShrink: 1 }}>
-          <Text style={styles.chatTitle}>Chat with {otherParticipantName}</Text>
-          <Text style={styles.chatPreview}>{firstMessage}</Text>
-        </View>
+      <View style={{flexDirection: "row"}} key={chat.id}>
+        <TouchableOpacity
+          onPress={() => handleChatPress(chat.id)}
+          style={styles.chatCard}
+          activeOpacity={globalStyles.ACTIVE_OPACITY}
+          onLayout={handleLayout}
+        >
+          <View style={{ flexShrink: 1 }}>
+            <Text style={styles.chatTitle}>
+              Chat with {otherParticipantName}
+            </Text>
+            <Text style={styles.chatPreview} numberOfLines={1}>{firstMessage}</Text>
+          </View>
+        </TouchableOpacity>
         <View>
           <TouchableOpacity
             style={{
               backgroundColor: globalStyles.primaryColor,
               padding: 10,
-              borderRadius: globalStyles.BORDER_RADIUS,
-              width: 50,
-              height: height - 30,
+              borderTopRightRadius: globalStyles.BORDER_RADIUS,
+              borderBottomRightRadius: globalStyles.BORDER_RADIUS,
+              width: 60,
+              height: height,
               justifyContent: "center",
               alignItems: "center",
             }}
             onPress={() => handleAnnouncementPress(chat)}
+            activeOpacity={globalStyles.ACTIVE_OPACITY}
           >
             <Icon
               name="market"
@@ -207,7 +226,7 @@ const AllChatsView = () => {
             />
           </TouchableOpacity>
         </View>
-      </TouchableOpacity>
+      </View>
     );
   };
 

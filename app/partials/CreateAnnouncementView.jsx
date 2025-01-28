@@ -11,18 +11,9 @@ import {
   ActivityIndicator,
   TextInput,
 } from "react-native";
-import { useCustomFonts } from "../utils/fonts";
 import { useNavigation } from "@react-navigation/native";
 
-// import fetchSVG, { fetchImgURL } from "../utils/fetchSVG";
-import { G, SvgUri } from "react-native-svg";
-
 import { globalStyles, styles as mainStyles } from "../utils/style";
-// import { iconParams, styles } from "../styles/AnnouncementViewStyles";
-import { Divider, Rating } from "react-native-elements";
-import OpinionCard from "../components/OpinionCard";
-import Swiper from "react-native-swiper";
-import ImageViewing from "react-native-image-viewing";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 import {
@@ -36,18 +27,16 @@ import {
 } from "firebase/database";
 import { db, storage } from "../../firebase.config";
 import { useUser } from "../components/UserProvider";
-import { getStorage, ref as storageRef, uploadBytes } from "firebase/storage";
-import { getDownloadURL } from "firebase/storage";
-
 import {
-  fetchSvgURL,
-  fetchImgURL,
-  getRandomAvatarUrl,
-} from "../utils/fetchSVG";
+  ref as storageRef,
+  uploadBytes,
+  getDownloadURL,
+  remove as sRemove,
+  deleteObject,
+} from "firebase/storage";
 
 import * as ImagePicker from "expo-image-picker";
 import { useForm, Controller } from "react-hook-form";
-import { SelectList } from "react-native-dropdown-select-list";
 import Icon from "../components/Icon";
 import { useTranslation } from "react-i18next";
 import Loader from "../components/Loader";
@@ -55,8 +44,8 @@ import Loader from "../components/Loader";
 const CreateAnnouncementView = ({ route }) => {
   const navigation = useNavigation();
   const { t } = useTranslation();
-  const { user, setUser } = useUser();
-  const { id } = route.params || {}
+  const { user } = useUser();
+  const { id } = route.params || {};
   const isEditMode = !!id;
 
   // const [image, setImage] = useState<string | null >(null);
@@ -64,11 +53,11 @@ const CreateAnnouncementView = ({ route }) => {
   const [image, setImage] = useState();
   const [images, setImages] = useState([]);
   const [squashedSubcategories, setSquashedSubcategories] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [category, setCategory] = useState("");
   const [categoryError, setCategoryError] = useState();
   const [isCategoryListVisible, setCategoryListVisible] = useState(false);
-  const [announcement, setAnnouncement] = useState(null)
+  const [announcement, setAnnouncement] = useState(null);
 
   const scrollViewRef = useRef(null);
 
@@ -84,6 +73,7 @@ const CreateAnnouncementView = ({ route }) => {
   useEffect(() => {
     if (isEditMode) {
       const fetchAnnouncement = async () => {
+        setLoading(true);
         const announcementRef = ref(db, `announcements/${id}`);
         const snapshot = await get(announcementRef);
         if (snapshot.exists()) {
@@ -97,7 +87,8 @@ const CreateAnnouncementView = ({ route }) => {
           setValue("price", data.pricePerDay?.toString() || "0");
           setValue("condition", data.condition || "Unknown");
           setValue("size", data.size || "");
-          
+
+          setCategory(data.category || {});
         }
         setLoading(false);
       };
@@ -108,38 +99,11 @@ const CreateAnnouncementView = ({ route }) => {
     }
   }, [id, isEditMode]);
 
-  // Pobieranie bieżącego użytkownika
-  // useEffect(() => {
-  //   if (!user) return;
-
-  //   const usersRef = ref(db, "users");
-  //   const unsubscribe = onValue(usersRef, (snapshot) => {
-  //     const data = snapshot.val();
-  //     if (!data) {
-  //       console.error("No users data found");
-  //       return;
-  //     }
-
-  //     const currentUserEntry = Object.entries(data).find(
-  //       ([key, userData]) => userData?.email === user?.email
-  //     );
-
-  //     if (currentUserEntry) {
-  //       const [key, userData] = currentUserEntry;
-  //       setUser({ ...userData, id: key });
-  //     } else {
-  //       console.warn("User not found in the database");
-  //       setUser(null);
-  //     }
-  //   });
-
-  //   return () => unsubscribe();
-  // }, [user]);
-
   // Pobieranie kategorii
   useEffect(() => {
     const fetchSubcategories = async () => {
       try {
+        setLoading(true);
         const categoriesRef = ref(db, "categories");
         const snapshot = await get(categoriesRef);
 
@@ -179,81 +143,139 @@ const CreateAnnouncementView = ({ route }) => {
       quality: 1,
     });
 
-    console.log(result);
+    // console.log(result);
 
     if (!result.canceled) {
       setImages([...images, result.assets[0].uri]);
     }
   };
 
-  const deleteImageFromStorage = async (imageUrl) => {
+  const deleteImageFromStorage = async (announcementId, imageUrl) => {
     try {
-      const fileName = imageUrl.split("/").pop();
-      const imageRef = storageRef(storage, `announcement-images/${fileName}`);
-      await remove(imageRef);
-      console.log("Obraz został usunięty:", fileName);
+      // console.log("Image URL:", imageUrl);
+  
+      if (!imageUrl) {
+        console.error("Invalid image URL:", imageUrl);
+        return;
+      }
+  
+      // Decode the URL to get the correct file path
+      const decodedUrl = decodeURIComponent(imageUrl); // Decode URL to get correct path
+      // console.log("Decoded URL:", decodedUrl);
+  
+      // Extract the file name after the last '/'
+      const pathSegments = decodedUrl.split('/');
+      const fileName = pathSegments[pathSegments.length - 1].split('?')[0]; // Remove query params
+      // console.log("Extracted file name:", fileName);
+  
+      if (!fileName) {
+        console.error("Unable to extract file name from URL:", decodedUrl);
+        return;
+      }
+  
+      // Correct path for deletion
+      const imageRef = storageRef(
+        storage,
+        `announcement-images/${announcementId}/${fileName}`  // Correct path without URL encoding
+      );
+      // console.log("Image reference:", imageRef);
+  
+      await deleteObject(imageRef);
+      // console.log("Image removed successfully:", fileName);
     } catch (error) {
-      console.error("Nie udało się usunąć obrazu:", error);
+      console.error("Error removing image:", error);
     }
   };
   
   
+  
   const deleteImage = (img) => {
-    const imageUrl = images.find((image) => image === img); // Znajdź URL
-    setImages(images.filter((item) => item !== img)); // Usuń lokalnie
-    if (imageUrl) deleteImageFromStorage(imageUrl); // Usuń z Firebase
+    const imageUrl = images.find((image) => image === img);
+    // console.log("img -> " + img);
+    
+    if (imageUrl) {
+      const announcementId = id; // Ensure this is the correct announcement ID
+      setImages(images.filter((item) => item !== img));
+      deleteImageFromStorage(announcementId, imageUrl); // Pass correct URL to delete function
+    }
   };
+  
   
   
 
   const handleSave = async (data) => {
+    setLoading(true);
+
     try {
+      // Upload images to Firebase Storage and get their URLs
+      const imageUrls = await uploadImagesToStorage(id, images);
+
       const newAnnouncement = {
         ...announcement,
         ...data,
-        images,
+        images: imageUrls, // Use the URLs from Firebase Storage here
+        category,
         pricePerDay: parseFloat(data.price),
         advertiserId: user.id,
         publicationDate: isEditMode ? announcement.publicationDate : Date.now(),
       };
-  
-      const announcementRef = ref(db, `announcements/${isEditMode ? id : Date.now()}`);
-  
+
+      const announcementRef = ref(
+        db,
+        `announcements/${isEditMode ? id : Date.now()}`
+      );
+
       if (isEditMode) {
         await update(announcementRef, newAnnouncement);
       } else {
         await set(announcementRef, newAnnouncement);
       }
-  
+
       navigation.goBack();
     } catch (error) {
       console.error("Błąd podczas zapisu ogłoszenia:", error);
-      Alert.alert("Błąd", "Nie udało się zapisać ogłoszenia. Spróbuj ponownie.");
+      Alert.alert(
+        "Błąd",
+        "Nie udało się zapisać ogłoszenia. Spróbuj ponownie."
+      );
+    } finally {
+      setLoading(false);
     }
   };
-  
 
   const uploadImagesToStorage = async (announcementId, images) => {
-    const storage = getStorage();
     const imageUrls = [];
-
+  
     for (let i = 0; i < images.length; i++) {
       const imageUri = images[i];
-      const fileName = `${announcementId}/${i}.jpg`; // Название файла с индексом
-      const imageRef = storageRef(storage, `announcement-images/${fileName}`);
-
-      // Загружаем изображение
-      const response = await fetch(imageUri);
-      const blob = await response.blob();
-      await uploadBytes(imageRef, blob);
-
-      // Получаем URL после загрузки
-      const imageUrl = await getDownloadURL(imageRef);
-      imageUrls.push(imageUrl);
+      const fileName = `${i}.jpg`; // Use a simple file name with the index, no prefix
+      const imageRef = storageRef(storage, `announcement-images/${announcementId}/${fileName}`);
+  
+      try {
+        const response = await fetch(imageUri); // Fetch image from the local URI
+        const blob = await response.blob(); // Convert to blob
+  
+        // Determine the MIME type based on the file (you can customize this logic for other types of images)
+        const mimeType = 'image/jpeg';  // You can change this to 'image/png' if the images are PNGs, for example
+  
+        const metadata = {
+          contentType: mimeType,  // Specify the MIME type for the image
+        };
+  
+        // Upload the image with the specified metadata
+        await uploadBytes(imageRef, blob, metadata); // Upload to Firebase Storage
+  
+        const imageUrl = await getDownloadURL(imageRef); // Get the download URL
+        imageUrls.push(imageUrl); // Store the URL
+      } catch (error) {
+        console.error("Error uploading image:", error);
+      }
     }
-
-    return imageUrls; // Возвращаем массив URL-ов изображений
+  
+    return imageUrls; // Return the array of image URLs
   };
+  
+  
 
   // Функция для добавления объявления в Realtime Database
   const createAnnouncementInDatabase = async (announcementId, announcement) => {
@@ -301,19 +323,13 @@ const CreateAnnouncementView = ({ route }) => {
       };
       let announcementId = announcement.publicationDate;
 
-      // 1. Создание записи в Realtime Database
       await createAnnouncementInDatabase(announcementId, announcement);
 
-      // 2. Загрузка изображений в Storage и получение их URL
       const imageUrls = await uploadImagesToStorage(announcementId, images);
-
-      // Обновляем объект объявления с URL-ами изображений
       announcement.images = imageUrls;
 
-      // 3. Обновляем запись в базе данных с добавленными изображениями
       await createAnnouncementInDatabase(announcementId, announcement);
-
-      console.log(announcement);
+      // console.log(announcement);
       navigation.goBack();
     }
   };
@@ -331,10 +347,6 @@ const CreateAnnouncementView = ({ route }) => {
     height: 22,
     fillColor: globalStyles.primaryColor,
   };
-
-  if (loading) {
-    return <Loader/>
-  }
 
   return (
     <SafeAreaView style={mainStyles.whiteBack}>
@@ -359,6 +371,7 @@ const CreateAnnouncementView = ({ route }) => {
                     key={"CreateAnnouncement_Image_" + img}
                     style={styles.deleteImageButton}
                     onPress={() => deleteImage(img)}
+                    activeOpacity={globalStyles.ACTIVE_OPACITY}
                   >
                     <Image source={{ uri: img }} style={styles.image} />
                   </TouchableOpacity>
@@ -367,6 +380,7 @@ const CreateAnnouncementView = ({ route }) => {
                 <TouchableOpacity
                   style={styles.addImageButton}
                   onPress={() => pickImage()}
+                  activeOpacity={globalStyles.ACTIVE_OPACITY}
                 >
                   <Icon name="plus" width={80} height={80} />
                 </TouchableOpacity>
@@ -475,14 +489,16 @@ const CreateAnnouncementView = ({ route }) => {
                             : styles.categoryListItemWithBorder
                         }
                         onPress={() => selectCategory(subcategoryItem)}
-                        activeOpacity={1}
+                        activeOpacity={globalStyles.ACTIVE_OPACITY}
                       >
                         <Icon
                           name={subcategoryItem?.subcategoryIcon}
                           {...iconOptions}
                         />
                         <Text style={styles.categoryListItemText}>
-                          {t(`subcategoryNames.${subcategoryItem?.subcategoryIcon}`)}
+                          {t(
+                            `subcategoryNames.${subcategoryItem?.subcategoryIcon}`
+                          )}
                         </Text>
                       </TouchableOpacity>
                     ))}
@@ -641,7 +657,10 @@ const CreateAnnouncementView = ({ route }) => {
           <View style={styles.buttonsContainer}>
             <TouchableOpacity
               style={styles.createButton}
-              onPress={ isEditMode ? handleSubmit(handleSave) : handleSubmit(onSubmit)}
+              onPress={
+                isEditMode ? handleSubmit(handleSave) : handleSubmit(onSubmit)
+              }
+              activeOpacity={globalStyles.ACTIVE_OPACITY}
             >
               <Text style={styles.createText}>
                 {t("createAnnouncement.createButton")}
@@ -650,6 +669,7 @@ const CreateAnnouncementView = ({ route }) => {
             <TouchableOpacity
               style={styles.cancelButton}
               onPress={() => navigation.goBack()}
+              activeOpacity={globalStyles.ACTIVE_OPACITY}
             >
               <Text style={styles.cancelText}>
                 {t("createAnnouncement.cancelButton")}
@@ -658,6 +678,11 @@ const CreateAnnouncementView = ({ route }) => {
           </View>
         </KeyboardAwareScrollView>
       </View>
+      {loading && (
+        <View style={styles.loaderOverlay}>
+          <Loader/>
+        </View>
+      )}
     </SafeAreaView>
   );
 };
@@ -688,7 +713,7 @@ const styles = StyleSheet.create({
     fontFamily: "WorkSans_900Black",
     fontSize: 18,
     color: globalStyles.textOnSecondaryColor,
-    marginTop: 10
+    marginTop: 10,
   },
 
   imagesList: {
@@ -889,5 +914,17 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins_500Medium",
     fontSize: 16,
     color: globalStyles.textOnRedColor,
+  },
+
+  loaderOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.7)", // Dark background with opacity
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 1,
   },
 });
