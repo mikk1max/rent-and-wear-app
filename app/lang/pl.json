@@ -219,7 +219,8 @@
       "allBtn": "Wszystkie",
       "rentNowBtn": "Wynajem",
       "rentOutBtn": "Najem",
-      "inputPlaceholder": "Napisz wiadomość..."
+      "inputPlaceholder": "Napisz wiadomość...",
+      "noUserName": "Usuniętym"
     },
     "settings": {
       "titleLabel": "Ustawienia",
@@ -310,7 +311,8 @@
       "opinions": "Opinie",
       "writeOpinion": "Napisz swoją opinię",
       "sendMessage": "NAPISZ",
-      "rentNow": "WYPOŻYCZ"
+      "rentNow": "WYPOŻYCZ",
+      "confirmDeleteTitle": "Czy na pewno chcesz usunąć to ogłoszenie?"
     },
     "searchBar": {
       "placeholder": "Szukaj tutaj"

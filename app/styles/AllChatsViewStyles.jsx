@@ -10,8 +10,9 @@ export const styles = StyleSheet.create({
     backgroundColor: globalStyles.secondaryColor, // Use a light background for visibility
     padding: 15,
     marginBottom: 10,
-    borderRadius: globalStyles.BORDER_RADIUS,
-    width: width - 50,
+    borderTopLeftRadius: globalStyles.BORDER_RADIUS,
+    borderBottomLeftRadius: globalStyles.BORDER_RADIUS,
+    width: width - 50 - 60,
     gap: 5
   },
   chatTitle: {

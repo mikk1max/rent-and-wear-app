@@ -31,7 +31,7 @@ const InputWithLabel = ({
         {isWithEditBtn && (
           <TouchableOpacity
             style={styles.buttonEdit}
-            activeOpacity={0.8}
+            activeOpacity={globalStyles.ACTIVE_OPACITY}
             onPress={onEdit}
           >
             <Text style={styles.buttonText}>{t("inputField.editButton")}</Text>

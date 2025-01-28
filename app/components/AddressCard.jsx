@@ -87,7 +87,7 @@ const AddressCard = ({
   const postalCodeCityCountry = postalCode + " " + city + ", " + country;
 
   return (
-    <View>
+    <>
       <View style={cardStyle}>
         <View style={styles.adresseWithButtons}>
           <Text style={styles.adresse}>{adresse}</Text>
@@ -95,14 +95,14 @@ const AddressCard = ({
             <TouchableOpacity
               onPress={() => selectAsDefaultAddress(id)}
               style={styles.button}
-              activeOpacity={0.8}
+              activeOpacity={globalStyles.ACTIVE_OPACITY}
             >
               <Icon name={star} width={20} height={20} fillColor={globalStyles.textOnPrimaryColor} />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => openAddressForm(id)}
               style={styles.button}
-              activeOpacity={0.8}
+              activeOpacity={globalStyles.ACTIVE_OPACITY}
             >
               <Icon
                 name="edit-pencil"
@@ -114,7 +114,7 @@ const AddressCard = ({
             <TouchableOpacity
               onPress={() => openDeleteConfirmation(id)}
               style={[styles.button, styles.buttonDelete]}
-              activeOpacity={0.8}
+              activeOpacity={globalStyles.ACTIVE_OPACITY}
             >
               <Icon name="trash" width={20} height={20} fillColor={globalStyles.textOnPrimaryColor} />
             </TouchableOpacity>
@@ -155,7 +155,7 @@ const AddressCard = ({
           <Text style={styles.text}>{postalCodeCityCountry}</Text>
         </View>
       </View>
-    </View>
+    </>
   );
 };
 

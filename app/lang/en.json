@@ -217,7 +217,8 @@
       "allBtn": "All",
       "rentNowBtn": "Rent Now",
       "rentOutBtn": "Rent Out",
-      "inputPlaceholder": "Type a message..."
+      "inputPlaceholder": "Type a message...",
+      "noUserName": "Removed"
     },
     "settings": {
       "titleLabel": "Settings",
@@ -308,7 +309,8 @@
       "opinions": "Opinions",
       "writeOpinion": "Write your opinion",
       "sendMessage": "SEND MESSAGE",
-      "rentNow": "RENT IT NOW"
+      "rentNow": "RENT IT NOW",
+      "confirmDeleteTitle": "Are you sure you want to delete this announcement?"
     },
     "searchBar": {
       "placeholder": "Search here"
