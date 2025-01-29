@@ -53,3 +53,7 @@ export const findUserById = async (userId) => {
 export const cutTitle = (title) => {
   return title?.length > 20 ? title.slice(0, 16) + "..." : title
 }
+
+export const cutAdvertiserNameInDetails = (fullName) => {
+  return fullName?.length > 16 ? fullName.slice(0, 15) + "..." : fullName
+}

@@ -107,7 +107,64 @@
       "noItemsMessage": "Brak wyników! Upewnij się, że ustawienia filtrów są poprawne.",
       "NoItems": "Nie znaleziono przedmiotów",
       "for": "za okres",
-      "day": "dni"
+      "day": " dni"
+    },
+    "getsDetails": {
+      "statusInfo": {
+        "pendingConfirmation": "Twoje wypożyczenie oczekuje na potwierdzenie ogłoszeniodawcy. Ty jeszcze możesz anulować wypożyczenie i dostać z powrotem swoje pieniądze.",
+        "reserved": "Twoje wypożyczenie jest zarezerwowane i oczekuje. Musisz zapłacić pozostałą kwotę ${{remainingAmount}} przed {{dueDate}}, a inaczej wypożyczenie zostanie anulowane. Ty jeszcze możesz anulować wypożyczenie, ale już nie dostaniesz pieniędzy z powrotem.",
+        "inProgress": "Twoje wypożyczenie jest w trakcie realizacji. Zostaniesz poinformowany, kiedy ogłoszeniodawca wyśle paczkę do Ciebie. Ty jeszcze możesz anulować wypożyczenie, ale już nie dostaniesz pieniędzy z powrotem.",
+        "shipped": "Paczka z twoim wypożyczeniem została wysłana do Ciebie. W szczegółach pojawiły się dane firmy kurierskiej oraz numer do śledzenia paczki. Po odbiorze paczki proszę zaznaczyć to właściwym przyciskiem.",
+        "inUse": "Twoje wypożyczenie jest w trakcie użytkowania. Po zakończeniu wypożyczenia proszę przykleić dołączoną etykietę na paczkę i wysłać za pomocą tej samej firmy kuriersiej. Wysyłka jest bezpłatna.",
+        "returned": "Wysłałeś wypożyczenie z powrotem. Po dostarczeniu go ogłoszeniodawcy i sprawdzeniu, wypożyczenie zostanie zakończone.",
+        "completed": "Wypożyczenie zostało zakończone. Możesz wystawić ocenę i napisać opinię.",
+        "canceled": "Wypożyczenie zostało anulowane."
+      },
+      "rentDetails": {
+        "rentNo": "ID wypożyczenia:",
+        "rentDate": "Data wypożyczenia:",
+        "status": "Aktualny status:",
+        "advertiserLabel": "Napisz do",
+        "statusInfoLabel": "Status",
+        "payForRentingLabel": "Zapłać za wypożyczenie",
+        "payForRenting": "ZAPŁAĆ ZA WYPOŻYCZENIE",
+        "cancelThisRent": "ANULUJ  WYPOŻYCZENIE",
+        "delivery": {
+          "confirmDelivery": "POTWIERDŹ DOSTAWĘ",
+          "confirmShipping": "POTWIERDŹ WYSYŁKĘ"
+        },
+        "opinion": {
+          "writeOpinion": "NAPISZ OPINIĘ",
+          "sendOpinion": "WYŚLIJ OPINIĘ",
+          "placeholder": "Napisz swoją opinię"
+        },
+        "rentDetailsLabel": "Szczegóły wypożyczenia",
+        "announcement": "Ogłoszenie",
+        "size": "Rozmiar",
+        "condition": "Stan",
+        "inRentFrom": "Wypożyczone od",
+        "inRentTo": "Wypożyczone do",
+        "pricePerDay": "Cena za dzień",
+        "daysInRent": "Dni wypożyczenia",
+        "amount": "Kwota",
+        "paymentMethod": "Metoda płatności",
+        "deliveryDetails": {
+          "deliverer": "Dostawca",
+          "pickupCode": "Kod odbioru",
+          "email": "E-mail",
+          "phoneNumber": "Numer telefonu"
+        },
+        "addressDetails": {
+          "addressee": "Odbiorca",
+          "address": "Adres",
+          "postalCode": "Kod pocztowy",
+          "city": "Miasto",
+          "country": "Kraj"
+        },
+        "barcode": {
+          "scanUponPickup": "Skanuj ten kod przy odbiorze"
+        }
+      }
     },
     "rentItNow": {
       "from": "Od",
@@ -312,7 +369,13 @@
       "writeOpinion": "Napisz swoją opinię",
       "sendMessage": "NAPISZ",
       "rentNow": "WYPOŻYCZ",
-      "confirmDeleteTitle": "Czy na pewno chcesz usunąć to ogłoszenie?"
+      "confirmDeleteTitle": "Czy na pewno chcesz usunąć to ogłoszenie?",
+      "deletion": {
+        "warning": "Ostrzeżenie",
+        "error": "Błąd",
+        "activeRent": "To ogłoszenie ma aktywny wynajem lub rezerwację. Usunięcie nie jest możliwe.",
+        "deleteError": "Nie udało się usunąć ogłoszenia. Spróbuj ponownie później."
+      }
     },
     "searchBar": {
       "placeholder": "Szukaj tutaj"
@@ -374,7 +437,8 @@
       "In use": "W użyciu",
       "Sent back": "Odesłane z powrotem",
       "Done": "Zakończone",
-      "Canceled": "Anulowane"
+      "Canceled": "Anulowane",
+      "Error": "Niedostępny"
     },
     "notFound": {
       "title": "Ups!",
