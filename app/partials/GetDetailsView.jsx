@@ -65,12 +65,13 @@ import {
 } from "react-native-credit-card-input";
 
 import { Barcode } from "expo-barcode-generator";
+import { cutAdvertiserNameInDetails } from "../utils/func";
 
 const { width } = Dimensions.get("window");
 
 const GetDetailsView = ({ route }) => {
   const navigation = useNavigation();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user, setUser } = useUser();
   const { id } = route.params;
 
@@ -110,23 +111,26 @@ const GetDetailsView = ({ route }) => {
   const type = user.rentalOrReservationData[id].type;
   const statusInfo = [
     "",
-    "Twoje wypożyczenie oczekuje na potwierdzenie ogłoszeniodawcy. Ty jeszcze możesz anulować wypożyczenie i dostać z powrotem swoje pieniądze.",
-    `Twoje wypożyczenie jest zarezerwowane i oczekuje. Musisz zapłacić pozostałą kwotę (${(
-      Math.round(currentRentOrReservation?.amount * 0.8 * 100) / 100
-    ).toFixed(2)} zł) przed ${getDateInXDays(
-      new Date(parseInt(currentRentOrReservation?.startDate)),
-      -2
-    ).toLocaleDateString(undefined, {
-      year: "numeric",
-      month: "numeric",
-      day: "numeric",
-    })}, a inaczej wypożyczenie zostanie anulowane. Ty jeszcze możesz anulować wypożyczenie, ale już nie dostaniesz pieniędzy z powrotem.`,
-    "Twoje wypożyczenie jest w trakcie realizacji. Zostaniesz poinformowany, kiedy ogloszeniodawca wyśle paczkę do Ciebie. Ty jeszcze możesz anulować wypożyczenie, ale już nie dostaniesz pieniędzy z powrotem.",
-    "Paczka z twoim wypożyczeniem została wysłana do Ciebie. W szczegółach pojawiły się dane firmy kurierskiej oraz numer do śledzenia paczki. Po odbiorze paczki proszę zaznaczyć to właściwym przyciskiem.",
-    "Twoje wypożyczenie jest w trakcie użytkowania. Po zakończeniu wypożyczenia proszę przykleić dołączoną etykietę na paczkę i wysłać za pomocą tej samej firmy kuriersiej. Wysyłka jest bezpłatna.",
-    "Wysłałeś wypożyczenie z powrotem. Po dostarczeniu go ogłoszeniodawcy i sprawdzeniu, wypożyczenie zostanie zakończone.",
-    "Wypożyczenie zostało zakończone. Możesz wystawić ocenę i napisać opinię.",
-    "Wypożyczenie zostało anulowane.",
+    t("getsDetails.statusInfo.pendingConfirmation"),
+    t("getsDetails.statusInfo.reserved", {
+      remainingAmount: (
+        Math.round(currentRentOrReservation?.amount * 0.8 * 100) / 100
+      ).toFixed(2),
+      dueDate: getDateInXDays(
+        new Date(parseInt(currentRentOrReservation?.startDate)),
+        -2
+      ).toLocaleDateString(i18n.language, {
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
+      }),
+    }),
+    t("getsDetails.statusInfo.inProgress"),
+    t("getsDetails.statusInfo.shipped"),
+    t("getsDetails.statusInfo.inUse"),
+    t("getsDetails.statusInfo.returned"),
+    t("getsDetails.statusInfo.completed"),
+    t("getsDetails.statusInfo.canceled"),
   ];
 
   // Pobieranie ogłoszenia z bazy
@@ -525,31 +529,51 @@ const GetDetailsView = ({ route }) => {
               source={{ uri: currentAnnouncement?.images[0] }}
             />
             <View style={styles.dateWithNumberContainer}>
-              <Text style={styles.dateOrNumberTextLabel}>Rent No.:</Text>
-              <Text style={styles.dateOrNumberTextValue}>
-                {currentRentOrReservation?.id}
-              </Text>
-              <Text style={styles.dateOrNumberTextLabel}>Rent date:</Text>
-              <Text style={styles.dateOrNumberTextValue}>
-                {new Date(
-                  parseInt(currentRentOrReservation?.id)
-                ).toLocaleDateString(undefined, {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-              </Text>
-              <Text style={styles.dateOrNumberTextLabel}>Status:</Text>
-              <Text style={styles.dateOrNumberTextValue}>
-                {currentRentOrReservation.status.statusName}
-              </Text>
+              <View>
+                <Text style={styles.dateOrNumberTextLabel}>
+                  {t("getsDetails.rentDetails.rentNo")}
+                </Text>
+                <Text style={styles.dateOrNumberTextValue}>
+                  {currentRentOrReservation?.id}
+                </Text>
+              </View>
+              <View>
+                <Text style={styles.dateOrNumberTextLabel}>
+                  {t("getsDetails.rentDetails.rentDate")}
+                </Text>
+                <Text style={styles.dateOrNumberTextValue}>
+                  {new Date(
+                    parseInt(
+                      currentRentOrReservation?.id.startsWith("ROR_")
+                        ? currentRentOrReservation?.id.substring(4)
+                        : currentRentOrReservation?.id
+                    )
+                  ).toLocaleDateString(i18n.language, {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                </Text>
+              </View>
+              <View>
+                <Text style={styles.dateOrNumberTextLabel}>
+                  {t("getsDetails.rentDetails.status")}
+                </Text>
+                <Text style={styles.dateOrNumberTextValue}>
+                  {t(`statusNames.${currentRentOrReservation.status.statusName}`)}
+                </Text>
+              </View>
             </View>
           </View>
 
           <View style={styles.advertiserInfo}>
-            <Text style={styles.advertiserLabel}>Advertiser:</Text>
+            <Text style={styles.advertiserLabel}>{`${t(
+              "getsDetails.rentDetails.advertiserLabel"
+            )}:`}</Text>
             <Text style={styles.advertiserValue}>
-              {currentAdvertiser.name} {currentAdvertiser.surname}
+              {cutAdvertiserNameInDetails(
+                `${currentAdvertiser.name} ${currentAdvertiser.surname}`
+              )}
             </Text>
             <TouchableOpacity
               style={styles.advertiserButton}
@@ -561,20 +585,24 @@ const GetDetailsView = ({ route }) => {
                 width={30}
                 height={30}
                 // colorStroke={globalStyles.textOnPrimaryColor}
-                fillColor={globalStyles.primaryColor}
+                fillColor={globalStyles.textOnPrimaryColor}
               />
             </TouchableOpacity>
           </View>
 
           <View style={styles.statusContainer}>
-            <Text style={styles.statusLabel}>Status:</Text>
+            <Text style={styles.statusLabel}>{`${t(
+              "getsDetails.rentDetails.statusInfoLabel"
+            )}:`}</Text>
             <Text style={styles.statusText}>
               {statusInfo[currentRentOrReservation.status.statusCode]}
             </Text>
 
             {currentRentOrReservation.status.statusCode === 2 && (
               <View style={styles.paymentContainer}>
-                <Text style={styles.paymentLabel}>Pay for renting:</Text>
+                <Text style={styles.paymentLabel}>
+                  {t("getsDetails.rentDetails.payForRentingLabel")}:
+                </Text>
                 <View style={styles.paymentMethodButtons}>
                   <TouchableOpacity
                     style={
@@ -771,7 +799,9 @@ const GetDetailsView = ({ route }) => {
                   activeOpacity={globalStyles.ACTIVE_OPACITY}
                   onPress={confirmReservation}
                 >
-                  <Text style={styles.payForRentingText}>PAY FOR RENTING</Text>
+                  <Text style={styles.payForRentingText}>
+                    {t("getsDetails.rentDetails.payForRenting")}
+                  </Text>
                 </TouchableOpacity>
               )}
 
@@ -783,7 +813,9 @@ const GetDetailsView = ({ route }) => {
                 activeOpacity={globalStyles.ACTIVE_OPACITY}
                 onPress={cancelThisRent}
               >
-                <Text style={styles.cancelText}>CANCEL THIS RENT</Text>
+                <Text style={styles.cancelText}>
+                  {t("getsDetails.rentDetails.cancelThisRent")}
+                </Text>
               </TouchableOpacity>
             )}
 
@@ -793,7 +825,9 @@ const GetDetailsView = ({ route }) => {
                 activeOpacity={globalStyles.ACTIVE_OPACITY}
                 onPress={confirmDelivery}
               >
-                <Text style={styles.confirmDeliveryText}>CONFIRM DELIVERY</Text>
+                <Text style={styles.confirmDeliveryText}>
+                  {t("getsDetails.rentDetails.delivery.confirmDelivery")}
+                </Text>
               </TouchableOpacity>
             )}
 
@@ -803,7 +837,9 @@ const GetDetailsView = ({ route }) => {
                 activeOpacity={globalStyles.ACTIVE_OPACITY}
                 onPress={confirmShipping}
               >
-                <Text style={styles.confirmShippingText}>CONFIRM SHIPPING</Text>
+                <Text style={styles.confirmShippingText}>
+                  {t("getsDetails.rentDetails.delivery.confirmShipping")}
+                </Text>
               </TouchableOpacity>
             )}
 
@@ -816,7 +852,9 @@ const GetDetailsView = ({ route }) => {
                     onPress={() => setOpinionFormVisible(!isOpinionFormVisible)}
                   >
                     <View style={styles.writeOpinionLine}>
-                      <Text style={styles.writeOpinionText}>WRITE OPINION</Text>
+                      <Text style={styles.writeOpinionText}>
+                        {t("getsDetails.rentDetails.opinion.writeOpinion")}
+                      </Text>
                       <Icon
                         name={isOpinionFormVisible ? "arrow-up" : "arrow-down"}
                         width={22}
@@ -840,7 +878,9 @@ const GetDetailsView = ({ route }) => {
                       <TextInput
                         style={styles.opinionInput}
                         onChangeText={setValueOpinion}
-                        placeholder="Write your opinion"
+                        placeholder={t(
+                          "getsDetails.rentDetails.opinion.placeholder"
+                        )}
                         placeholderTextColor={"gray"}
                         value={valueOpinion}
                         maxLength={1000}
@@ -857,7 +897,7 @@ const GetDetailsView = ({ route }) => {
                           onPress={sendOpinion}
                         >
                           <Text style={styles.sendOpinionText}>
-                            Send opinion
+                            {t("getsDetails.rentDetails.opinion.sendOpinion")}
                           </Text>
                         </TouchableOpacity>
                       )}
@@ -868,32 +908,42 @@ const GetDetailsView = ({ route }) => {
           </View>
 
           <View style={styles.detailsConstainer}>
-            <Text style={styles.detailsLabel}>Rent details:</Text>
+            <Text style={styles.detailsLabel}>
+              {t("getsDetails.rentDetails.rentDetailsLabel")}:
+            </Text>
             <View style={styles.detailsValue}>
               <View style={styles.detailsTextContainer}>
-                <Text style={styles.detailsTextLabel}>Announcement:</Text>
+                <Text style={styles.detailsTextLabel}>
+                  {t("getsDetails.rentDetails.announcement")}:
+                </Text>
                 <Text style={styles.detailsTextValue}>
                   {currentAnnouncement.title}
                 </Text>
               </View>
               <View style={styles.detailsTextContainer}>
-                <Text style={styles.detailsTextLabel}>Size:</Text>
+                <Text style={styles.detailsTextLabel}>
+                  {t("getsDetails.rentDetails.size")}:
+                </Text>
                 <Text style={styles.detailsTextValue}>
                   {currentAnnouncement.size}
                 </Text>
               </View>
               <View style={styles.detailsTextContainer}>
-                <Text style={styles.detailsTextLabel}>Condition:</Text>
+                <Text style={styles.detailsTextLabel}>
+                  {t("getsDetails.rentDetails.condition")}:
+                </Text>
                 <Text style={styles.detailsTextValue}>
                   {currentAnnouncement.condition}
                 </Text>
               </View>
               <View style={styles.detailsTextContainer}>
-                <Text style={styles.detailsTextLabel}>In rent from:</Text>
+                <Text style={styles.detailsTextLabel}>
+                  {t("getsDetails.rentDetails.inRentFrom")}:
+                </Text>
                 <Text style={styles.detailsTextValue}>
                   {new Date(
                     parseInt(currentRentOrReservation.startDate)
-                  ).toLocaleDateString(undefined, {
+                  ).toLocaleDateString(i18n.language, {
                     year: "numeric",
                     month: "long",
                     day: "numeric",
@@ -901,11 +951,13 @@ const GetDetailsView = ({ route }) => {
                 </Text>
               </View>
               <View style={styles.detailsTextContainer}>
-                <Text style={styles.detailsTextLabel}>In rent to:</Text>
+                <Text style={styles.detailsTextLabel}>
+                  {t("getsDetails.rentDetails.inRentTo")}:
+                </Text>
                 <Text style={styles.detailsTextValue}>
                   {new Date(
                     parseInt(currentRentOrReservation.endDate)
-                  ).toLocaleDateString(undefined, {
+                  ).toLocaleDateString(i18n.language, {
                     year: "numeric",
                     month: "long",
                     day: "numeric",
@@ -916,25 +968,43 @@ const GetDetailsView = ({ route }) => {
               <Divider style={styles.divider} />
 
               <View style={styles.detailsTextContainer}>
-                <Text style={styles.detailsTextLabel}>Price per day:</Text>
+                <Text style={styles.detailsTextLabel}>
+                  {t("getsDetails.rentDetails.pricePerDay")}:
+                </Text>
                 <Text
                   style={styles.detailsTextValue}
-                >{`${currentAnnouncement.pricePerDay.toFixed(2)} zł`}</Text>
+                >{`$${currentAnnouncement.pricePerDay.toFixed(2)}`}</Text>
               </View>
               <View style={styles.detailsTextContainer}>
-                <Text style={styles.detailsTextLabel}>Days in rent:</Text>
+                <Text style={styles.detailsTextLabel}>
+                  {t("getsDetails.rentDetails.daysInRent")}:
+                </Text>
                 <Text style={styles.detailsTextValue}>
-                  {`${currentRentOrReservation.daysInRent} days`}
+                  {`${currentRentOrReservation.daysInRent} ${
+                    i18n.language === "en"
+                      ? currentRentOrReservation.daysInRent === 1
+                        ? "day"
+                        : "days"
+                      : i18n.language === "pl"
+                      ? currentRentOrReservation.daysInRent === 1
+                        ? "dzień"
+                        : "dni"
+                      : "days"
+                  }`}
                 </Text>
               </View>
               <View style={styles.detailsTextContainer}>
-                <Text style={styles.detailsTextLabel}>Amount:</Text>
+                <Text style={styles.detailsTextLabel}>
+                  {t("getsDetails.rentDetails.amount")}:
+                </Text>
                 <Text
                   style={styles.detailsTextValue}
-                >{`${currentRentOrReservation.amount.toFixed(2)} zł`}</Text>
+                >{`$${currentRentOrReservation.amount.toFixed(2)}`}</Text>
               </View>
               <View style={styles.detailsTextContainer}>
-                <Text style={styles.detailsTextLabel}>Payment method:</Text>
+                <Text style={styles.detailsTextLabel}>
+                  {t("getsDetails.rentDetails.paymentMethod")}:
+                </Text>
                 <Text style={styles.detailsTextValue}>
                   {currentRentOrReservation.paymentMethod}
                 </Text>
@@ -948,32 +1018,31 @@ const GetDetailsView = ({ route }) => {
                   <Divider style={styles.divider} />
 
                   <View style={styles.detailsTextContainer}>
-                    <Text style={styles.detailsTextLabel}>Deliverer</Text>
+                    <Text style={styles.detailsTextLabel}>{t("getsDetails.rentDetails.deliveryDetails.deliverer")}:</Text>
                     <Text style={styles.detailsTextValue}>OutPost sp. p.</Text>
                   </View>
                   <View style={styles.detailsTextContainer}>
-                    <Text style={styles.detailsTextLabel}>Tracking code:</Text>
+                    <Text style={styles.detailsTextLabel}>{t("getsDetails.rentDetails.deliveryDetails.pickupCode")}:</Text>
                     <TouchableOpacity
                       activeOpacity={globalStyles.ACTIVE_OPACITY}
                       onPress={toggleModalBarcode}
                     >
                       <Text style={styles.detailsTextValueTrackingCode}>
-                        1714602812
+                        {`0${currentRentOrReservation?.destinationAddress?.phoneNumber}`}
                       </Text>
                     </TouchableOpacity>
                   </View>
                   <View style={styles.detailsTextContainer}>
-                    <Text style={styles.detailsTextLabel}>E-mail:</Text>
+                    <Text style={styles.detailsTextLabel}>{t("getsDetails.rentDetails.deliveryDetails.email")}:</Text>
                     <Text style={styles.detailsTextValue}>
                       {currentRentOrReservation?.destinationAddress?.email}
                     </Text>
                   </View>
                   <View style={styles.detailsTextContainer}>
-                    <Text style={styles.detailsTextLabel}>Phone number:</Text>
+                    <Text style={styles.detailsTextLabel}>{t("getsDetails.rentDetails.deliveryDetails.phoneNumber")}:</Text>
                     <Text style={styles.detailsTextValue}>
                       {
-                        currentRentOrReservation?.destinationAddress
-                          ?.phoneNumber
+                        currentRentOrReservation?.destinationAddress?.phoneNumber
                       }
                     </Text>
                   </View>
@@ -983,29 +1052,29 @@ const GetDetailsView = ({ route }) => {
               <Divider style={styles.divider} />
 
               <View style={styles.detailsTextContainer}>
-                <Text style={styles.detailsTextLabel}>Addressee:</Text>
+                <Text style={styles.detailsTextLabel}>{t("getsDetails.rentDetails.addressDetails.addressee")}:</Text>
                 <Text style={styles.detailsTextValue}>
                   {currentRentOrReservation?.destinationAddress?.adresse}
                 </Text>
               </View>
               <View style={styles.detailsTextContainer}>
-                <Text style={styles.detailsTextLabel}>Address:</Text>
+                <Text style={styles.detailsTextLabel}>{t("getsDetails.rentDetails.addressDetails.address")}:</Text>
                 <Text style={styles.detailsTextValue}>{deliveryAddress}</Text>
               </View>
               <View style={styles.detailsTextContainer}>
-                <Text style={styles.detailsTextLabel}>Postal code:</Text>
+                <Text style={styles.detailsTextLabel}>{t("getsDetails.rentDetails.addressDetails.postalCode")}:</Text>
                 <Text style={styles.detailsTextValue}>
                   {currentRentOrReservation.destinationAddress.postalCode}
                 </Text>
               </View>
               <View style={styles.detailsTextContainer}>
-                <Text style={styles.detailsTextLabel}>City:</Text>
+                <Text style={styles.detailsTextLabel}>{t("getsDetails.rentDetails.addressDetails.city")}:</Text>
                 <Text style={styles.detailsTextValue}>
                   {currentRentOrReservation.destinationAddress.city}
                 </Text>
               </View>
               <View style={styles.detailsTextContainer}>
-                <Text style={styles.detailsTextLabel}>Country:</Text>
+                <Text style={styles.detailsTextLabel}>{t("getsDetails.rentDetails.addressDetails.country")}:</Text>
                 <Text style={styles.detailsTextValue}>
                   {currentRentOrReservation.destinationAddress.country}
                 </Text>
@@ -1026,10 +1095,10 @@ const GetDetailsView = ({ route }) => {
               <View style={styles.barcodeBackground}>
                 <View style={styles.barcodeContainer}>
                   <Text style={styles.barcodeLabel}>
-                    Scan this code upon pickup
+                  {t('getsDetails.rentDetails.barcode.scanUponPickup')}
                   </Text>
                   <Barcode
-                    value="1714602812"
+                    value={`0${currentRentOrReservation?.destinationAddress?.phoneNumber}`}
                     options={{
                       format: "MSI",
                       // background: globalStyles.secondaryColor,
@@ -1060,26 +1129,27 @@ const styles = StyleSheet.create({
   },
 
   image: {
-    width: "50%",
+    width: "45%",
     height: "auto",
     borderRadius: globalStyles.BORDER_RADIUS,
   },
 
   dateWithNumberContainer: {
     flexDirection: "column",
-    width: "50%",
+    width: "55%",
     padding: 10,
+    gap: 10,
   },
 
   dateOrNumberTextLabel: {
     fontFamily: "Poppins_500Medium",
-    fontSize: 14,
+    fontSize: 16,
     color: globalStyles.textOnPrimaryColor,
   },
 
   dateOrNumberTextValue: {
     paddingLeft: 5,
-    fontFamily: "Poppins_500Medium",
+    fontFamily: "WorkSans_900Black",
     fontSize: 14,
     color: globalStyles.backgroundColor,
   },
@@ -1087,19 +1157,21 @@ const styles = StyleSheet.create({
   advertiserInfo: {
     zIndex: -1,
     flexDirection: "row",
-    width: "100%",
+    width: width - 50,
+    flexWrap: "wrap",
     gap: 10,
     padding: 10,
     marginTop: -20,
     paddingTop: 25,
     alignItems: "center",
+    justifyContent: "center",
     borderBottomLeftRadius: globalStyles.BORDER_RADIUS,
     borderBottomRightRadius: globalStyles.BORDER_RADIUS,
     backgroundColor: globalStyles.textOnSecondaryColor,
   },
 
   advertiserLabel: {
-    fontFamily: "WorkSans_900Black",
+    fontFamily: "Poppins_500Medium",
     fontSize: 18,
     color: globalStyles.textOnPrimaryColor,
   },
@@ -1113,7 +1185,7 @@ const styles = StyleSheet.create({
   advertiserButton: {
     borderRadius: globalStyles.BORDER_RADIUS,
     padding: 3,
-    backgroundColor: globalStyles.textOnPrimaryColor,
+    backgroundColor: globalStyles.accentColor,
   },
 
   statusContainer: {
@@ -1156,6 +1228,7 @@ const styles = StyleSheet.create({
     fontFamily: "WorkSans_900Black",
     fontSize: 18,
     color: globalStyles.textOnSecondaryColor,
+    marginBottom: 15,
   },
 
   detailsValue: {
@@ -1174,7 +1247,7 @@ const styles = StyleSheet.create({
   // },
 
   divider: {
-    marginVertical: 3,
+    marginVertical: 10,
     borderWidth: 0.5,
     borderColor: globalStyles.primaryColor,
     borderRadius: globalStyles.BORDER_RADIUS,
