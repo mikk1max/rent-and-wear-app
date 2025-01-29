@@ -283,36 +283,67 @@ const AnnouncementView = ({ route }) => {
 
   const rejectAnnouncementDeletion = () => {
     setModalDeleteVisible(false);
+    const statuses = Object.values(announcement.rentalData).map(
+      (rental) => rental.status
+    );
+    console.log(statuses[0].statusCode);
+    console.log(statuses);
+  };
+
+  const checkAnnouncementForActiveRent = (announcement) => {
+    const statusRental = Object.values(announcement.rentalData || {}).map(
+      (rental) => rental.status
+    );
+    const statusReserve = Object.values(announcement.reservationData || {}).map(
+      (reserve) => reserve.status
+    );
+
+    const isRentalActive = statusRental.some(
+      (status) => status?.statusCode !== 7 && status?.statusCode !== 8
+    );
+    const isReserveActive = statusReserve.some(
+      (status) => status?.statusCode !== 7 && status?.statusCode !== 8
+    );
+
+    return announcement.id && (isRentalActive || isReserveActive);
   };
 
   const confirmAnnouncementDeletion = async () => {
-    try {
-      if (announcement.id) {
-        const folderPath = `announcement-images/${announcement.id}`;
-
-        const folderRef = storageRef(storage, folderPath);
-
-        const folderContents = await listAll(folderRef);
-        const deletePromises = folderContents.items.map((fileRef) =>
-          deleteObject(fileRef)
-        );
-
-        await Promise.all(deletePromises);
-        console.log(`All files in folder ${folderPath} have been deleted.`);
-      }
-
-      const announcementRef = ref(db, `announcements/${announcement.id}`);
-      await remove(announcementRef);
-
+    if (checkAnnouncementForActiveRent(announcement)) {
       setModalDeleteVisible(false);
-      navigation.goBack();
-    } catch (error) {
-      console.error("Error deleting announcement:", error);
       Alert.alert(
-        "Error",
-        "Could not delete the announcement. Please try again."
+        t("announcement.deletion.warning"),
+        t("announcement.deletion.activeRent")
       );
-      setModalDeleteVisible(false);
+    } else {
+      try {
+        if (announcement.id) {
+          const folderPath = `announcement-images/${announcement.id}`;
+
+          const folderRef = storageRef(storage, folderPath);
+
+          const folderContents = await listAll(folderRef);
+          const deletePromises = folderContents.items.map((fileRef) =>
+            deleteObject(fileRef)
+          );
+
+          await Promise.all(deletePromises);
+          // console.log(`All files in folder ${folderPath} have been deleted.`);
+        }
+
+        const announcementRef = ref(db, `announcements/${announcement.id}`);
+        await remove(announcementRef);
+
+        setModalDeleteVisible(false);
+        navigation.goBack();
+      } catch (error) {
+        console.error("Error deleting announcement:", error);
+        Alert.alert(
+          t("announcement.deletion.error"),
+          t("announcement.deletion.deleteError")
+        );
+        setModalDeleteVisible(false);
+      }
     }
   };
 

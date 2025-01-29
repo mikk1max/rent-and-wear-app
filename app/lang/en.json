@@ -107,6 +107,63 @@
       "for": "for a",
       "day": "-day period"
     },
+    "getsDetails": {
+      "statusInfo": {
+        "pendingConfirmation": "Your rental is waiting for the advertiser's confirmation. You can still cancel the rental and get your money back.",
+        "reserved": "Your rental is reserved and pending. You must pay the remaining amount ${{remainingAmount}} by {{dueDate}}, or the rental will be canceled. You can still cancel the rental but will not get your money back.",
+        "inProgress": "Your rental is in progress. You will be notified when the advertiser ships the package to you. You can still cancel the rental but will not get your money back.",
+        "shipped": "The package with your rental has been shipped to you. Shipping details and tracking number are available. After receiving the package, please mark it with the appropriate button.",
+        "inUse": "Your rental is in use. After finishing the rental, please attach the included label to the package and send it using the same courier. Shipping is free.",
+        "returned": "You have returned the rental. After it is delivered to the advertiser and checked, the rental will be completed.",
+        "completed": "The rental has been completed. You can leave a rating and a review.",
+        "canceled": "The rental has been canceled."
+      },
+      "rentDetails": {
+        "rentNo": "Rental ID:",
+        "rentDate": "Rental Date:",
+        "status": "Current Status:",
+        "advertiserLabel": "Contact with",
+        "statusInfoLabel": "Status",
+        "payForRentingLabel": "Pay for renting",
+        "payForRenting": "PAY FOR RENTING",
+        "cancelThisRent": "CANCEL THIS RENT",
+        "delivery": {
+          "confirmDelivery": "CONFIRM DELIVERY",
+          "confirmShipping": "CONFIRM SHIPPING"
+        },
+        "opinion": {
+          "writeOpinion": "WRITE OPINION",
+          "sendOpinion": "SEND OPINION",
+          "placeholder": "Write your opinion"
+        },
+        "rentDetailsLabel": "Rent details",
+        "announcement": "Announcement",
+        "size": "Size",
+        "condition": "Condition",
+        "inRentFrom": "In rent from",
+        "inRentTo": "In rent to",
+        "pricePerDay": "Price per day",
+        "daysInRent": "Days in rent",
+        "amount": "Amount",
+        "paymentMethod": "Payment method",
+        "deliveryDetails": {
+          "deliverer": "Deliverer",
+          "pickupCode": "Pickup code",
+          "email": "E-mail",
+          "phoneNumber": "Phone number"
+        },
+        "addressDetails": {
+          "addressee": "Addressee",
+          "address": "Address",
+          "postalCode": "Postal code",
+          "city": "City",
+          "country": "Country"
+        },
+        "barcode": {
+          "scanUponPickup": "Scan this code upon pickup"
+        }
+      }
+    },
     "rentItNow": {
       "from": "From",
       "to": "To",
@@ -310,7 +367,13 @@
       "writeOpinion": "Write your opinion",
       "sendMessage": "SEND MESSAGE",
       "rentNow": "RENT IT NOW",
-      "confirmDeleteTitle": "Are you sure you want to delete this announcement?"
+      "confirmDeleteTitle": "Are you sure you want to delete this announcement?",
+      "deletion": {
+        "warning": "Warning",
+        "error": "Error",
+        "activeRent": "This announcement has an active rent or reservation. Deletion is not possible.",
+        "deleteError": "Could not delete the announcement. Please try again later."
+      }
     },
     "searchBar": {
       "placeholder": "Search here"
@@ -372,7 +435,8 @@
       "In use": "In use",
       "Sent back": "Sent back",
       "Done": "Done",
-      "Canceled": "Canceled"
+      "Canceled": "Canceled",
+      "Error": "Unavailable"
     },
     "notFound": {
       "title": "Oops!",
