@@ -220,13 +220,13 @@ const GetsView = () => {
                     <Divider style={styles.rentOrReservationDivider} />
                     <Text style={styles.rentOrReservationText}>{`$${
                       rentOrReservation.amount
-                    } ${t("sendsGets.for")} ${rentOrReservation.daysInRent} ${t(
+                    } ${t("sendsGets.for")} ${rentOrReservation.daysInRent}${t(
                       "sendsGets.day"
                     )}`}</Text>
                     <Divider style={styles.rentOrReservationDivider} />
                     <Text style={styles.rentOrReservationText}>{`Status: ${t(
                       `statusNames.${
-                        rentOrReservation?.status?.statusName || "undefined"
+                        rentOrReservation?.status?.statusName || t("statusNames.Error")
                       }`
                     )}`}</Text>
                     <Progress.Bar
@@ -234,7 +234,7 @@ const GetsView = () => {
                         rentOrReservation.status.statusCode
                       )}
                       height={20}
-                      width={330}
+                      width={width - 50 - 10}
                       color={returnProgressColor(
                         rentOrReservation.status.statusCode
                       )}
@@ -242,6 +242,7 @@ const GetsView = () => {
                       unfilledColor={globalStyles.textOnPrimaryColor}
                       // borderWidth={2}
                       borderRadius={globalStyles.BORDER_RADIUS}
+                      style={{ alignSelf: "center" }}
                     />
                   </View>
                   <TouchableOpacity
@@ -348,13 +349,8 @@ const styles = StyleSheet.create({
   },
 
   rentsAndReservationsContainer: {
-    flexDirection: "column",
-    width: "100%",
-    height: "auto",
-    justifyContent: "center",
-    // marginTop: 20,
+    width: width - 50,
     gap: 20,
-    marginBottom: 50,
   },
 
   rentOrReservationComponent: {

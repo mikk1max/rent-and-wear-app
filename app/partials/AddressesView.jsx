@@ -27,14 +27,20 @@ const AddressesView = () => {
   if (!fontsLoaded) return null;
 
   const { user, setUser } = useUser();
-  
+
   const [addresses, setAddresses] = useState([]);
 
   useEffect(() => {
-    if (user?.addresses) {
-      setAddresses(user.addresses);
-    }
-  }, [user]);
+    const addressesRef = ref(db, `users/${user.id}/addresses`);
+    const unsubscribe = onValue(addressesRef, (snapshot) => {
+      const data = snapshot.val();
+      setAddresses(
+        data ? Object.entries(data).map(([id, addr]) => ({ id, ...addr })) : []
+      );
+    });
+
+    return () => unsubscribe();
+  }, [user.id]);
 
   const getAddressById = (addresses, addressId) => {
     return addresses.find((address) => address.id === addressId);
@@ -86,7 +92,7 @@ const AddressesView = () => {
         console.error("Error unsetting default address:", error);
       }
     } else {
-      findAndUnsetDefaultAddress();
+      await findAndUnsetDefaultAddress();
       try {
         // Zmieniamy isDefault na true dla wskazanego addressId
         await update(ref(db, `users/${user.id}/addresses/${addressId}`), {
@@ -134,8 +140,10 @@ const AddressesView = () => {
 
   const openAddressForm = (addressId) => {
     if (addressId != null) {
-      setCurrentAddress(getAddressById(addresses, addressId));
-      setCurrentAddressId(addressId);
+      const address = getAddressById(addresses, addressId);
+      setCurrentAddress(address ? { ...address } : emptyAddress);
+      setCurrentAddressId(addressId || null);
+
       setFormTitle(
         `${t("addresses.editAddressFor")} ` +
           getAddressById(addresses, addressId).adresse
@@ -151,7 +159,7 @@ const AddressesView = () => {
 
   // Ustawienie początkowych wartości dla wielu pól
   useEffect(() => {
-    if (currentAddress) {
+    if (currentAddress !== null) {
       setValue("adresse", currentAddress.adresse || "");
       setValue("phoneNumber", currentAddress.phoneNumber || "");
       setValue("email", currentAddress.email || "");
@@ -196,6 +204,8 @@ const AddressesView = () => {
 
   const onCancel = () => {
     reset();
+    setCurrentAddress(null);
+    setCurrentAddressId(null);
     toggleModal();
   };
 
