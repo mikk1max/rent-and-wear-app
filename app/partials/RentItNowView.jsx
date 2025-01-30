@@ -66,6 +66,7 @@ import { color } from "react-native-elements/dist/helpers";
 
 import * as Progress from "react-native-progress";
 import { useTranslation } from "react-i18next";
+import i18n from "../utils/i18n";
 
 // Get the screen dimensions
 const { width } = Dimensions.get("window");
@@ -567,7 +568,7 @@ const RentItNowView = ({ route }) => {
               {`${t("rentItNow.from")}: `}
               <Text style={{ color: globalStyles.textOnSecondaryColor }}>
                 {selectedStartDate
-                  ? selectedStartDate.toLocaleDateString(undefined, {
+                  ? selectedStartDate.toLocaleDateString(i18n.language, {
                       year: "numeric",
                       month: "long",
                       day: "numeric",
@@ -579,7 +580,7 @@ const RentItNowView = ({ route }) => {
               {`${t("rentItNow.to")}: `}
               <Text style={{ color: globalStyles.textOnSecondaryColor }}>
                 {selectedEndDate
-                  ? selectedEndDate.toLocaleDateString(undefined, {
+                  ? selectedEndDate.toLocaleDateString(i18n.language, {
                       year: "numeric",
                       month: "long",
                       day: "numeric",
