@@ -66,11 +66,10 @@ export default function SettingsView() {
     loadUrl();
   }, [user.id]);
 
-  // Funkcja do zapisu zmodyfikowanego użytkownika do bazy danych
   const saveUser = (currentUser, fieldName) => {
-    const userRef = ref(db, `users/${currentUser.id}`); // Ustaw ścieżkę do konkretnego użytkownika za pomocą jego ID
+    const userRef = ref(db, `users/${currentUser.id}`);
     update(userRef, {
-      [fieldName]: currentUser[fieldName], // Aktualizuj pole
+      [fieldName]: currentUser[fieldName],
     })
       .then(() => {
         console.log(`User ${fieldName} updated successfully!`);
@@ -96,7 +95,6 @@ export default function SettingsView() {
 
   const handleEditPicture = async () => {
     try {
-      // Prośba o uprawnienia
       const permissionResult =
         await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (permissionResult.status !== "granted") {
@@ -104,7 +102,6 @@ export default function SettingsView() {
         return;
       }
 
-      // Wybierz obraz
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
@@ -116,9 +113,8 @@ export default function SettingsView() {
         const uploadedUrl = await uploadImage(result.assets[0].uri, user.id);
 
         if (uploadedUrl) {
-          // Zapisz URL do bazy danych
           saveUser({ ...user, profileImg: uploadedUrl }, "profileImg");
-          setUserProfileImg(uploadedUrl); // Zaktualizuj lokalny stan
+          setUserProfileImg(uploadedUrl);
         }
       }
     } catch (error) {
@@ -128,7 +124,6 @@ export default function SettingsView() {
     }
   };
 
-  // Name form
   const {
     control: controlName,
     handleSubmit: handleSubmitName,
@@ -171,7 +166,6 @@ export default function SettingsView() {
     setNameButtonsStyle(styles.buttonsHidden);
   };
 
-  // Surname form
   const {
     control: controlSurname,
     handleSubmit: handleSubmitSurname,
@@ -248,14 +242,12 @@ export default function SettingsView() {
 
   const onSubmitPassword = async (data) => {
     try {
-      // Reauthenticate the user (Firebase requires reauthentication to change sensitive data like passwords)
       const credential = EmailAuthProvider.credential(
         user.email,
         data.currentPassword
       );
       await reauthenticateWithCredential(auth.currentUser, credential);
 
-      // Change the password
       await updatePassword(auth.currentUser, data.newPassword);
 
       console.log("Password updated successfully!");
@@ -293,7 +285,6 @@ export default function SettingsView() {
             nestedScrollEnabled={true}
             style={mainStyles.scrollBase}
           >
-            {/* Profile image */}
             <View style={styles.imageContainer}>
               <Image
                 source={{
@@ -314,7 +305,6 @@ export default function SettingsView() {
             <Divider style={styles.divider} />
 
             <View style={{ gap: 20 }}>
-              {/* Name form */}
               <View style={{ gap: 25 }}>
                 <InputWithLabel
                   control={controlName}
@@ -363,7 +353,6 @@ export default function SettingsView() {
                 </View>
               </View>
 
-              {/* Surname form */}
               <View style={{ gap: 25 }}>
                 <InputWithLabel
                   control={controlSurname}
@@ -413,7 +402,6 @@ export default function SettingsView() {
               </View>
 
               <View style={{ gap: 25 }}>
-                {/* Pole do wpisania obecnego hasła */}
                 <InputWithLabel
                   control={controlPassword}
                   name={"currentPassword"}
@@ -434,7 +422,6 @@ export default function SettingsView() {
                   secureTextEntry={true}
                 />
 
-                {/* Pole do wpisania nowego hasła */}
                 <InputWithLabel
                   control={controlPassword}
                   name={"newPassword"}
@@ -455,7 +442,6 @@ export default function SettingsView() {
                   secureTextEntry={true}
                 />
 
-                {/* Przyciski zapisz i anuluj */}
                 <View style={[passwordButtonsStyle, { marginBottom: 20 }]}>
                   <TouchableOpacity
                     style={styles.buttonSave}

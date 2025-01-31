@@ -1,20 +1,11 @@
 import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  Dimensions,
-} from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { View, Text, StyleSheet, Image, Dimensions } from "react-native";
 import { globalStyles } from "../utils/style";
 import { useTranslation } from "react-i18next";
 
-const { width, height } = Dimensions.get("window");
+const { height } = Dimensions.get("window");
 
 const NoConversation = () => {
-  const navigation = useNavigation();
   const { t } = useTranslation();
 
   return (
@@ -31,9 +22,7 @@ const NoConversation = () => {
 
 const styles = StyleSheet.create({
   container: {
-    // width: width,
     height: height - 180,
-    // height: "100%",
     backgroundColor: globalStyles.backgroundColor,
     alignItems: "center",
     justifyContent: "center",
@@ -56,17 +45,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 30,
     lineHeight: 22,
-  },
-  button: {
-    backgroundColor: globalStyles.primaryColor,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-  },
-  buttonText: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#fff",
   },
 });
 

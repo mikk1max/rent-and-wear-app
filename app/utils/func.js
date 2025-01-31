@@ -3,7 +3,6 @@ import { db } from "../../firebase.config";
 
 export const getUserById = async (userIds) => {
   try {
-    // Ensure userIds is an array
     if (!Array.isArray(userIds)) {
       userIds = [userIds];
     }
@@ -15,12 +14,10 @@ export const getUserById = async (userIds) => {
       if (snapshot.exists()) {
         return { [id]: snapshot.val() };
       } else {
-        // console.log(`No user found with ID: ${id}`);
         return { [id]: null };
       }
     });
 
-    // Combine results into a single object
     const usersArray = await Promise.all(userPromises);
     return Object.assign({}, ...usersArray);
   } catch (error) {

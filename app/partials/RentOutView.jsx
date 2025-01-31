@@ -31,7 +31,6 @@ import Icon from "../components/Icon";
 import NoAnnouncementsYet from "../components/NoAnnouncementsYet";
 import { useTranslation } from "react-i18next";
 
-// Get the screen dimensions
 const { width } = Dimensions.get("window");
 
 export default function RentOutView() {
@@ -40,8 +39,7 @@ export default function RentOutView() {
   const fontsLoaded = useCustomFonts();
   if (!fontsLoaded) return null;
 
-  // Pobieranie bieżącego użytkownika
-  const { user, setUser } = useUser();
+  const { user } = useUser();
 
   const [announcementPreviews, setAnnouncementPreviews] = useState([[]]);
   useEffect(() => {
@@ -119,7 +117,6 @@ export default function RentOutView() {
   const onRefresh = async () => {
     setRefreshing(true);
     try {
-      // Refresh data
       setReloadKey((prevKey) => prevKey + 1);
     } catch (error) {
       console.error("Error refreshing data:", error);

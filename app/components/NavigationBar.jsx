@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React from "react";
 import { Text, View, StyleSheet, Platform, SafeAreaView } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import RentNowView from "../partials/RentNowView";
@@ -15,13 +15,19 @@ const renderIcon = (route, focused, t) => {
   const textAndIconStyle = {
     fontFamily: "WorkSans_900Black",
     fontSize: 18,
-    color: focused ? globalStyles.textOnPrimaryColor : globalStyles.primaryColor,
+    color: focused
+      ? globalStyles.textOnPrimaryColor
+      : globalStyles.primaryColor,
   };
 
   let iconColor = globalStyles.primaryColor;
   if (route.name === "UserProfile") {
-    iconColor = focused ? globalStyles.textOnPrimaryColor : globalStyles.primaryColor;
-    return <Icon name={"user-fill"} width={32} height={32} fillColor={iconColor} />;
+    iconColor = focused
+      ? globalStyles.textOnPrimaryColor
+      : globalStyles.primaryColor;
+    return (
+      <Icon name={"user-fill"} width={32} height={32} fillColor={iconColor} />
+    );
   }
 
   switch (route.name) {
@@ -88,8 +94,6 @@ const NavigationBar = (route) => {
 const styles = StyleSheet.create({
   navbarContainer: {
     flex: 1,
-    // backgroundColor: "red",
-    // marginBottom: Platform.OS == "android" ? 20 : 30,
   },
   tabBarStyle: {
     width: "86%",
