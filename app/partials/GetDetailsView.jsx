@@ -212,7 +212,7 @@ const GetDetailsView = ({ route }) => {
       }
       if (currentRentOrReservation.destinationAddress.floorNumber) {
         address +=
-          " (floor " +
+          ` (${t("getsDetails.rentDetails.addressDetails.floor")} ` +
           currentRentOrReservation.destinationAddress.floorNumber +
           ")";
       }
@@ -425,6 +425,7 @@ const GetDetailsView = ({ route }) => {
     const opinionId = "OPI_" + Date.now();
     const opinion = {
       authorId: user.id,
+      rentingId: currentRentOrReservation.id,
       rate: ratingValue,
       date: Date.now(),
       text: valueOpinion,
@@ -438,6 +439,12 @@ const GetDetailsView = ({ route }) => {
       `announcements/${currentAnnouncement.id}/opinions/${opinionId}`
     );
     set(opinionRef, opinion);
+
+    const rentalRef = ref(
+      db,
+      `announcements/${currentAnnouncement.id}/rentalData/${currentRentOrReservation.id}`
+    );
+    update(rentalRef, { opinionId: opinionId });
 
     let numberOfRatings = 0;
     let sumOfRatings = 0;
@@ -560,7 +567,9 @@ const GetDetailsView = ({ route }) => {
                   {t("getsDetails.rentDetails.status")}
                 </Text>
                 <Text style={styles.dateOrNumberTextValue}>
-                  {t(`statusNames.${currentRentOrReservation.status.statusName}`)}
+                  {t(
+                    `statusNames.${currentRentOrReservation.status.statusName}`
+                  )}
                 </Text>
               </View>
             </View>
@@ -1018,31 +1027,45 @@ const GetDetailsView = ({ route }) => {
                   <Divider style={styles.divider} />
 
                   <View style={styles.detailsTextContainer}>
-                    <Text style={styles.detailsTextLabel}>{t("getsDetails.rentDetails.deliveryDetails.deliverer")}:</Text>
+                    <Text style={styles.detailsTextLabel}>
+                      {t("getsDetails.rentDetails.deliveryDetails.deliverer")}:
+                    </Text>
                     <Text style={styles.detailsTextValue}>OutPost sp. p.</Text>
                   </View>
                   <View style={styles.detailsTextContainer}>
-                    <Text style={styles.detailsTextLabel}>{t("getsDetails.rentDetails.deliveryDetails.pickupCode")}:</Text>
+                    <Text style={styles.detailsTextLabel}>
+                      {t("getsDetails.rentDetails.deliveryDetails.pickupCode")}:
+                    </Text>
                     <TouchableOpacity
                       activeOpacity={globalStyles.ACTIVE_OPACITY}
                       onPress={toggleModalBarcode}
                     >
                       <Text style={styles.detailsTextValueTrackingCode}>
-                        {`0${currentRentOrReservation?.destinationAddress?.phoneNumber}`}
+                        {currentRentOrReservation.trackingNumber
+                          ? currentRentOrReservation.trackingNumber
+                          : t(
+                              "sendsDetails.rentDetails.barcode.didntGenerateCode"
+                            )}
                       </Text>
                     </TouchableOpacity>
                   </View>
                   <View style={styles.detailsTextContainer}>
-                    <Text style={styles.detailsTextLabel}>{t("getsDetails.rentDetails.deliveryDetails.email")}:</Text>
+                    <Text style={styles.detailsTextLabel}>
+                      {t("getsDetails.rentDetails.deliveryDetails.email")}:
+                    </Text>
                     <Text style={styles.detailsTextValue}>
                       {currentRentOrReservation?.destinationAddress?.email}
                     </Text>
                   </View>
                   <View style={styles.detailsTextContainer}>
-                    <Text style={styles.detailsTextLabel}>{t("getsDetails.rentDetails.deliveryDetails.phoneNumber")}:</Text>
+                    <Text style={styles.detailsTextLabel}>
+                      {t("getsDetails.rentDetails.deliveryDetails.phoneNumber")}
+                      :
+                    </Text>
                     <Text style={styles.detailsTextValue}>
                       {
-                        currentRentOrReservation?.destinationAddress?.phoneNumber
+                        currentRentOrReservation?.destinationAddress
+                          ?.phoneNumber
                       }
                     </Text>
                   </View>
@@ -1052,29 +1075,39 @@ const GetDetailsView = ({ route }) => {
               <Divider style={styles.divider} />
 
               <View style={styles.detailsTextContainer}>
-                <Text style={styles.detailsTextLabel}>{t("getsDetails.rentDetails.addressDetails.addressee")}:</Text>
+                <Text style={styles.detailsTextLabel}>
+                  {t("getsDetails.rentDetails.addressDetails.addressee")}:
+                </Text>
                 <Text style={styles.detailsTextValue}>
                   {currentRentOrReservation?.destinationAddress?.adresse}
                 </Text>
               </View>
               <View style={styles.detailsTextContainer}>
-                <Text style={styles.detailsTextLabel}>{t("getsDetails.rentDetails.addressDetails.address")}:</Text>
+                <Text style={styles.detailsTextLabel}>
+                  {t("getsDetails.rentDetails.addressDetails.address")}:
+                </Text>
                 <Text style={styles.detailsTextValue}>{deliveryAddress}</Text>
               </View>
               <View style={styles.detailsTextContainer}>
-                <Text style={styles.detailsTextLabel}>{t("getsDetails.rentDetails.addressDetails.postalCode")}:</Text>
+                <Text style={styles.detailsTextLabel}>
+                  {t("getsDetails.rentDetails.addressDetails.postalCode")}:
+                </Text>
                 <Text style={styles.detailsTextValue}>
                   {currentRentOrReservation.destinationAddress.postalCode}
                 </Text>
               </View>
               <View style={styles.detailsTextContainer}>
-                <Text style={styles.detailsTextLabel}>{t("getsDetails.rentDetails.addressDetails.city")}:</Text>
+                <Text style={styles.detailsTextLabel}>
+                  {t("getsDetails.rentDetails.addressDetails.city")}:
+                </Text>
                 <Text style={styles.detailsTextValue}>
                   {currentRentOrReservation.destinationAddress.city}
                 </Text>
               </View>
               <View style={styles.detailsTextContainer}>
-                <Text style={styles.detailsTextLabel}>{t("getsDetails.rentDetails.addressDetails.country")}:</Text>
+                <Text style={styles.detailsTextLabel}>
+                  {t("getsDetails.rentDetails.addressDetails.country")}:
+                </Text>
                 <Text style={styles.detailsTextValue}>
                   {currentRentOrReservation.destinationAddress.country}
                 </Text>
@@ -1095,10 +1128,14 @@ const GetDetailsView = ({ route }) => {
               <View style={styles.barcodeBackground}>
                 <View style={styles.barcodeContainer}>
                   <Text style={styles.barcodeLabel}>
-                  {t('getsDetails.rentDetails.barcode.scanUponPickup')}
+                    {t("getsDetails.rentDetails.barcode.scanUponPickup")}
                   </Text>
                   <Barcode
-                    value={`0${currentRentOrReservation?.destinationAddress?.phoneNumber}`}
+                    value={
+                      currentRentOrReservation.trackingNumber
+                        ? `${currentRentOrReservation.trackingNumber}`
+                        : "0000000000"
+                    }
                     options={{
                       format: "MSI",
                       // background: globalStyles.secondaryColor,

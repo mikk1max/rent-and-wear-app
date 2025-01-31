@@ -177,6 +177,24 @@ const SendsView = () => {
       rentOrReservation.status.statusName === activeStatus
   );
 
+  const returnProgressValue = (statusCode) => {
+    if (statusCode === 8) {
+      return 1;
+    } else {
+      return statusCode / 7;
+    }
+  };
+
+  const returnProgressColor = (statusCode) => {
+    if (statusCode === 8) {
+      return globalStyles.redColor;
+    } else if (statusCode === 7) {
+      return "green";
+    } else {
+      return globalStyles.accentColor;
+    }
+  };
+
   // console.log(currentRentsAndReservations);
   // console.log(statuses);
 
@@ -199,7 +217,9 @@ const SendsView = () => {
                 ]}
                 onPress={() =>
                   setActiveStatus((prevStatus) =>
-                    prevStatus == status.statusName ? statuses[0].statusName : status.statusName
+                    prevStatus == status.statusName
+                      ? statuses[0].statusName
+                      : status.statusName
                   )
                 }
               >
@@ -241,22 +261,31 @@ const SendsView = () => {
                       {rentOrReservation.announcementTitle}
                     </Text>
                     <Divider style={styles.rentOrReservationDivider} />
-                    <Text
-                      style={styles.rentOrReservationText}
-                    >{`$${rentOrReservation.amount} ${t("sendsGets.for")} ${rentOrReservation.daysInRent} ${t("sendsGets.day")}`}</Text>
+                    <Text style={styles.rentOrReservationText}>{`$${
+                      rentOrReservation.amount
+                    } ${t("sendsGets.for")} ${rentOrReservation.daysInRent} ${t(
+                      "sendsGets.day"
+                    )}`}</Text>
                     <Divider style={styles.rentOrReservationDivider} />
-                    <Text
-                      style={styles.rentOrReservationText}
-                    >{`Status: ${t(`statusNames.${rentOrReservation?.status?.statusName || 'undefined'}`)}`}</Text>
+                    <Text style={styles.rentOrReservationText}>{`Status: ${t(
+                      `statusNames.${
+                        rentOrReservation?.status?.statusName || "undefined"
+                      }`
+                    )}`}</Text>
                     <Progress.Bar
-                      progress={rentOrReservation.status.statusCode / 8}
+                      progress={returnProgressValue(
+                        rentOrReservation.status.statusCode
+                      )}
                       height={20}
                       width={330}
-                      color={globalStyles.accentColor}
+                      color={returnProgressColor(
+                        rentOrReservation.status.statusCode
+                      )}
                       borderColor={globalStyles.primaryColor}
                       unfilledColor={globalStyles.textOnPrimaryColor}
                       // borderWidth={2}
                       borderRadius={globalStyles.BORDER_RADIUS}
+                      style={{ alignSelf: "center" }}
                     />
                   </View>
                   <TouchableOpacity
@@ -293,7 +322,9 @@ const SendsView = () => {
                       height={150}
                       fillColor={globalStyles.primaryColor}
                     />
-                    <Text style={styles.noItemsBtn}>{t("sendsGets.NoItems")}</Text>
+                    <Text style={styles.noItemsBtn}>
+                      {t("sendsGets.NoItems")}
+                    </Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -365,13 +396,8 @@ const styles = StyleSheet.create({
   },
 
   rentsAndReservationsContainer: {
-    flexDirection: "column",
-    width: "100%",
-    height: "auto",
-    justifyContent: "center",
-    // marginTop: 20,
+    width: width - 50,
     gap: 20,
-    marginBottom: 50,
   },
 
   rentOrReservationComponent: {
@@ -422,7 +448,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     gap: 100,
     // height: height/2
-    width: width - 50
+    width: width - 50,
   },
 
   noItemsMessage: {
@@ -452,6 +478,6 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     fontFamily: "Poppins_500Medium",
     fontSize: 20,
-    textAlign: "center"
+    textAlign: "center",
   },
 });
