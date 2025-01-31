@@ -1,14 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
-  Dimensions,
   View,
   Text,
   TouchableOpacity,
-  ScrollView,
   SafeAreaView,
   Image,
-  StyleSheet,
-  ActivityIndicator,
   Modal,
   TextInput,
   StatusBar,
@@ -16,16 +12,9 @@ import {
 import { useCustomFonts } from "../utils/fonts";
 import { useNavigation } from "@react-navigation/native";
 
-// import fetchSVG, { fetchImgURL } from "../utils/fetchSVG";
-import { G, SvgUri } from "react-native-svg";
-
 import { globalStyles, styles as mainStyles } from "../utils/style";
-// import { iconParams, styles } from "../styles/AnnouncementViewStyles";
 import { Divider } from "react-native-elements";
 import { Rating } from "react-native-ratings";
-import OpinionCard from "../components/OpinionCard";
-import Swiper from "react-native-swiper";
-import ImageViewing from "react-native-image-viewing";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 import {
@@ -35,45 +24,28 @@ import {
   get,
   set,
   remove,
-  goOnline,
   push,
 } from "firebase/database";
-import { db, storage } from "../../firebase.config";
+import { db } from "../../firebase.config";
 import { useUser } from "../components/UserProvider";
-import { getStorage, ref as storageRef, uploadBytes } from "firebase/storage";
-import { getDownloadURL } from "firebase/storage";
 
-import {
-  fetchSvgURL,
-  fetchImgURL,
-  getRandomAvatarUrl,
-} from "../utils/fetchSVG";
-
-import * as ImagePicker from "expo-image-picker";
-import { useForm, Controller } from "react-hook-form";
-import { SelectList } from "react-native-dropdown-select-list";
 import Icon from "../components/Icon";
 import { useTranslation } from "react-i18next";
 import Loader from "../components/Loader";
 
 import {
   CreditCardView,
-  CreditCardInput,
   LiteCreditCardInput,
-  CreditCardFormData,
-  CreditCardFormField,
-  ValidationState,
 } from "react-native-credit-card-input";
 
 import { Barcode } from "expo-barcode-generator";
 import { cutAdvertiserNameInDetails } from "../utils/func";
-
-const { width } = Dimensions.get("window");
+import { styles } from "../styles/GetDetailsViewStyles";
 
 const GetDetailsView = ({ route }) => {
   const navigation = useNavigation();
   const { t, i18n } = useTranslation();
-  const { user, setUser } = useUser();
+  const { user } = useUser();
   const { id } = route.params;
 
   const [currentRentOrReservation, setCurrentRentOrReservation] =
@@ -90,9 +62,6 @@ const GetDetailsView = ({ route }) => {
   const [isBarcodeVisible, setBarcodeVisible] = useState(false);
   const [isOpinionFormVisible, setOpinionFormVisible] = useState(false);
   const [valueOpinion, setValueOpinion] = useState();
-  const [errorOpinion, setErrorOpinion] = useState(
-    "This field cannot be empty"
-  );
   const [ratingValue, setRatingValue] = useState(0);
 
   const fontsLoaded = useCustomFonts();
@@ -134,7 +103,6 @@ const GetDetailsView = ({ route }) => {
     t("getsDetails.statusInfo.canceled"),
   ];
 
-  // Pobieranie ogłoszenia z bazy
   useEffect(() => {
     const announcementRef = ref(
       db,
@@ -161,7 +129,6 @@ const GetDetailsView = ({ route }) => {
     return () => unsubscribe();
   }, [id]);
 
-  // Bieżące dane wypożyczenia lub rezerwacji
   useEffect(() => {
     if (currentAnnouncement) {
       let rentOrReservation = null;
@@ -175,7 +142,6 @@ const GetDetailsView = ({ route }) => {
     }
   }, [currentAnnouncement]);
 
-  // Pobieranie ogłoszeniodawcy z bazy
   useEffect(() => {
     const usersRef = ref(db, `users/${currentAnnouncement?.advertiserId}`);
     const unsubscribe = onValue(
@@ -199,7 +165,6 @@ const GetDetailsView = ({ route }) => {
     return () => unsubscribe();
   }, [currentAnnouncement]);
 
-  // Address
   useEffect(() => {
     if (currentRentOrReservation) {
       let address = "";
@@ -222,7 +187,6 @@ const GetDetailsView = ({ route }) => {
   }, [currentRentOrReservation]);
 
   const onChatPress = () => {
-    // const { id: announcementId, advertiserId } = announcement;
     const announcementId = currentAnnouncement.id;
     const advertiserId = currentAdvertiser.id;
     const userId = user.id;
@@ -278,11 +242,9 @@ const GetDetailsView = ({ route }) => {
   const updateStatus = (code, name) => {
     const basePath = `announcements/${currentAnnouncement.id}`;
 
-    // Определяем поле для обновления в зависимости от типа
     const dataPath = type === "Rent" ? "rentalData" : "reservationData";
 
     try {
-      // Обновляем statusCode и statusName отдельно
       update(
         ref(
           db,
@@ -377,7 +339,6 @@ const GetDetailsView = ({ route }) => {
 
   useEffect(() => {
     if (valueBLIK) {
-      // console.log(isNaN(NaN));
       if (!isNaN(valueBLIK)) {
         if (valueBLIK.toString().length < 6) {
           setErrorBLIK("The code should consist of 6 characters");
@@ -413,7 +374,7 @@ const GetDetailsView = ({ route }) => {
   };
 
   const toggleModalBarcode = () => {
-    setBarcodeVisible(!isBarcodeVisible); // Funkcja do otwierania i zamykania modalu
+    setBarcodeVisible(!isBarcodeVisible);
     console.log(`Barcode - ${isBarcodeVisible}`);
   };
 
@@ -508,10 +469,6 @@ const GetDetailsView = ({ route }) => {
     set(hasOpinionRef, true);
   };
 
-  // useEffect(() => {
-
-  // }, [currentRentOrReservation]);
-
   if (!currentRentOrReservation || !currentAnnouncement || !currentAdvertiser) {
     return <Loader />;
   }
@@ -595,7 +552,6 @@ const GetDetailsView = ({ route }) => {
                 name="envelope"
                 width={30}
                 height={30}
-                // colorStroke={globalStyles.textOnPrimaryColor}
                 fillColor={globalStyles.textOnPrimaryColor}
               />
             </TouchableOpacity>
@@ -783,7 +739,6 @@ const GetDetailsView = ({ route }) => {
 
                     <TextInput
                       style={styles.paymentBLIKTextInput}
-                      // onBlur={setValueBLIK}
                       onChangeText={setValueBLIK}
                       placeholder={t("rentItNow.placeholderBlIK")}
                       placeholderTextColor={"gray"}
@@ -1118,10 +1073,10 @@ const GetDetailsView = ({ route }) => {
           </View>
 
           <Modal
-            animationType="fade" // animacja otwierania
-            transparent={true} // transparentne tło
+            animationType="fade"
+            transparent={true}
             visible={isBarcodeVisible}
-            onRequestClose={toggleModalBarcode} // zamykanie na Androidzie przyciskiem "back"
+            onRequestClose={toggleModalBarcode}
           >
             <TouchableOpacity
               activeOpacity={globalStyles.ACTIVE_OPACITY}
@@ -1140,7 +1095,6 @@ const GetDetailsView = ({ route }) => {
                     }
                     options={{
                       format: "MSI",
-                      // background: globalStyles.secondaryColor,
                       lineColor: globalStyles.primaryColor,
                       width: 2.5,
                       height: 150,
@@ -1157,487 +1111,3 @@ const GetDetailsView = ({ route }) => {
 };
 
 export default GetDetailsView;
-
-const styles = StyleSheet.create({
-  imageWithDateAndNumberContainer: {
-    flexDirection: "row",
-    overflow: "hidden",
-    width: "100%",
-    borderRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.primaryColor,
-  },
-
-  image: {
-    width: "45%",
-    height: "auto",
-    borderRadius: globalStyles.BORDER_RADIUS,
-  },
-
-  dateWithNumberContainer: {
-    flexDirection: "column",
-    width: "55%",
-    padding: 10,
-    gap: 10,
-  },
-
-  dateOrNumberTextLabel: {
-    fontFamily: "Poppins_500Medium",
-    fontSize: 16,
-    color: globalStyles.textOnPrimaryColor,
-  },
-
-  dateOrNumberTextValue: {
-    paddingLeft: 5,
-    fontFamily: "WorkSans_900Black",
-    fontSize: 14,
-    color: globalStyles.backgroundColor,
-  },
-
-  advertiserInfo: {
-    zIndex: -1,
-    flexDirection: "row",
-    width: width - 50,
-    flexWrap: "wrap",
-    gap: 10,
-    padding: 10,
-    marginTop: -20,
-    paddingTop: 25,
-    alignItems: "center",
-    justifyContent: "center",
-    borderBottomLeftRadius: globalStyles.BORDER_RADIUS,
-    borderBottomRightRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.textOnSecondaryColor,
-  },
-
-  advertiserLabel: {
-    fontFamily: "Poppins_500Medium",
-    fontSize: 18,
-    color: globalStyles.textOnPrimaryColor,
-  },
-
-  advertiserValue: {
-    fontFamily: "WorkSans_900Black",
-    fontSize: 18,
-    color: globalStyles.backgroundColor,
-  },
-
-  advertiserButton: {
-    borderRadius: globalStyles.BORDER_RADIUS,
-    padding: 3,
-    backgroundColor: globalStyles.accentColor,
-  },
-
-  statusContainer: {
-    marginTop: 20,
-  },
-
-  statusLabel: {
-    fontFamily: "WorkSans_900Black",
-    fontSize: 18,
-    color: globalStyles.textOnSecondaryColor,
-  },
-
-  statusText: {
-    padding: 10,
-    fontFamily: "Poppins_500Medium",
-    fontSize: 15,
-    color: globalStyles.primaryColor,
-  },
-
-  cancelButton: {
-    width: "100%",
-    alignItems: "center",
-    padding: 10,
-    marginTop: 20,
-    borderRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.redColor,
-  },
-
-  cancelText: {
-    fontFamily: "WorkSans_900Black",
-    fontSize: 18,
-    color: globalStyles.textOnRedColor,
-  },
-
-  detailsConstainer: {
-    marginTop: 20,
-  },
-
-  detailsLabel: {
-    fontFamily: "WorkSans_900Black",
-    fontSize: 18,
-    color: globalStyles.textOnSecondaryColor,
-    marginBottom: 15,
-  },
-
-  detailsValue: {
-    width: "100%",
-    // paddingHorizontal: 10,
-    borderRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.secondaryColor,
-    // borderWidth: 10,
-    // borderColor: globalStyles.secondaryColor,
-    padding: 10,
-  },
-
-  // detailsTextRow: {
-  //   flexDirection: "row",
-  //   justifyContent: "space-between",
-  // },
-
-  divider: {
-    marginVertical: 10,
-    borderWidth: 0.5,
-    borderColor: globalStyles.primaryColor,
-    borderRadius: globalStyles.BORDER_RADIUS,
-  },
-
-  detailsTextContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    columnGap: 10,
-    alignItems: "center",
-  },
-
-  detailsTextLabel: {
-    fontFamily: "Poppins_500Medium",
-    fontSize: 15,
-    color: globalStyles.primaryColor,
-  },
-
-  detailsTextValue: {
-    fontFamily: "Poppins_500Medium",
-    fontSize: 15,
-    color: globalStyles.textOnSecondaryColor,
-  },
-
-  detailsTextValueTrackingCode: {
-    fontFamily: "WorkSans_900Black",
-    fontSize: 15,
-    color: globalStyles.textOnAccentColor,
-    backgroundColor: globalStyles.accentColor,
-    borderRadius: globalStyles.BORDER_RADIUS,
-    padding: 5,
-  },
-
-  paymentContainer: {
-    // marginTop: 10,
-    gap: 10,
-  },
-
-  paymentLabel: {
-    fontFamily: "WorkSans_900Black",
-    fontSize: 18,
-    color: globalStyles.textOnSecondaryColor,
-  },
-
-  paymentMethodButtons: {
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-
-  paymentMethodCardButtonSelected: {
-    width: "50%",
-    padding: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    borderTopLeftRadius: globalStyles.BORDER_RADIUS,
-    borderBottomLeftRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.primaryColor,
-  },
-
-  paymentMethodCardButtonNotSelected: {
-    width: "50%",
-    padding: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 1,
-    borderRightWidth: 0,
-    borderTopLeftRadius: globalStyles.BORDER_RADIUS,
-    borderBottomLeftRadius: globalStyles.BORDER_RADIUS,
-    borderColor: globalStyles.primaryColor,
-    backgroundColor: globalStyles.textOnPrimaryColor,
-  },
-
-  paymentMethodCardTextSelected: {
-    textAlign: "center",
-    fontFamily: "WorkSans_900Black",
-    fontSize: 18,
-    color: globalStyles.textOnPrimaryColor,
-  },
-
-  paymentMethodCardTextNotSelected: {
-    textAlign: "center",
-    fontFamily: "WorkSans_900Black",
-    fontSize: 18,
-    color: globalStyles.primaryColor,
-  },
-
-  paymentMethodBLIKButtonSelected: {
-    width: "50%",
-    padding: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    borderTopRightRadius: globalStyles.BORDER_RADIUS,
-    borderBottomRightRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.primaryColor,
-  },
-
-  paymentMethodBLIKButtonNotSelected: {
-    width: "50%",
-    padding: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 1,
-    borderTopRightRadius: globalStyles.BORDER_RADIUS,
-    borderBottomRightRadius: globalStyles.BORDER_RADIUS,
-    borderColor: globalStyles.primaryColor,
-    backgroundColor: globalStyles.textOnPrimaryColor,
-  },
-
-  paymentMethodBLIKTextSelected: {
-    textAlign: "center",
-    fontFamily: "WorkSans_900Black",
-    fontSize: 18,
-    color: globalStyles.textOnPrimaryColor,
-  },
-
-  paymentMethodBLIKTextNotSelected: {
-    textAlign: "center",
-    fontFamily: "WorkSans_900Black",
-    fontSize: 18,
-    color: globalStyles.primaryColor,
-  },
-
-  paymentCardContainer: {
-    zIndex: -1,
-    marginTop: -25,
-    padding: 10,
-    paddingTop: 30,
-    gap: 10,
-    borderBottomLeftRadius: globalStyles.BORDER_RADIUS,
-    borderBottomRightRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.secondaryColor,
-  },
-
-  paymentCardView: {
-    alignSelf: "center",
-    // marginTop: 15,
-  },
-
-  paymentCardInput: {
-    width: "100%",
-    borderWidth: 0.5,
-    borderRadius: globalStyles.BORDER_RADIUS,
-    borderColor: globalStyles.primaryColor,
-    backgroundColor: globalStyles.textOnPrimaryColor,
-    color: globalStyles.primaryColor,
-    // marginTop: 15,
-    // borderColor: "#fff",
-    // borderTopWidth: 1,
-    // borderBottomWidth: 1,
-  },
-
-  paymentCardInputText: {
-    color: globalStyles.primaryColor,
-  },
-
-  paymentCardInfoContainer: {
-    // margin: 20,
-    // padding: 20,
-    // backgroundColor: "#dfdfdf",
-    // borderRadius: 5,
-  },
-
-  paymentCardInfo: {
-    flexDirection: "row",
-    width: "100%",
-    justifyContent: "flex-start",
-    gap: 10,
-    alignItems: "center",
-  },
-
-  paymentCardInfoText: {
-    fontFamily: "Poppins_500Medium",
-    fontSize: 14,
-    color: globalStyles.primaryColor,
-  },
-
-  paymentBLIKContainer: {
-    zIndex: -1,
-    marginTop: -25,
-    padding: 10,
-    paddingTop: 30,
-    gap: 10,
-    borderBottomLeftRadius: globalStyles.BORDER_RADIUS,
-    borderBottomRightRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.secondaryColor,
-  },
-
-  paymentBLIKError: {
-    width: "100%",
-    marginBottom: -20,
-    paddingTop: 10,
-    paddingBottom: 15,
-    paddingHorizontal: 10,
-    fontFamily: "Poppins_500Medium",
-    fontSize: 14,
-    color: globalStyles.redColor,
-    backgroundColor: globalStyles.textOnRedColor,
-    borderTopRightRadius: globalStyles.BORDER_RADIUS,
-    borderTopLeftRadius: globalStyles.BORDER_RADIUS,
-  },
-
-  paymentBLIKTextInput: {
-    width: "100%",
-    padding: 10,
-    borderWidth: 0.5,
-    borderRadius: globalStyles.BORDER_RADIUS,
-    borderColor: globalStyles.primaryColor,
-    backgroundColor: globalStyles.textOnPrimaryColor,
-    fontFamily: "Poppins_500Medium",
-    fontSize: 14,
-    color: globalStyles.primaryColor,
-  },
-
-  payForRentingButton: {
-    width: "100%",
-    alignItems: "center",
-    marginTop: 20,
-    padding: 10,
-    borderRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.accentColor,
-  },
-
-  payForRentingText: {
-    fontFamily: "WorkSans_900Black",
-    fontSize: 18,
-    color: globalStyles.textOnAccentColor,
-  },
-
-  confirmDeliveryButton: {
-    width: "100%",
-    alignItems: "center",
-    marginTop: 20,
-    padding: 10,
-    borderRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.primaryColor,
-  },
-
-  confirmDeliveryText: {
-    fontFamily: "WorkSans_900Black",
-    fontSize: 18,
-    color: globalStyles.textOnPrimaryColor,
-  },
-
-  confirmShippingButton: {
-    width: "100%",
-    alignItems: "center",
-    marginTop: 20,
-    padding: 10,
-    borderRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.primaryColor,
-  },
-
-  confirmShippingText: {
-    fontFamily: "WorkSans_900Black",
-    fontSize: 18,
-    color: globalStyles.textOnPrimaryColor,
-  },
-
-  barcodeBackground: {
-    width: "100%",
-    height: "100%",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  barcodeContainer: {
-    backgroundColor: globalStyles.secondaryColor,
-    borderRadius: globalStyles.BORDER_RADIUS,
-    padding: 10,
-  },
-
-  barcodeLabel: {
-    fontFamily: "WorkSans_900Black",
-    fontSize: 20,
-    color: globalStyles.primaryColor,
-    textAlign: "center",
-  },
-
-  opinionContainer: {
-    marginTop: 10,
-  },
-
-  writeOpinionButton: {
-    width: "100%",
-    // alignItems: "center",
-    padding: 10,
-    borderRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.accentColor,
-  },
-
-  writeOpinionLine: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-
-  writeOpinionText: {
-    fontFamily: "WorkSans_900Black",
-    fontSize: 18,
-    color: globalStyles.textOnAccentColor,
-  },
-
-  opinionFormContainer: {
-    zIndex: -1,
-    width: "100%",
-    padding: 10,
-    marginTop: -20,
-    paddingTop: 30,
-    gap: 10,
-    backgroundColor: globalStyles.secondaryColor,
-    borderBottomRightRadius: globalStyles.BORDER_RADIUS,
-    borderBottomLeftRadius: globalStyles.BORDER_RADIUS,
-  },
-
-  opinionRating: {
-    width: "70%",
-    padding: 5,
-    borderRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.backgroundColor,
-    borderColor: globalStyles.primaryColor,
-    borderWidth: 0.5,
-  },
-
-  opinionInput: {
-    width: width - 70,
-    height: "auto",
-    minHeight: 70,
-    padding: 10,
-    borderWidth: 0.5,
-    borderRadius: globalStyles.BORDER_RADIUS,
-    borderColor: globalStyles.primaryColor,
-    backgroundColor: globalStyles.backgroundColor,
-    color: globalStyles.primaryColor,
-    fontFamily: "Poppins_500Medium",
-    fontSize: 14,
-  },
-
-  sendOpinionButton: {
-    width: "50%",
-    alignSelf: "flex-end",
-    alignItems: "center",
-    padding: 10,
-    borderRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.primaryColor,
-  },
-
-  sendOpinionText: {
-    fontFamily: "WorkSans_900Black",
-    fontSize: 18,
-    color: globalStyles.textOnPrimaryColor,
-  },
-});

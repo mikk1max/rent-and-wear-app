@@ -21,9 +21,7 @@ const InputWithLabel = ({
   isSecure = false,
   isAutoCorrect = false,
 }) => {
-
-
-  const {t} = useTranslation()
+  const { t } = useTranslation();
 
   return (
     <View style={styles.inputContainer}>

@@ -18,7 +18,7 @@ import { fetchImgURL, getRandomAvatarUrl } from "../utils/fetchSVG";
 import { globalStyles, styles as mainStyles } from "../utils/style";
 import { iconParams, styles } from "../styles/UserProfileViewStyles";
 import { useUser } from "../components/UserProvider";
-import { onConfirmEmail, onLogin, onLogout } from "../utils/auth";
+import { onConfirmEmail, onLogout } from "../utils/auth";
 import Icon from "../components/Icon";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "../components/LanguageSwitcher";
@@ -39,7 +39,6 @@ const UserProfileView = () => {
   const [modalContent, setModalContent] = useState({ title: "", message: "" });
 
   const [refreshing, setRefreshing] = useState(false);
-  const [reloadKey, setReloadKey] = useState(0);
 
   const toggleDropdown = () => setDropdownVisible(!isDropdownVisible);
 
@@ -87,7 +86,6 @@ const UserProfileView = () => {
     try {
       const snapshot = await get(ref(db, "announcements"));
       if (snapshot.exists()) {
-        // console.log("Access confirmed:", snapshot.val());
       } else {
         console.log("No data or access denied.");
       }
@@ -105,7 +103,6 @@ const UserProfileView = () => {
   }
 
   const handleLogout = () => {
-    // Unsubscribe from Firebase listeners
     off(ref(db, "announcements"));
 
     onLogout()
@@ -235,7 +232,6 @@ const UserProfileView = () => {
                 onRefresh={async () => {
                   setRefreshing(true);
                   try {
-                    // Refetch user data
                     const usersRef = ref(db, "users");
                     const snapshot = await get(usersRef);
                     if (snapshot.exists()) {
@@ -250,7 +246,6 @@ const UserProfileView = () => {
                       }
                     }
 
-                    // Refetch profile image
                     const url = await fetchImgURL(
                       `user-avatars/${user.id}/${user.id}.jpg`
                     );
@@ -370,7 +365,6 @@ const UserProfileView = () => {
                 onRefresh={async () => {
                   setRefreshing(true);
                   try {
-                    // Refetch user data
                     const usersRef = ref(db, "users");
                     const snapshot = await get(usersRef);
                     if (snapshot.exists()) {
@@ -385,7 +379,6 @@ const UserProfileView = () => {
                       }
                     }
 
-                    // Refetch profile image
                     const url = await fetchImgURL(
                       `user-avatars/${user.id}/${user.id}.jpg`
                     );
@@ -434,7 +427,6 @@ const UserProfileView = () => {
                   onPress={handleLogout}
                   activeOpacity={globalStyles.ACTIVE_OPACITY}
                 >
-                  {/* <Icon name="logout" {...iconParams} /> */}
                   <Text style={styles.buttonText}>
                     {t("userProfile.login")}
                   </Text>

@@ -46,6 +46,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+
   modalContent: {
     backgroundColor: globalStyles.textOnPrimaryColor,
     padding: 20,
@@ -53,23 +54,27 @@ const styles = StyleSheet.create({
     width: "80%",
     alignItems: "center",
   },
+
   modalTitle: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 10,
     color: globalStyles.primaryColor,
   },
+
   modalMessage: {
     fontSize: 16,
     marginBottom: 20,
     textAlign: "center",
     color: globalStyles.textOnSecondaryColor,
   },
+
   modalButton: {
     backgroundColor: globalStyles.primaryColor,
     padding: 10,
     borderRadius: 5,
   },
+
   modalButtonText: {
     color: globalStyles.textOnPrimaryColor,
     fontSize: 16,

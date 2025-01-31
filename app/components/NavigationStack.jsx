@@ -30,7 +30,6 @@ const stackOptions = {
 const Loader = React.lazy(() => import("./Loader"));
 const NavigationBar = React.lazy(() => import("./NavigationBar"));
 const UserProfileView = React.lazy(() => import("../partials/UserProfileView"));
-const SendsGetsView = React.lazy(() => import("../partials/SendsGetsView"));
 const SettingsView = React.lazy(() => import("../partials/SettingsView"));
 const WelcomeView = React.lazy(() => import("../partials/WelcomeView"));
 const RentNowView = React.lazy(() => import("../partials/RentNowView"));
@@ -75,16 +74,13 @@ export default function Navigation() {
           component={AddressesView}
           options={{ title: t("viewTitles.addresses"), ...stackOptions }}
         />
-        <Stack.Screen
-          name="RentNowView"
-          component={RentNowView}
-        />
+        <Stack.Screen name="RentNowView" component={RentNowView} />
         <Stack.Screen
           name="AnnouncementView"
           component={AnnouncementView}
           options={({ route }) => ({
             ...stackOptions,
-            title: route.params.title
+            title: route.params.title,
           })}
         />
         <Stack.Screen
@@ -105,7 +101,10 @@ export default function Navigation() {
         <Stack.Screen
           name="CreateAnnouncementView"
           component={CreateAnnouncementView}
-          options={{ title: t("viewTitles.createAnnouncement"), ...stackOptions }}
+          options={{
+            title: t("viewTitles.createAnnouncement"),
+            ...stackOptions,
+          }}
         />
         <Stack.Screen
           name="RentItNowView"

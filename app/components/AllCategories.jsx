@@ -13,25 +13,20 @@ import { globalStyles } from "../utils/style";
 import { styles as mainStyles } from "../utils/style";
 import { useCustomFonts } from "../utils/fonts";
 
-import {
-  ref,
-  onValue,
-  update,
-  get,
-  set,
-  remove,
-  goOnline,
-} from "firebase/database";
+import { ref, get } from "firebase/database";
 import { db } from "../../firebase.config";
 import { useTranslation } from "react-i18next";
 import { IconContext } from "./IconProvider";
 
 const AllCategories = ({ navigation }) => {
-  const fontsLoaded = useCustomFonts();
-  const {t} = useTranslation()
+  const { changeIcon, icons, setActiveIcon } = useContext(IconContext);
+  const { t } = useTranslation();
 
   const [categories, setCategories] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const fontsLoaded = useCustomFonts();
+  if (!fontsLoaded) return null;
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -42,7 +37,6 @@ const AllCategories = ({ navigation }) => {
         if (snapshot.exists()) {
           const rawData = snapshot.val();
 
-          // Преобразование данных обратно в массив
           const formattedCategories = Object.values(rawData).map(
             (category) => ({
               categoryName: category.categoryName,
@@ -69,17 +63,11 @@ const AllCategories = ({ navigation }) => {
     fetchCategories();
   }, []);
 
-  // console.log(categories);
-
   const iconOptions = {
     width: 50,
     height: 50,
     fillColor: globalStyles.primaryColor,
   };
-
-  if (!fontsLoaded) return null;
-
-  const { changeIcon, icons, setActiveIcon } = useContext(IconContext);
 
   const handleCategoryPress = (icon) => {
     if (changeIcon && !icons.includes(icon)) {
@@ -104,7 +92,6 @@ const AllCategories = ({ navigation }) => {
                 key={`Category_${categoryItem.categoryName}`}
               >
                 <Text style={styles.iconsTitle}>
-                  {/* {categoryItem.categoryName} */}
                   {t(`allCategories.${categoryItem.categoryName}`)}
                 </Text>
                 <ScrollView

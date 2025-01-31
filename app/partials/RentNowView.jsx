@@ -6,7 +6,6 @@ import {
   Dimensions,
   Text,
   TouchableOpacity,
-  ScrollView,
   SafeAreaView,
   Platform,
   RefreshControl,
@@ -21,22 +20,13 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { globalStyles, styles as mainStyles } from "../utils/style";
 import { styles } from "../styles/RentNowViewStyles";
 
-import {
-  ref,
-  onValue,
-  update,
-  get,
-  set,
-  remove,
-  push,
-} from "firebase/database";
+import { ref, onValue, get } from "firebase/database";
 import { db } from "../../firebase.config";
 import { useUser } from "../components/UserProvider";
 import { useTranslation } from "react-i18next";
 import NoItemsFound from "../components/NoItemsFound";
 import { IconContext } from "../components/IconProvider";
 
-// Get the screen dimensions
 const { width } = Dimensions.get("window");
 
 const RentNowView = () => {
@@ -82,10 +72,9 @@ const RentNowView = () => {
     return () => unsubscribe();
   }, []);
 
-  // console.log(announcementPreviews);
-
   const [searchQuery, setSearchQuery] = useState("");
-  const { changeIcon, icons, activeIcon, setActiveIcon } = useContext(IconContext);
+  const { changeIcon, icons, activeIcon, setActiveIcon } =
+    useContext(IconContext);
 
   const handleSearch = (text) => {
     setSearchQuery(text);
@@ -114,13 +103,6 @@ const RentNowView = () => {
   const handleButtonPress = (iconName) => {
     setActiveIcon((prev) => {
       const newActiveIcon = prev === iconName ? null : iconName;
-      // console.log(
-      //   `${
-      //     newActiveIcon
-      //       ? `${iconName} button pressed`
-      //       : `${iconName} button unpressed`
-      //   }`
-      // );
       return newActiveIcon;
     });
   };
@@ -134,7 +116,10 @@ const RentNowView = () => {
             onPress: () => null,
             style: "cancel",
           },
-          { text: `${t("universal.yesBtn")}`, onPress: () => BackHandler.exitApp() },
+          {
+            text: `${t("universal.yesBtn")}`,
+            onPress: () => BackHandler.exitApp(),
+          },
         ]);
         return true;
       };
@@ -212,9 +197,7 @@ const RentNowView = () => {
                 {t("rentNow.categoryTitle")}
               </Text>
               <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate("Categories")
-                }
+                onPress={() => navigation.navigate("Categories")}
                 activeOpacity={globalStyles.ACTIVE_OPACITY}
               >
                 <Text style={styles.allCategoriesTextBtn}>
@@ -235,7 +218,7 @@ const RentNowView = () => {
                 ))}
             </View>
 
-{ console.log(activeIcon)}
+            {console.log(activeIcon)}
             <View style={styles.announcementsContainer}>
               {filteredAnnouncements &&
                 filteredAnnouncements?.map((announcementPreview) => (

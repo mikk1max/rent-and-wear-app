@@ -24,12 +24,14 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 
 const AddressesView = () => {
   const { t } = useTranslation();
+
   const fontsLoaded = useCustomFonts();
   if (!fontsLoaded) return null;
 
-  const { user, setUser } = useUser();
+  const { user } = useUser();
 
   const [addresses, setAddresses] = useState([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
     const addressesRef = ref(db, `users/${user.id}/addresses`);
@@ -50,20 +52,17 @@ const AddressesView = () => {
   // Funkcja, która ustawia isDefault na false dla bieżącego domyślnego adresu użytkownika
   const findAndUnsetDefaultAddress = async () => {
     try {
-      // Referencja do wszystkich adresów użytkownika
       const addressesRef = ref(db, `users/${user.id}/addresses`);
       const snapshot = await get(addressesRef);
       const data = snapshot.val();
 
       if (data) {
-        // Szukamy adresu, który ma isDefault ustawione na true
         const addressToUnset = Object.entries(data).find(
           ([, address]) => address.isDefault === true
         );
 
         if (addressToUnset) {
           const [addressId] = addressToUnset;
-          // Zmieniamy isDefault na false dla znalezionego adresu
           await update(ref(db, `users/${user.id}/addresses/${addressId}`), {
             isDefault: false,
           });
@@ -82,9 +81,7 @@ const AddressesView = () => {
   // Funkcja, która ustawia isDefault na true dla adresu o podanym addressId
   const setOrUnsetDefaultAddress = async (addressId) => {
     if (getAddressById(addresses, addressId).isDefault === true) {
-      // if (addresses[addressId].isDefault === true) {
       try {
-        // Zmieniamy isDefault na false dla wskazanego addressId
         await update(ref(db, `users/${user.id}/addresses/${addressId}`), {
           isDefault: false,
         });
@@ -95,7 +92,6 @@ const AddressesView = () => {
     } else {
       await findAndUnsetDefaultAddress();
       try {
-        // Zmieniamy isDefault na true dla wskazanego addressId
         await update(ref(db, `users/${user.id}/addresses/${addressId}`), {
           isDefault: true,
         });
@@ -106,7 +102,6 @@ const AddressesView = () => {
     }
   };
 
-  // Formularz
   const {
     control,
     handleSubmit,
@@ -115,11 +110,8 @@ const AddressesView = () => {
     formState: { errors },
   } = useForm();
 
-  // Modal: Edit card
-  const [isModalVisible, setIsModalVisible] = useState(false);
-
   const toggleModal = () => {
-    setIsModalVisible(!isModalVisible); // Funkcja do otwierania i zamykania modalu
+    setIsModalVisible(!isModalVisible);
   };
 
   const emptyAddress = {
@@ -158,7 +150,6 @@ const AddressesView = () => {
     toggleModal();
   };
 
-  // Ustawienie początkowych wartości dla wielu pól
   useEffect(() => {
     if (currentAddress !== null) {
       setValue("adresse", currentAddress.adresse || "");
@@ -210,7 +201,6 @@ const AddressesView = () => {
     toggleModal();
   };
 
-  // Funkcja do edytowania adresu o danym ID
   const editAddress = async (currentAddress, currentAddressId) => {
     try {
       const addressRef = ref(
@@ -218,7 +208,6 @@ const AddressesView = () => {
         `users/${user.id}/addresses/${currentAddressId}`
       );
 
-      // Aktualizujemy adres na nowy
       await update(addressRef, currentAddress);
       console.log(`Address with ID ${currentAddressId} has been updated.`);
     } catch (error) {
@@ -226,7 +215,6 @@ const AddressesView = () => {
     }
   };
 
-  // Funkcja do tworzenia nowego adresu
   const createAddress = async (currentAddress) => {
     try {
       const addressesRef = ref(db, `users/${user.id}/addresses`);
@@ -235,15 +223,12 @@ const AddressesView = () => {
 
       let newAddressId;
       if (data) {
-        // Pobieramy istniejące ID adresów i znajdujemy maksymalne
         const addressIds = Object.keys(data).map((id) => parseInt(id, 10));
-        newAddressId = Math.max(...addressIds) + 1; // Nowy ID to max + 1
+        newAddressId = Math.max(...addressIds) + 1;
       } else {
-        // Jeśli nie ma adresów, zaczynamy od ID 0
         newAddressId = 0;
       }
 
-      // Tworzymy nowy adres o ID newAddressId
       await set(
         ref(db, `users/${user.id}/addresses/${newAddressId}`),
         currentAddress
@@ -254,11 +239,10 @@ const AddressesView = () => {
     }
   };
 
-  // Modal: Delete
   const [isModalDeleteVisible, setIsModalDeleteVisible] = useState(false);
 
   const toggleModalDelete = () => {
-    setIsModalDeleteVisible(!isModalDeleteVisible); // Funkcja do otwierania i zamykania modalu
+    setIsModalDeleteVisible(!isModalDeleteVisible);
   };
 
   const [confirmationTitle, setConfirmationTitle] = useState();
@@ -275,7 +259,6 @@ const AddressesView = () => {
         `users/${user.id}/addresses/${currentAddressId}`
       );
 
-      // Aktualizujemy adres na nowy
       await remove(addressRef);
       console.log(`Address with ID ${currentAddressId} has been deleted.`);
     } catch (error) {
@@ -340,10 +323,10 @@ const AddressesView = () => {
       </View>
 
       <Modal
-        animationType="slide" // animacja otwierania
-        transparent={true} // transparentne tło
+        animationType="slide"
+        transparent={true}
         visible={isModalVisible}
-        onRequestClose={onCancel} // zamykanie na Androidzie przyciskiem "back"
+        onRequestClose={onCancel}
       >
         <View style={styles.modalBackground}>
           <View style={styles.modalCard}>
@@ -353,13 +336,11 @@ const AddressesView = () => {
               nestedScrollEnabled={true}
               style={[mainStyles.scrollBase, { marginVertical: 40 }]}
             >
-              {/* Title */}
               <Text style={[styles.modalFormTitle, { marginTop: 20 }]}>
                 {formTitle}
               </Text>
               <Divider style={styles.modalDivider} />
 
-              {/* Adresse */}
               <View style={styles.modalInputContainer}>
                 <Text style={styles.modalLabel}>
                   {`${t("addresses.modalAddEdit.addresseeLabel")}: `}
@@ -396,7 +377,6 @@ const AddressesView = () => {
                 />
               </View>
 
-              {/* Phone number */}
               <View style={styles.modalInputContainer}>
                 <Text style={styles.modalLabel}>{`${t(
                   "addresses.modalAddEdit.phoneLabel"
@@ -435,7 +415,6 @@ const AddressesView = () => {
                 />
               </View>
 
-              {/* E-mail */}
               <View style={styles.modalInputContainer}>
                 <Text style={styles.modalLabel}>{`${t(
                   "addresses.modalAddEdit.emailLabel"
@@ -471,7 +450,6 @@ const AddressesView = () => {
                 />
               </View>
 
-              {/* Street */}
               <View style={styles.modalInputContainer}>
                 <Text style={styles.modalLabel}>
                   {`${t("addresses.modalAddEdit.streetLabel")}: `}
@@ -506,7 +484,6 @@ const AddressesView = () => {
                 />
               </View>
 
-              {/* Building number */}
               <View style={styles.modalInputContainer}>
                 <Text style={styles.modalLabel}>
                   {`${t("addresses.modalAddEdit.buildingLabel")}: `}
@@ -545,7 +522,6 @@ const AddressesView = () => {
                 />
               </View>
 
-              {/* Flar of Apartment number */}
               <View style={styles.modalInputContainer}>
                 <Text style={styles.modalLabel}>{`${t(
                   "addresses.modalAddEdit.apartmentLabel"
@@ -576,7 +552,6 @@ const AddressesView = () => {
                 />
               </View>
 
-              {/* Floor number */}
               <View style={styles.modalInputContainer}>
                 <Text style={styles.modalLabel}>{`${t(
                   "addresses.modalAddEdit.floorLabel"
@@ -611,7 +586,6 @@ const AddressesView = () => {
                 />
               </View>
 
-              {/* Postal code */}
               <View style={styles.modalInputContainer}>
                 <Text style={styles.modalLabel}>
                   {`${t("addresses.modalAddEdit.postalCodeLabel")}: `}
@@ -652,7 +626,6 @@ const AddressesView = () => {
                 />
               </View>
 
-              {/* City */}
               <View style={styles.modalInputContainer}>
                 <Text style={styles.modalLabel}>
                   {`${t("addresses.modalAddEdit.cityLabel")}: `}
@@ -685,7 +658,6 @@ const AddressesView = () => {
                 />
               </View>
 
-              {/* Country */}
               <View style={styles.modalInputContainer}>
                 <Text style={styles.modalLabel}>
                   {`${t("addresses.modalAddEdit.countryLabel")}: `}
@@ -746,10 +718,10 @@ const AddressesView = () => {
       </Modal>
 
       <Modal
-        animationType="fade" // animacja otwierania
-        transparent={true} // transparentne tło
+        animationType="fade"
+        transparent={true}
         visible={isModalDeleteVisible}
-        onRequestClose={rejectAddressDeletion} // zamykanie na Androidzie przyciskiem "back"
+        onRequestClose={rejectAddressDeletion}
       >
         <View style={styles.modalBackground}>
           <View style={styles.modalCardMini}>
