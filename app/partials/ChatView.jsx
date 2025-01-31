@@ -5,6 +5,7 @@ import {
   Text,
   Alert,
   TouchableOpacity,
+  StatusBar,
 } from "react-native";
 import {
   GiftedChat,
@@ -183,6 +184,7 @@ export default function ChatView() {
 
   return (
     <SafeAreaView style={[mainStyles.whiteBack]}>
+      <StatusBar backgroundColor={globalStyles.primaryColor} barStyle="light-content" />
       <GiftedChat
         messages={messages}
         locale={`${i18n.language}`}

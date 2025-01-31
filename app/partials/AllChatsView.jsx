@@ -6,6 +6,7 @@ import {
   ScrollView,
   SafeAreaView,
   RefreshControl,
+  StatusBar,
 } from "react-native";
 import { ref, onValue, get } from "firebase/database";
 import { db } from "../../firebase.config";
@@ -229,6 +230,7 @@ const AllChatsView = () => {
 
   return (
     <SafeAreaView style={mainStyles.whiteBack}>
+      <StatusBar backgroundColor={globalStyles.primaryColor} barStyle="light-content" />
       <View style={[mainStyles.container]}>
         {renderFilterButtons()}
         <ScrollView

@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   Image,
   TextInput,
+  StatusBar,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
@@ -293,6 +294,7 @@ const CreateAnnouncementView = ({ route }) => {
 
   return (
     <SafeAreaView style={mainStyles.whiteBack}>
+      <StatusBar backgroundColor={globalStyles.primaryColor} barStyle="light-content" />
       <View
         style={[
           mainStyles.container,
