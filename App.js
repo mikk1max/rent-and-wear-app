@@ -10,7 +10,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { getLocales } from "expo-localization";
 import { IconProvider } from "./app/components/IconProvider";
 
-i18n.changeLanguage(getLocales()[1].languageCode ?? "en");
+i18n.changeLanguage(getLocales()[0].languageCode ?? "en");
 
 export default function App() {
   return (
