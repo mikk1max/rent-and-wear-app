@@ -226,7 +226,8 @@ const GetsView = () => {
                     <Divider style={styles.rentOrReservationDivider} />
                     <Text style={styles.rentOrReservationText}>{`Status: ${t(
                       `statusNames.${
-                        rentOrReservation?.status?.statusName || t("statusNames.Error")
+                        rentOrReservation?.status?.statusName ||
+                        t("statusNames.Error")
                       }`
                     )}`}</Text>
                     <Progress.Bar

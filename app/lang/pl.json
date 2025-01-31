@@ -159,10 +159,68 @@
           "address": "Adres",
           "postalCode": "Kod pocztowy",
           "city": "Miasto",
-          "country": "Kraj"
+          "country": "Kraj",
+          "floor": "piętro"
         },
         "barcode": {
           "scanUponPickup": "Skanuj ten kod przy odbiorze"
+        }
+      }
+    },
+    "sendsDetails": {
+      "statusInfo": {
+        "pendingConfirmation": "To wypożyczenie oczekuje na Twoje potwierdzenie. Zatwierdź wypożyczenie i przejdź do kolejnego kroku, albo anuluj go.",
+        "reserved": "To wypożyczenie jest zarezerwowane. Jeśli najemca nie wpłaci pozostałej kwoty przed {{dueDate}}, wypożyczenie zostanie anulowane.",
+        "inProgress": "To wypożyczenie jest w trakcie realizacji. Wygeneruj kod do paczki i wyślij ją za pośrednictwem firmy OutPost sp. p.",
+        "shipped": "Wysłałeś paczkę do Najemcy. Kolejna zmiana statusu — kiedy on potwierdzi odbiór.",
+        "inUse": "To wypożyczenie jest w trakcie użytkowania. Zostaniesz poinformowany, kiedy Najemca wyśle paczkę z powrotem.",
+        "returned": "Najemca wysłał wypożyczenie z powrotem. Sprawdź stan odzieży i zatwierdź odbiór.",
+        "completed": "Wypożyczenie zostało zakończone. Jeśli Najemca wystawi opinię, zobaczysz ją na tej stronie.",
+        "canceled": "Wypożyczenie zostało anulowane."
+      },
+      "rentDetails": {
+        "rentNo": "ID wypożyczenia:",
+        "rentDate": "Data wypożyczenia:",
+        "status": "Aktualny status:",
+        "borrowerLabel": "Napisz do",
+        "statusInfoLabel": "Status",
+        "delivery": {
+          "confirmDelivery": "POTWIERDŹ DOSTAWĘ",
+          "confirmShipping": "POTWIERDŹ WYSYŁKĘ"
+        },
+        "rentDetailsLabel": "Szczegóły wypożyczenia",
+        "announcement": "Ogłoszenie",
+        "size": "Rozmiar",
+        "condition": "Stan",
+        "inRentFrom": "Wypożyczone od",
+        "inRentTo": "Wypożyczone do",
+        "pricePerDay": "Cena za dzień",
+        "daysInRent": "Dni wypożyczenia",
+        "amount": "Kwota",
+        "paymentMethod": "Metoda płatności",
+        "deliveryDetails": {
+          "deliverer": "Dostawca",
+          "pickupCode": "Kod odbioru",
+          "email": "E-mail",
+          "phoneNumber": "Numer telefonu"
+        },
+        "addressDetails": {
+          "addressee": "Odbiorca",
+          "address": "Adres",
+          "postalCode": "Kod pocztowy",
+          "city": "Miasto",
+          "country": "Kraj",
+          "floor": "piętro"
+        },
+        "barcode": {
+          "scanUponSending": "Skanuj ten kod przy nadaniu",
+          "didntGenerateCode": "Nie wygenerowano kodu!"
+        },
+        "actions": {
+          "acceptRent": "ZAAKCEPTUJ WYPOŻYCZENIE",
+          "generateTrackingNumber": "WYGENERUJ KOD",
+          "confirmShipping": "POTWIERDŹ WYSYŁKĘ",
+          "confirmDelivery": "POTWIERDŹ ODBIÓR"
         }
       }
     },
