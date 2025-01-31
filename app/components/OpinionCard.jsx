@@ -69,7 +69,7 @@ const OpinionCard = ({
 
   let opinOnModerationStyle = styles.opinOnModeration;
   let opinOnModerationTextStyle = styles.opinOnModerationText;
-  if (moderationStatus.code == 2) {
+  if (moderationStatus?.code == 2) {
     opinOnModerationStyle = [styles.opinOnModeration, styles.opinBlocked];
     opinOnModerationTextStyle = [
       styles.opinOnModerationText,
@@ -77,7 +77,7 @@ const OpinionCard = ({
     ];
   }
 
-  return moderationStatus.code == 1 ? (
+  return moderationStatus?.code == 1 ? (
     <View style={styles.opinion}>
       <View style={styles.opinAuthorNameWithPlate}>
         <Text style={styles.opinAuthorName}>
@@ -100,9 +100,9 @@ const OpinionCard = ({
       </View>
       <Text style={styles.opinText}>{text}</Text>
     </View>
-  ) : moderationStatus.code != 1 && isAuthor ? (
+  ) : moderationStatus?.code != 1 && isAuthor ? (
     <View style={opinOnModerationStyle}>
-      <Text style={opinOnModerationTextStyle}>{moderationStatus.messege}</Text>
+      <Text style={opinOnModerationTextStyle}>{moderationStatus?.messege}</Text>
       <View style={styles.opinion}>
         <View style={styles.opinAuthorNameWithPlate}>
           <Text style={styles.opinAuthorName}>

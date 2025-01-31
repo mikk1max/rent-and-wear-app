@@ -157,10 +157,68 @@
           "address": "Address",
           "postalCode": "Postal code",
           "city": "City",
-          "country": "Country"
+          "country": "Country",
+          "floor": "floor"
         },
         "barcode": {
           "scanUponPickup": "Scan this code upon pickup"
+        }
+      }
+    },
+    "sendsDetails": {
+      "statusInfo": {
+        "pendingConfirmation": "This rental is awaiting your confirmation. Approve the rental and proceed to the next step, or cancel it.",
+        "reserved": "This rental is reserved. If the renter does not pay the remaining amount before {{dueDate}}, the rental will be canceled.",
+        "inProgress": "This rental is in progress. Generate a package code and send it via OutPost sp. p.",
+        "shipped": "You have sent the package to the renter. The next status update will occur when they confirm receipt.",
+        "inUse": "This rental is currently in use. You will be notified when the renter sends the package back.",
+        "returned": "The renter has sent the rental back. Check the condition of the clothing and confirm receipt.",
+        "completed": "The rental has been completed. If the renter leaves a review, you will see it on this page.",
+        "canceled": "The rental has been canceled."
+      },
+      "rentDetails": {
+        "rentNo": "Rental ID:",
+        "rentDate": "Rental date:",
+        "status": "Current status:",
+        "borrowerLabel": "Message to",
+        "statusInfoLabel": "Status",
+        "delivery": {
+          "confirmDelivery": "CONFIRM DELIVERY",
+          "confirmShipping": "CONFIRM SHIPPING"
+        },
+        "rentDetailsLabel": "Rental details",
+        "announcement": "Listing",
+        "size": "Size",
+        "condition": "Condition",
+        "inRentFrom": "Rented from",
+        "inRentTo": "Rented until",
+        "pricePerDay": "Price per day",
+        "daysInRent": "Days rented",
+        "amount": "Amount",
+        "paymentMethod": "Payment method",
+        "deliveryDetails": {
+          "deliverer": "Courier",
+          "pickupCode": "Pickup code",
+          "email": "Email",
+          "phoneNumber": "Phone number"
+        },
+        "addressDetails": {
+          "addressee": "Recipient",
+          "address": "Address",
+          "postalCode": "Postal code",
+          "city": "City",
+          "country": "Country",
+          "floor": "Floor"
+        },
+        "barcode": {
+          "scanUponSending": "Scan this code upon dispatch",
+          "didntGenerateCode": "Code not generated!"
+        },
+        "actions": {
+          "acceptRent": "ACCEPT RENTAL",
+          "generateTrackingNumber": "GENERATE CODE",
+          "confirmShipping": "CONFIRM SHIPPING",
+          "confirmDelivery": "CONFIRM RECEIPT"
         }
       }
     },
