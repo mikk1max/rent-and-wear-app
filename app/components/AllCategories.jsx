@@ -6,6 +6,7 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
+  StatusBar,
 } from "react-native";
 import Icon from "./Icon";
 import { globalStyles } from "../utils/style";
@@ -90,6 +91,7 @@ const AllCategories = ({ navigation }) => {
 
   return (
     <SafeAreaView style={[mainStyles.whiteBack, styles.modal]}>
+      <StatusBar backgroundColor={globalStyles.primaryColor} barStyle="light-content" />
       <View style={[mainStyles.container, { alignItems: "stretch" }]}>
         <ScrollView
           style={[mainStyles.scrollBase, { paddingVertical: 20 }]}

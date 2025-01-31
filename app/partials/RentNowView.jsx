@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useContext } from "react";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { BackHandler, Alert } from "react-native";
+import { BackHandler, Alert, StatusBar } from "react-native";
 import {
   View,
   Dimensions,
@@ -179,6 +179,7 @@ const RentNowView = () => {
 
   return (
     <SafeAreaView style={mainStyles.whiteBack}>
+      <StatusBar backgroundColor={globalStyles.backgroundColor} barStyle="dark-content" />
       <View
         style={[
           mainStyles.container,

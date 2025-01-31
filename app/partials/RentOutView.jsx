@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
-import { BackHandler, Alert } from "react-native";
+import { BackHandler, Alert, StatusBar } from "react-native";
 import {
   View,
   Dimensions,
@@ -130,6 +130,7 @@ export default function RentOutView() {
 
   return (
     <SafeAreaView style={mainStyles.whiteBack}>
+      <StatusBar backgroundColor={globalStyles.backgroundColor} barStyle="dark-content" />
       <View
         style={[
           mainStyles.container,
