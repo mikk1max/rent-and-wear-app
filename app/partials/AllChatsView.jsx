@@ -26,8 +26,8 @@ const AllChatsView = () => {
   const [filter, setFilter] = useState(`${t("chat.allBtn")}`);
   const [refreshing, setRefreshing] = useState(false);
   const [userData, setUserData] = useState({});
-  const [height, setHeight] = useState(0); // Height state for icon button
-  const prevHeightRef = useRef(height); // Using useRef to keep track of previous height
+  const [height, setHeight] = useState(0);
+  const prevHeightRef = useRef(height);
 
   const fetchChats = useCallback(() => {
     return new Promise((resolve) => {
@@ -72,7 +72,7 @@ const AllChatsView = () => {
 
         setChats(filteredChats);
         setRefreshing(false);
-        resolve(); // Resolve the promise after fetching data
+        resolve();
       });
 
       return () => unsubscribe();
@@ -86,7 +86,6 @@ const AllChatsView = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       if (user?.id && chats.length > 0) {
-        // Identify other participant IDs
         const otherParticipantIds = [
           ...new Set(
             chats.map((chat) =>
@@ -96,7 +95,7 @@ const AllChatsView = () => {
         ];
 
         const userInfo = await getUserById(otherParticipantIds);
-        setUserData(userInfo); // Store fetched user data
+        setUserData(userInfo);
       }
     };
 
@@ -118,12 +117,11 @@ const AllChatsView = () => {
     const announcementRef = ref(db, "announcements/" + announcementId);
     const snapshot = await get(announcementRef);
     if (snapshot.exists()) {
-      return snapshot.val().title; // Assuming the "title" is a field in the announcement
+      return snapshot.val().title;
     }
     return "No Title";
   };
 
-  // Render filter buttons
   const renderFilterButtons = () => (
     <View style={styles.filterButtonsContainer}>
       {[
@@ -157,10 +155,9 @@ const AllChatsView = () => {
   const handleLayout = useCallback((event) => {
     const { height: newHeight } = event.nativeEvent.layout;
 
-    // Only update height if it's different from the previous height
     if (newHeight !== prevHeightRef.current) {
-      prevHeightRef.current = newHeight; // Update ref with the new height value
-      setHeight(newHeight); // Set state only when height is different
+      prevHeightRef.current = newHeight;
+      setHeight(newHeight);
     }
   }, []);
 
@@ -172,7 +169,6 @@ const AllChatsView = () => {
     });
   };
 
-  // Render individual chat card
   const renderChat = (chat) => {
     if (!chat) return null;
 
@@ -182,14 +178,13 @@ const AllChatsView = () => {
           ?.text) ||
       "";
 
-    // Determine the other participant
     const otherParticipantId =
       chat.userId === user.id ? chat.advertiserId : chat.userId;
     const otherParticipantName =
       userData?.[otherParticipantId]?.name || t("chat.noUserName");
 
     return (
-      <View style={{flexDirection: "row"}} key={chat.id}>
+      <View style={{ flexDirection: "row" }} key={chat.id}>
         <TouchableOpacity
           onPress={() => handleChatPress(chat.id)}
           style={styles.chatCard}
@@ -200,7 +195,9 @@ const AllChatsView = () => {
             <Text style={styles.chatTitle}>
               Chat with {otherParticipantName}
             </Text>
-            <Text style={styles.chatPreview} numberOfLines={1}>{firstMessage}</Text>
+            <Text style={styles.chatPreview} numberOfLines={1}>
+              {firstMessage}
+            </Text>
           </View>
         </TouchableOpacity>
         <View>

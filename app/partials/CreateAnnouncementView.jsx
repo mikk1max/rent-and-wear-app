@@ -1,14 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
-  Dimensions,
   View,
   Text,
   TouchableOpacity,
   ScrollView,
   SafeAreaView,
   Image,
-  StyleSheet,
-  ActivityIndicator,
   TextInput,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -16,22 +13,13 @@ import { useNavigation } from "@react-navigation/native";
 import { globalStyles, styles as mainStyles } from "../utils/style";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
-import {
-  ref,
-  onValue,
-  update,
-  get,
-  set,
-  remove,
-  goOnline,
-} from "firebase/database";
+import { ref, get, set } from "firebase/database";
 import { db, storage } from "../../firebase.config";
 import { useUser } from "../components/UserProvider";
 import {
   ref as storageRef,
   uploadBytes,
   getDownloadURL,
-  remove as sRemove,
   deleteObject,
 } from "firebase/storage";
 
@@ -40,6 +28,7 @@ import { useForm, Controller } from "react-hook-form";
 import Icon from "../components/Icon";
 import { useTranslation } from "react-i18next";
 import Loader from "../components/Loader";
+import { styles } from "../styles/CreateAnnouncementViewStyles";
 
 const CreateAnnouncementView = ({ route }) => {
   const navigation = useNavigation();
@@ -48,9 +37,6 @@ const CreateAnnouncementView = ({ route }) => {
   const { id } = route.params || {};
   const isEditMode = !!id;
 
-  // const [image, setImage] = useState<string | null >(null);
-  const [currentAnnouncement, setCurrentAnnouncement] = useState();
-  const [image, setImage] = useState();
   const [images, setImages] = useState([]);
   const [squashedSubcategories, setSquashedSubcategories] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -61,7 +47,6 @@ const CreateAnnouncementView = ({ route }) => {
 
   const scrollViewRef = useRef(null);
 
-  // Formularz
   const {
     control,
     handleSubmit,
@@ -81,7 +66,6 @@ const CreateAnnouncementView = ({ route }) => {
           setAnnouncement(data);
           setImages(data.images || []);
 
-          // Pre-fill form fields
           setValue("title", data.title || "");
           setValue("description", data.description || "");
           setValue("price", data.pricePerDay?.toString() || "0");
@@ -98,7 +82,6 @@ const CreateAnnouncementView = ({ route }) => {
     }
   }, [id, isEditMode]);
 
-  // Pobieranie kategorii
   useEffect(() => {
     const fetchSubcategories = async () => {
       try {
@@ -109,7 +92,6 @@ const CreateAnnouncementView = ({ route }) => {
         if (snapshot.exists()) {
           const rawData = snapshot.val();
 
-          // Преобразование данных в плоский массив подкатегорий
           const allSubcategories = Object.values(rawData).flatMap((category) =>
             Object.values(category.subcategories).map((subcategory) => ({
               subcategoryName: subcategory?.subcategoryName,
@@ -131,18 +113,13 @@ const CreateAnnouncementView = ({ route }) => {
     fetchSubcategories();
   }, []);
 
-  // console.log(squashedSubcategories);
-
   const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
-
-    // console.log(result);
 
     if (!result.canceled) {
       setImages([...images, result.assets[0].uri]);
@@ -151,36 +128,27 @@ const CreateAnnouncementView = ({ route }) => {
 
   const deleteImageFromStorage = async (announcementId, imageUrl) => {
     try {
-      // console.log("Image URL:", imageUrl);
-  
       if (!imageUrl) {
         console.error("Invalid image URL:", imageUrl);
         return;
       }
-  
-      // Decode the URL to get the correct file path
-      const decodedUrl = decodeURIComponent(imageUrl); // Decode URL to get correct path
-      // console.log("Decoded URL:", decodedUrl);
-  
-      // Extract the file name after the last '/'
-      const pathSegments = decodedUrl.split('/');
-      const fileName = pathSegments[pathSegments.length - 1].split('?')[0]; // Remove query params
-      // console.log("Extracted file name:", fileName);
-  
+
+      const decodedUrl = decodeURIComponent(imageUrl);
+
+      const pathSegments = decodedUrl.split("/");
+      const fileName = pathSegments[pathSegments.length - 1].split("?")[0];
+
       if (!fileName) {
         console.error("Unable to extract file name from URL:", decodedUrl);
         return;
       }
-  
-      // Correct path for deletion
+
       const imageRef = storageRef(
         storage,
-        `announcement-images/${announcementId}/${fileName}`  // Correct path without URL encoding
+        `announcement-images/${announcementId}/${fileName}`
       );
-      // console.log("Image reference:", imageRef);
-  
+
       await deleteObject(imageRef);
-      // console.log("Image removed successfully:", fileName);
     } catch (error) {
       console.error("Error removing image:", error);
     }
@@ -188,12 +156,11 @@ const CreateAnnouncementView = ({ route }) => {
 
   const deleteImage = (img) => {
     const imageUrl = images.find((image) => image === img);
-    // console.log("img -> " + img);
-    
+
     if (imageUrl) {
-      const announcementId = id; // Ensure this is the correct announcement ID
+      const announcementId = id;
       setImages(images.filter((item) => item !== img));
-      deleteImageFromStorage(announcementId, imageUrl); // Pass correct URL to delete function
+      deleteImageFromStorage(announcementId, imageUrl);
     }
   };
 
@@ -201,13 +168,12 @@ const CreateAnnouncementView = ({ route }) => {
     setLoading(true);
 
     try {
-      // Upload images to Firebase Storage and get their URLs
       const imageUrls = await uploadImagesToStorage(id, images);
 
       const newAnnouncement = {
         ...announcement,
         ...data,
-        images: imageUrls, // Use the URLs from Firebase Storage here
+        images: imageUrls,
         category,
         pricePerDay: parseFloat(data.price),
         advertiserId: user.id,
@@ -239,39 +205,37 @@ const CreateAnnouncementView = ({ route }) => {
 
   const uploadImagesToStorage = async (announcementId, images) => {
     const imageUrls = [];
-  
+
     for (let i = 0; i < images.length; i++) {
       const imageUri = images[i];
-      const fileName = `${i}.jpg`; // Use a simple file name with the index, no prefix
-      const imageRef = storageRef(storage, `announcement-images/${announcementId}/${fileName}`);
-  
+      const fileName = `${i}.jpg`;
+      const imageRef = storageRef(
+        storage,
+        `announcement-images/${announcementId}/${fileName}`
+      );
+
       try {
-        const response = await fetch(imageUri); // Fetch image from the local URI
-        const blob = await response.blob(); // Convert to blob
-  
-        // Determine the MIME type based on the file (you can customize this logic for other types of images)
-        const mimeType = 'image/jpeg';  // You can change this to 'image/png' if the images are PNGs, for example
-  
+        const response = await fetch(imageUri);
+        const blob = await response.blob();
+
+        const mimeType = "image/jpeg";
+
         const metadata = {
-          contentType: mimeType,  // Specify the MIME type for the image
+          contentType: mimeType,
         };
-  
-        // Upload the image with the specified metadata
-        await uploadBytes(imageRef, blob, metadata); // Upload to Firebase Storage
-  
-        const imageUrl = await getDownloadURL(imageRef); // Get the download URL
-        imageUrls.push(imageUrl); // Store the URL
+
+        await uploadBytes(imageRef, blob, metadata);
+
+        const imageUrl = await getDownloadURL(imageRef);
+        imageUrls.push(imageUrl);
       } catch (error) {
         console.error("Error uploading image:", error);
       }
     }
-  
-    return imageUrls; // Return the array of image URLs
-  };
-  
-  
 
-  // Функция для добавления объявления в Realtime Database
+    return imageUrls;
+  };
+
   const createAnnouncementInDatabase = async (announcementId, announcement) => {
     const announcementRef = ref(db, "announcements/" + announcementId);
     await set(announcementRef, announcement);
@@ -309,7 +273,6 @@ const CreateAnnouncementView = ({ route }) => {
       announcement.images = imageUrls;
 
       await createAnnouncementInDatabase(announcementId, announcement);
-      // console.log(announcement);
       navigation.goBack();
     }
   };
@@ -660,7 +623,7 @@ const CreateAnnouncementView = ({ route }) => {
       </View>
       {loading && (
         <View style={styles.loaderOverlay}>
-          <Loader/>
+          <Loader />
         </View>
       )}
     </SafeAreaView>
@@ -668,243 +631,3 @@ const CreateAnnouncementView = ({ route }) => {
 };
 
 export default CreateAnnouncementView;
-
-const styles = StyleSheet.create({
-  divider: {
-    marginVertical: 10,
-    width: "100%",
-    height: 2,
-    borderRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.primaryColor,
-  },
-
-  imagesContainer: {
-    width: "100%",
-    height: "auto",
-    padding: 10,
-    borderRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.secondaryColor,
-  },
-
-  imagesLabel: {
-    width: "50%",
-    alignSelf: "center",
-    textAlign: "center",
-    fontFamily: "WorkSans_900Black",
-    fontSize: 18,
-    color: globalStyles.textOnSecondaryColor,
-    marginTop: 10,
-  },
-
-  imagesList: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    width: "100%",
-    height: "auto",
-    justifyContent: "center",
-    alignContent: "center",
-    gap: 10,
-  },
-
-  deleteImageButton: {
-    width: 100,
-    height: 100,
-    justifyContent: "center",
-    alignContent: "center",
-  },
-
-  image: {
-    width: "100%",
-    height: "100%",
-    borderRadius: globalStyles.BORDER_RADIUS,
-  },
-
-  addImageButton: {
-    width: 100,
-    height: 100,
-    backgroundColor: globalStyles.primaryColor,
-    borderRadius: globalStyles.BORDER_RADIUS,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  addImageIcon: {
-    // backgroundColor: "red",
-  },
-
-  inputs: {
-    width: "100%",
-    height: "auto",
-    // margin: 10,
-    marginVertical: 10,
-    gap: 10,
-    // backgroundColor: "lightyellow"
-  },
-
-  inputContainer: {
-    // flexDirection: "column",
-    // flexWrap: "wrap",
-    width: "100%",
-    height: "auto",
-    gap: 5,
-  },
-
-  inputLabel: {
-    fontFamily: "WorkSans_900Black",
-    fontSize: 18,
-    color: globalStyles.textOnSecondaryColor,
-  },
-
-  textInputError: {
-    // width: "100%",
-    // height: "auto",
-    // marginLeft: "5%",
-    paddingTop: 10,
-    paddingHorizontal: 10,
-    paddingBottom: 30,
-    marginBottom: -30,
-    borderRadius: globalStyles.BORDER_RADIUS,
-    fontFamily: "Poppins_500Medium",
-    fontSize: 14,
-    color: globalStyles.redColor,
-    backgroundColor: "lightpink",
-  },
-
-  textInput: {
-    // flexWrap: "wrap",
-    // width: "100%",
-    height: 50,
-    // marginLeft: "5%",
-    padding: 10,
-    borderRadius: globalStyles.BORDER_RADIUS,
-    fontFamily: "Poppins_500Medium",
-    fontSize: 14,
-    color: globalStyles.primaryColor,
-    backgroundColor: globalStyles.secondaryColor,
-  },
-
-  categoryListButton: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    height: 50,
-    padding: 10,
-    // marginLeft: 1, // ?????????????
-    backgroundColor: globalStyles.primaryColor,
-    borderRadius: globalStyles.BORDER_RADIUS,
-  },
-
-  categoryListButtonTextWithIcon: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    gap: 10,
-  },
-
-  categoryListButtonText: {
-    fontFamily: "Poppins_500Medium",
-    fontSize: 14,
-    color: globalStyles.textOnPrimaryColor,
-  },
-
-  categoryListScroll: {
-    // height: "25%",
-    // flex: 1,
-    // overflow: "hidden",
-  },
-
-  categoryList: {
-    zIndex: -1,
-    marginTop: -20,
-    padding: 10,
-    paddingTop: 25,
-    // gap: 5,
-    height: 200,
-    // flex: 1,
-    // overflow: "hidden",
-    backgroundColor: globalStyles.secondaryColor,
-    borderBottomLeftRadius: globalStyles.BORDER_RADIUS,
-    borderBottomRightRadius: globalStyles.BORDER_RADIUS,
-  },
-
-  categoryListItemWithBorder: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    alignContent: "center",
-    gap: 10,
-    paddingBottom: 7,
-    marginBottom: 9,
-    borderBottomWidth: 1,
-    borderBottomColor: globalStyles.textOnSecondaryColor,
-  },
-
-  categoryListItemWithoutBorder: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    alignContent: "center",
-    gap: 10,
-  },
-
-  categoryListItemText: {
-    fontFamily: "Poppins_500Medium",
-    fontSize: 14,
-    color: globalStyles.primaryColor,
-  },
-
-  buttonsContainer: {
-    flexDirection: "row",
-    width: "100%",
-    height: "auto",
-    marginTop: 10,
-    justifyContent: "center",
-    alignContent: "center",
-    alignItems: "center",
-  },
-
-  createButton: {
-    width: "50%",
-    height: "auto",
-    padding: 10,
-    justifyContent: "center",
-    // borderRadius: globalStyles.BORDER_RADIUS,
-    borderTopLeftRadius: globalStyles.BORDER_RADIUS,
-    borderBottomLeftRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.primaryColor,
-  },
-
-  createText: {
-    textAlign: "center",
-    fontFamily: "Poppins_500Medium",
-    fontSize: 16,
-    color: globalStyles.textOnPrimaryColor,
-  },
-
-  cancelButton: {
-    width: "50%",
-    height: "auto",
-    padding: 10,
-    justifyContent: "center",
-    borderTopRightRadius: globalStyles.BORDER_RADIUS,
-    borderBottomRightRadius: globalStyles.BORDER_RADIUS,
-    // borderRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.redColor,
-  },
-
-  cancelText: {
-    textAlign: "center",
-    fontFamily: "Poppins_500Medium",
-    fontSize: 16,
-    color: globalStyles.textOnRedColor,
-  },
-
-  loaderOverlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.7)", // Dark background with opacity
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 1,
-  },
-});

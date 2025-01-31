@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
-import React, { useEffect, useState } from "react";
-import { Card, Divider } from "react-native-elements";
+import React from "react";
+import { Divider } from "react-native-elements";
 import { globalStyles } from "../utils/style";
 import { useCustomFonts } from "../utils/fonts";
 import Icon from "./Icon";
@@ -23,10 +23,8 @@ const AddressCard = ({
   openAddressForm,
   openDeleteConfirmation,
 }) => {
+  const { t } = useTranslation();
 
-  const {t} = useTranslation()
-
-  // Fonts
   const fontsLoaded = useCustomFonts();
   if (!fontsLoaded) return null;
 
@@ -38,10 +36,9 @@ const AddressCard = ({
     star = "star-fill";
   }
 
-  // Flat and floor numbers
   let flatAndFloorNumber = "";
   let flatAndFloorNumberStyle = styles.displayNone;
-  
+
   if (flatOrApartmentNumber && floorNumber) {
     const floorLabel = getFloorLabel(floorNumber);
     flatAndFloorNumber = `${flatOrApartmentNumber}, ${floorLabel}`;
@@ -57,7 +54,7 @@ const AddressCard = ({
   if (!flatOrApartmentNumber && floorNumber) {
     flatAndFloorNumberStyle = [styles.textWithIcon, styles.textCapitalized];
   }
-  
+
   function getFloorLabel(floor) {
     switch (floor) {
       case "0":
@@ -71,7 +68,7 @@ const AddressCard = ({
       default:
         return `${floor}${t("addresses.addressCard.anyFloor")}`;
     }
-  }  
+  }
 
   let emailStyle = styles.displayNone;
   if (email != "") {
@@ -83,7 +80,6 @@ const AddressCard = ({
     phoneNumberStyle = styles.textWithIcon;
   }
 
-  // Postal code + City + Country
   const postalCodeCityCountry = postalCode + " " + city + ", " + country;
 
   return (
@@ -97,7 +93,12 @@ const AddressCard = ({
               style={styles.button}
               activeOpacity={globalStyles.ACTIVE_OPACITY}
             >
-              <Icon name={star} width={20} height={20} fillColor={globalStyles.textOnPrimaryColor} />
+              <Icon
+                name={star}
+                width={20}
+                height={20}
+                fillColor={globalStyles.textOnPrimaryColor}
+              />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => openAddressForm(id)}
@@ -116,42 +117,69 @@ const AddressCard = ({
               style={[styles.button, styles.buttonDelete]}
               activeOpacity={globalStyles.ACTIVE_OPACITY}
             >
-              <Icon name="trash" width={20} height={20} fillColor={globalStyles.textOnPrimaryColor} />
+              <Icon
+                name="trash"
+                width={20}
+                height={20}
+                fillColor={globalStyles.textOnPrimaryColor}
+              />
             </TouchableOpacity>
           </View>
         </View>
 
         <Divider style={styles.divider} />
 
-        {/* Phone number */}
         <View style={phoneNumberStyle}>
-          <Icon name="phone" width={15} height={15} colorStroke={globalStyles.primaryColor} />
+          <Icon
+            name="phone"
+            width={15}
+            height={15}
+            colorStroke={globalStyles.primaryColor}
+          />
           <Text style={styles.text}>{phoneNumber}</Text>
         </View>
 
-        {/* E-mail */}
         <View style={emailStyle}>
-          <Icon name="envelope" width={15} height={15} fillColor={globalStyles.primaryColor} />
+          <Icon
+            name="envelope"
+            width={15}
+            height={15}
+            fillColor={globalStyles.primaryColor}
+          />
           <Text style={styles.text}>{email}</Text>
         </View>
 
-        {/* Street + Building bumber */}
         <View style={styles.textWithIcon}>
-          <Icon name="location" width={15} height={15} colorStroke={globalStyles.primaryColor}  />
+          <Icon
+            name="location"
+            width={15}
+            height={15}
+            colorStroke={globalStyles.primaryColor}
+          />
           <Text style={styles.text}>
             {street} {buildingNumber}
           </Text>
         </View>
 
-        {/* Flat number + Floor number */}
         <View style={flatAndFloorNumberStyle}>
-          <Icon name="door" width={15} height={15} colorStroke={globalStyles.primaryColor}  />
-          <Text style={[styles.text, flatAndFloorNumberStyle]}>{flatAndFloorNumber}</Text>
+          <Icon
+            name="door"
+            width={15}
+            height={15}
+            colorStroke={globalStyles.primaryColor}
+          />
+          <Text style={[styles.text, flatAndFloorNumberStyle]}>
+            {flatAndFloorNumber}
+          </Text>
         </View>
 
-        {/* Postal code + City + Country */}
         <View style={styles.textWithIcon}>
-          <Icon name="city" width={15} height={15} fillColor={globalStyles.primaryColor} />
+          <Icon
+            name="city"
+            width={15}
+            height={15}
+            fillColor={globalStyles.primaryColor}
+          />
           <Text style={styles.text}>{postalCodeCityCountry}</Text>
         </View>
       </View>
@@ -221,7 +249,7 @@ const styles = StyleSheet.create({
   },
 
   textCapitalized: {
-    textTransform: "capitalize"
+    textTransform: "capitalize",
   },
 
   text: {

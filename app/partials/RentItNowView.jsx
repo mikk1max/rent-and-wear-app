@@ -6,83 +6,49 @@ import {
   TouchableOpacity,
   ScrollView,
   SafeAreaView,
-  Image,
   StyleSheet,
-  ActivityIndicator,
   TextInput,
-  Platform,
   Alert,
 } from "react-native";
 import { useCustomFonts } from "../utils/fonts";
 import { useNavigation } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
-// import fetchSVG, { fetchImgURL } from "../utils/fetchSVG";
-import { G, SvgUri } from "react-native-svg";
-
 import { globalStyles, styles as mainStyles } from "../utils/style";
-// import { iconParams, styles } from "../styles/AnnouncementViewStyles";
-import { Divider, Rating } from "react-native-elements";
-import OpinionCard from "../components/OpinionCard";
-import Swiper from "react-native-swiper";
-import ImageViewing from "react-native-image-viewing";
+import { Divider } from "react-native-elements";
 
-import {
-  ref,
-  onValue,
-  update,
-  get,
-  set,
-  remove,
-  goOnline,
-} from "firebase/database";
-import { db, storage } from "../../firebase.config";
+import { ref, onValue, set } from "firebase/database";
+import { db } from "../../firebase.config";
 import { useUser } from "../components/UserProvider";
-import { getStorage, ref as storageRef, uploadBytes } from "firebase/storage";
-import { getDownloadURL } from "firebase/storage";
 
-import {
-  fetchSvgURL,
-  fetchImgURL,
-  getRandomAvatarUrl,
-} from "../utils/fetchSVG";
-
-import * as ImagePicker from "expo-image-picker";
-import { useForm, Controller } from "react-hook-form";
-import { SelectList } from "react-native-dropdown-select-list";
 import Icon from "../components/Icon";
 
 import CalendarPicker from "react-native-calendar-picker";
 
 import {
   CreditCardView,
-  CreditCardInput,
   LiteCreditCardInput,
-  CreditCardFormData,
-  CreditCardFormField,
-  ValidationState,
 } from "react-native-credit-card-input";
-import { color } from "react-native-elements/dist/helpers";
 
 import * as Progress from "react-native-progress";
 import { useTranslation } from "react-i18next";
 import i18n from "../utils/i18n";
 
-// Get the screen dimensions
+import { styles } from "../styles/RentItNowViewStyles";
+
 const { width } = Dimensions.get("window");
 
 const RentItNowView = ({ route }) => {
   const navigation = useNavigation();
   const { t } = useTranslation();
 
-  const { user, setUser } = useUser();
+  const { user } = useUser();
 
   const [selectedStartDate, setSelectedStartDate] = useState(null);
   const [selectedEndDate, setSelectedEndDate] = useState(null);
-  const [key, setKey] = useState(0); // Используется для перерендеринга
+  const [key, setKey] = useState(0);
   const [isLoading, setLoading] = useState(true);
   const [announcement, setAnnouncement] = useState([]);
-  // const [unavailableDates, setUnavailableDates] = useState([]);
   const [rentalOption, setRentalOption] = useState("Rent"); // "Rent" or "Book"
   const [isBookingAvailable, setBookingAvailable] = useState(false);
   const [isNextStepActive, setNextStepActive] = useState(false); // false - button visible, section hidden, true - button hidden, section visible
@@ -103,7 +69,6 @@ const RentItNowView = ({ route }) => {
 
   const { id } = route.params;
 
-  // Funkcje do zarządzania datami
   const getToday = () => {
     let today = new Date(Date.now());
     today.setMilliseconds(0);
@@ -135,7 +100,6 @@ const RentItNowView = ({ route }) => {
     return differenceInDays;
   };
 
-  // Pobieranie ogłoszenia z bazy
   useEffect(() => {
     const announcementsRef = ref(db, `announcements/${id}`);
     const unsubscribe = onValue(
@@ -147,23 +111,16 @@ const RentItNowView = ({ route }) => {
         } else {
           setAnnouncement(null);
         }
-        setLoading(false); // Ustawienie ładowania na false po zakończeniu pobierania
+        setLoading(false);
       },
       (error) => {
         console.error("Błąd podczas pobierania danych:", error);
-        setLoading(false); // Nawet w przypadku błędu przerywamy ładowanie
+        setLoading(false);
       }
     );
 
     return () => unsubscribe();
   }, [id]);
-
-  // Пример массива недоступных дат
-  // const unavailableDates = [
-  //   { startDate: new Date(2025, 0, 10), endDate: new Date(2025, 0, 15) },
-  //   // { startDate: new Date(2025, 0, 20), endDate: new Date(2025, 0, 25) },
-  //   { startDate: new Date(2025, 0, 28), endDate: new Date(2025, 1, 2) },
-  // ];
 
   let unavailableDates = [];
   if (announcement) {
@@ -188,22 +145,9 @@ const RentItNowView = ({ route }) => {
   const firstAvailableDate = getDateInXDays(getToday(), 2);
   const lastAvailableDate = getDateInXDays(firstAvailableDate, 90);
 
-  // const isDateUnavailable = (date) => {
-  //   // Проверка недоступных дат из массива
-  //   const isInUnavailableRange = unavailableDates.some(
-  //     ({ startDate, endDate }) => date >= startDate && date <= endDate
-  //   );
-
-  //   // Проверка границ доступных дат
-  //   const isOutOfBounds = date < firstAvailableDate || date > lastAvailableDate;
-
-  //   return { isUnavailable: isInUnavailableRange, isOutOfBounds };
-  // };
-
   const generateCustomDatesStyles = () => {
     const stylesArray = [];
 
-    // Стиль для дат из unavailableDates
     unavailableDates.forEach(({ startDate, endDate }) => {
       let currentDate = new Date(startDate);
       while (currentDate <= endDate) {
@@ -217,37 +161,12 @@ const RentItNowView = ({ route }) => {
       }
     });
 
-    // Стиль для дат за границами доступного диапазона
-    // let currentDate = new Date(2025, 0, 1);
-    // while (currentDate < firstAvailableDate) {
-    //   stylesArray.push({
-    //     date: new Date(currentDate),
-    //     style: styles.outOfBoundsDate,
-    //     textStyle: styles.outOfBoundsDateText,
-    //     allowDisabled: true,
-    //   });
-    //   currentDate.setDate(currentDate.getDate() + 1);
-    // }
-
-    // currentDate = new Date(lastAvailableDate);
-    // currentDate.setDate(currentDate.getDate() + 1);
-    // while (currentDate <= new Date(2025, 1, 28)) {
-    //   stylesArray.push({
-    //     date: new Date(currentDate),
-    //     style: styles.outOfBoundsDate,
-    //     textStyle: styles.outOfBoundsDateText,
-    //     allowDisabled: true,
-    //   });
-    //   currentDate.setDate(currentDate.getDate() + 1);
-    // }
-
     return stylesArray;
   };
 
   const isRangeValid = (start, end) => {
     if (!start || !end) return true;
 
-    // Проверяем, пересекает ли диапазон недоступные даты
     for (let i = 0; i < unavailableDates.length; i++) {
       const { startDate, endDate } = unavailableDates[i];
       if (
@@ -287,7 +206,6 @@ const RentItNowView = ({ route }) => {
   const getDisabledDates = () => {
     const disabledDates = [];
 
-    // Добавляем даты из unavailableDates
     unavailableDates.forEach(({ startDate, endDate }) => {
       let currentDate = new Date(startDate);
       while (currentDate <= endDate) {
@@ -295,20 +213,6 @@ const RentItNowView = ({ route }) => {
         currentDate.setDate(currentDate.getDate() + 1);
       }
     });
-
-    // Добавляем даты за границами доступного диапазона
-    // let currentDate = new Date(2025, 0, 1);
-    // while (currentDate < firstAvailableDate) {
-    //   disabledDates.push(new Date(currentDate));
-    //   currentDate.setDate(currentDate.getDate() + 1);
-    // }
-
-    // currentDate = new Date(lastAvailableDate);
-    // currentDate.setDate(currentDate.getDate() + 1);
-    // while (currentDate <= new Date(2025, 1, 28)) {
-    //   disabledDates.push(new Date(currentDate));
-    //   currentDate.setDate(currentDate.getDate() + 1);
-    // }
 
     return disabledDates;
   };
@@ -355,13 +259,6 @@ const RentItNowView = ({ route }) => {
     }
   }, [address]);
 
-  const selectedAddressIconOptions = {
-    width: 15,
-    height: 15,
-    colorStroke: globalStyles.primaryColor,
-    fillColor: globalStyles.primaryColor,
-  };
-
   const getTotalAmount = (startDate, endDate) => {
     const totalAmount =
       (getDaysBetweenTwoDates(startDate, endDate) + 1) *
@@ -398,7 +295,6 @@ const RentItNowView = ({ route }) => {
 
   useEffect(() => {
     if (valueBLIK) {
-      // console.log(isNaN(NaN));
       if (!isNaN(valueBLIK)) {
         if (valueBLIK.toString().length < 6) {
           setErrorBLIK("The code should consist of 6 characters");
@@ -482,7 +378,6 @@ const RentItNowView = ({ route }) => {
   useEffect(() => {
     const intervalId = intervalRef.current;
 
-    // also clear on component unmount
     return () => clearInterval(intervalId);
   }, []);
 
@@ -504,8 +399,6 @@ const RentItNowView = ({ route }) => {
     requestRenting();
   };
 
-  // console.log(selectedStartDate.getTime());
-
   return (
     <SafeAreaView style={mainStyles.whiteBack}>
       <View
@@ -519,7 +412,6 @@ const RentItNowView = ({ route }) => {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
           nestedScrollEnabled={true}
-          // style={mainStyles.scrollBase}
         >
           <View style={styles.datePickerContainer}>
             <CalendarPicker
@@ -623,8 +515,7 @@ const RentItNowView = ({ route }) => {
                 {`${t("rentItNow.rentTermsSubTitle")}`}
               </Text>
             )}
-            {/* Wynajmujesz z obowiązkiem zapłaty całej kwoty. Jeśli zrezygnujesz,
-            nie dostaniesz pieniędzy z powrotem. */}
+
             {rentalOption === "Book" && (
               <Text style={styles.rentalOptionBookItDescription}>
                 {`${t("rentItNow.rentalOptionBookItDescriptionFirst")} `}
@@ -640,19 +531,7 @@ const RentItNowView = ({ route }) => {
                 {`, ${t("rentItNow.rentalOptionBookItDescriptionLast")}`}
               </Text>
             )}
-            {/* Rezerwujesz to ogłoszenie na później. Zapłacisz 20% od całej kwoty,
-            którą nie dostaniesz z powrotem w przypadku rezygnacji z rezerwacji.
-            Od momentu złożenia rezerwacji i do{" "}
-            {selectedStartDate
-              ? selectedStartDate.toLocaleDateString(undefined, {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })
-              : "CHOOSE A START DATE"}{" "}
-            musisz zapłacić pozostałe 80%, żeby móc wypożyczyć to ogłoszenie.
-            Jeśli nie zapłacisz przed upływem tego terminu, rezerwacja zostanie
-            anulowana. */}
+
             <View style={styles.rentalOptionButtons}>
               <TouchableOpacity
                 style={
@@ -785,7 +664,6 @@ const RentItNowView = ({ route }) => {
 
               {address && !isAddressListVisible && (
                 <View style={styles.selectedAddressContainer}>
-                  {/* Adresse */}
                   <View style={styles.selectedAddressTextWithIcon}>
                     <Icon
                       name="user-stroke"
@@ -798,7 +676,6 @@ const RentItNowView = ({ route }) => {
                     </Text>
                   </View>
 
-                  {/* Phone number */}
                   {address?.phoneNumber && (
                     <View style={styles.selectedAddressTextWithIcon}>
                       <Icon
@@ -813,7 +690,6 @@ const RentItNowView = ({ route }) => {
                     </View>
                   )}
 
-                  {/* E-mail */}
                   <View style={styles.selectedAddressTextWithIcon}>
                     <Icon
                       name="envelope"
@@ -826,7 +702,6 @@ const RentItNowView = ({ route }) => {
                     </Text>
                   </View>
 
-                  {/* Street + Building bumber */}
                   <View style={styles.selectedAddressTextWithIcon}>
                     <Icon
                       name="location"
@@ -839,7 +714,6 @@ const RentItNowView = ({ route }) => {
                     </Text>
                   </View>
 
-                  {/* Flat number + Floor number */}
                   {(address?.flatOrApartmentNumber || address?.floorNumber) && (
                     <View style={styles.selectedAddressTextWithIcon}>
                       <Icon
@@ -876,7 +750,6 @@ const RentItNowView = ({ route }) => {
                     </View>
                   )}
 
-                  {/* Postal code + City + Country */}
                   <View style={styles.selectedAddressTextWithIcon}>
                     <Icon
                       name="city"
@@ -976,7 +849,7 @@ const RentItNowView = ({ route }) => {
                     onChange={setCardFormData}
                     onFocusField={setCardFocusedField}
                   />
-                  <View style={styles.paymentCardInfoContainer}>
+                  <View>
                     <View style={styles.paymentCardInfo}>
                       <Icon
                         name={
@@ -1192,654 +1065,3 @@ const RentItNowView = ({ route }) => {
 };
 
 export default RentItNowView;
-
-const styles = StyleSheet.create({
-  datePickerContainer: {
-    width: "100%",
-    height: "auto",
-    padding: 10,
-    gap: 10,
-    borderRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.secondaryColor,
-    // padding: 50,
-    // marginRight: 1,
-  },
-
-  datePickerPreviousTitle: {
-    fontFamily: "Poppins_500Medium",
-    fontSize: 14,
-    width: 70,
-    padding: 5,
-    textAlign: "center",
-    justifyContent: "center",
-    borderRadius: globalStyles.BORDER_RADIUS,
-    color: globalStyles.textOnPrimaryColor,
-    backgroundColor: globalStyles.primaryColor,
-  },
-
-  datePickerNextTitle: {
-    fontFamily: "Poppins_500Medium",
-    fontSize: 14,
-    width: 70,
-    padding: 5,
-    textAlign: "center",
-    justifyContent: "center",
-    borderRadius: globalStyles.BORDER_RADIUS,
-    color: globalStyles.textOnPrimaryColor,
-    backgroundColor: globalStyles.primaryColor,
-  },
-
-  // Niewiadomo do czego służy
-  datePickerSelectedDayStyle: {
-    // color: "blue",
-    // backgroundColor: "red",
-  },
-
-  datePickerSelectedDayTextStyle: {
-    fontFamily: "Poppins_500Medium",
-    fontSize: 14,
-    color: globalStyles.textOnAccentColor,
-  },
-
-  datePickerSelectedRangeStartTextStyle: {
-    fontFamily: "Poppins_500Medium",
-    fontSize: 14,
-    color: globalStyles.textOnAccentColor,
-  },
-
-  datePickerSelectedRangeEndTextStyle: {
-    fontFamily: "Poppins_500Medium",
-    fontSize: 14,
-    color: globalStyles.textOnAccentColor,
-  },
-
-  datePickerSelectedRangeStartStyle: {
-    borderTopLeftRadius: globalStyles.BORDER_RADIUS,
-    borderBottomLeftRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.accentColor,
-  },
-
-  datePickerSelectedRangeEndStyle: {
-    borderTopRightRadius: globalStyles.BORDER_RADIUS,
-    borderBottomRightRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.accentColor,
-  },
-
-  datePickerSelectedRangeStyle: {
-    backgroundColor: globalStyles.accentColor,
-  },
-
-  datePickerDisabledDatesTextStyle: {
-    fontFamily: "Poppins_500Medium",
-    fontSize: 14,
-    color: "gray",
-  },
-
-  datePickerTodayTextStyle: {
-    fontFamily: "Poppins_500Medium",
-    fontSize: 14,
-  },
-
-  datePickerTextStyle: {
-    fontFamily: "WorkSans_900Black",
-    fontSize: 18,
-    color: globalStyles.textOnSecondaryColor,
-  },
-
-  datePickerDayLabelsWrapper: {
-    borderColor: globalStyles.primaryColor,
-  },
-
-  // datePickerMonthYearHeaderWrapperStyle: {
-  // },
-
-  // datePickerHeaderWrapperStyle: {
-  // },
-
-  datePickerMonthTitleStyle: {
-    fontFamily: "WorkSans_900Black",
-    fontSize: 18,
-    color: globalStyles.textOnSecondaryColor,
-  },
-
-  datePickerYearTitleStyle: {
-    fontFamily: "WorkSans_900Black",
-    fontSize: 18,
-    color: globalStyles.textOnSecondaryColor,
-  },
-
-  selectedDatesContainer: {
-    marginTop: 20,
-    alignItems: "center",
-  },
-
-  unavailableDate: {
-    // backgroundColor: "#FF6347", // Красный для дат из unavailableDates
-    borderRadius: 5,
-    backgroundColor: globalStyles.redColor,
-  },
-
-  unavailableDateText: {
-    // color: "#FFFFFF",
-    color: globalStyles.textOnRedColor,
-  },
-
-  // outOfBoundsDate: {
-  //   backgroundColor: "#D3D3D3", // Серый для дат за пределами доступных
-  //   borderRadius: 5,
-  // },
-  // outOfBoundsDateText: {
-  //   color: "#A9A9A9",
-  // },
-
-  dateDivider: {
-    // height: 5,
-    // width: 5,
-    marginHorizontal: 10,
-    borderWidth: 0.5,
-    borderColor: globalStyles.primaryColor,
-  },
-
-  dateResulText: {
-    paddingHorizontal: 10,
-    fontFamily: "Poppins_500Medium",
-    fontSize: 14,
-    color: globalStyles.primaryColor,
-  },
-
-  dateResetButton: {
-    width: "100%",
-    padding: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: globalStyles.primaryColor,
-    borderRadius: globalStyles.BORDER_RADIUS,
-  },
-
-  dateResetText: {
-    fontFamily: "WorkSans_900Black",
-    fontSize: 18,
-    color: globalStyles.textOnPrimaryColor,
-  },
-
-  rentalOptionContainer: {
-    marginTop: 10,
-    gap: 10,
-  },
-
-  rentalOptionLabel: {
-    fontFamily: "WorkSans_900Black",
-    fontSize: 18,
-    color: globalStyles.textOnSecondaryColor,
-  },
-
-  rentalOptionRentItNowDescription: {
-    paddingHorizontal: 10,
-    fontFamily: "Poppins_500Medium",
-    fontSize: 14,
-    color: globalStyles.primaryColor,
-  },
-
-  rentalOptionBookItDescription: {
-    paddingHorizontal: 10,
-    fontFamily: "Poppins_500Medium",
-    fontSize: 14,
-    color: globalStyles.primaryColor,
-  },
-
-  rentalOptionButtons: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-
-  rentalOptionRentItNowButtonActive: {
-    width: "50%",
-    padding: 10,
-    justifyContent: "center",
-    borderTopLeftRadius: globalStyles.BORDER_RADIUS,
-    borderBottomLeftRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.primaryColor,
-  },
-
-  rentalOptionRentItNowButtonNotActive: {
-    width: "50%",
-    padding: 10,
-    justifyContent: "center",
-    borderTopLeftRadius: globalStyles.BORDER_RADIUS,
-    borderBottomLeftRadius: globalStyles.BORDER_RADIUS,
-    borderWidth: 1,
-    borderColor: globalStyles.primaryColor,
-    backgroundColor: globalStyles.textOnPrimaryColor,
-  },
-
-  rentalOptionRentItNowTextActive: {
-    textAlign: "center",
-    fontFamily: "WorkSans_900Black",
-    fontSize: 18,
-    color: globalStyles.textOnPrimaryColor,
-  },
-
-  rentalOptionRentItNowTextNotActive: {
-    textAlign: "center",
-    fontFamily: "WorkSans_900Black",
-    fontSize: 18,
-    color: globalStyles.primaryColor,
-  },
-
-  rentalOptionBookItButtonActive: {
-    width: "50%",
-    padding: 10,
-    justifyContent: "center",
-    borderTopRightRadius: globalStyles.BORDER_RADIUS,
-    borderBottomRightRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.primaryColor,
-  },
-
-  rentalOptionBookItButtonNotActive: {
-    width: "50%",
-    padding: 10,
-    justifyContent: "center",
-    borderTopRightRadius: globalStyles.BORDER_RADIUS,
-    borderBottomRightRadius: globalStyles.BORDER_RADIUS,
-    borderWidth: 1,
-    borderColor: globalStyles.primaryColor,
-    backgroundColor: globalStyles.textOnPrimaryColor,
-  },
-
-  rentalOptionBookItTextActive: {
-    textAlign: "center",
-    fontFamily: "WorkSans_900Black",
-    fontSize: 18,
-    color: globalStyles.textOnPrimaryColor,
-  },
-
-  rentalOptionBookItTextNotActive: {
-    textAlign: "center",
-    fontFamily: "WorkSans_900Black",
-    fontSize: 18,
-    color: globalStyles.primaryColor,
-  },
-
-  rentalOptionBookItDisabled: {
-    width: "50%",
-    padding: 10,
-    justifyContent: "center",
-    textAlign: "center",
-    fontFamily: "Poppins_500Medium",
-    fontSize: 14,
-    borderTopRightRadius: globalStyles.BORDER_RADIUS,
-    borderBottomRightRadius: globalStyles.BORDER_RADIUS,
-    borderWidth: 1,
-    borderColor: globalStyles.primaryColor,
-    backgroundColor: globalStyles.textOnRedColor,
-    color: globalStyles.primaryColor,
-  },
-
-  nextStepButton: {
-    marginTop: 20,
-    width: "100%",
-    padding: 10,
-    justifyContent: "center",
-    borderRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.accentColor,
-  },
-
-  nextStepText: {
-    textAlign: "center",
-    fontFamily: "WorkSans_900Black",
-    fontSize: 18,
-    color: globalStyles.textOnAccentColor,
-  },
-
-  addressContainer: {
-    marginTop: 10,
-    gap: 10,
-  },
-
-  addressLabelWithReset: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-
-  addressLabel: {
-    fontFamily: "WorkSans_900Black",
-    fontSize: 18,
-    color: globalStyles.textOnSecondaryColor,
-  },
-
-  addressResetButton: {
-    padding: 5,
-    borderRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.primaryColor,
-  },
-
-  addressResetText: {
-    fontFamily: "Poppins_500Medium",
-    fontSize: 14,
-    color: globalStyles.textOnPrimaryColor,
-  },
-
-  addressListButton: {
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 10,
-    borderRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.primaryColor,
-  },
-
-  addressListText: {
-    fontFamily: "Poppins_500Medium",
-    fontSize: 14,
-    color: globalStyles.textOnPrimaryColor,
-  },
-
-  addressList: {
-    zIndex: -1,
-    marginTop: -20,
-    padding: 10,
-    paddingTop: 20,
-    // gap: 5,
-    // height: 200,
-    height: "auto",
-    // flex: 1,
-    // overflow: "hidden",
-    backgroundColor: globalStyles.secondaryColor,
-    borderBottomLeftRadius: globalStyles.BORDER_RADIUS,
-    borderBottomRightRadius: globalStyles.BORDER_RADIUS,
-  },
-
-  addressListScroll: {},
-
-  addressListItemWithoutBorder: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    alignContent: "center",
-    gap: 10,
-  },
-
-  addressListItemWithBorder: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    alignContent: "center",
-    gap: 10,
-    paddingBottom: 7,
-    marginBottom: 9,
-    borderBottomWidth: 1,
-    borderBottomColor: globalStyles.textOnSecondaryColor,
-  },
-
-  addressListItemText: {
-    fontFamily: "Poppins_500Medium",
-    fontSize: 14,
-    color: globalStyles.primaryColor,
-  },
-
-  addressOrText: {
-    textAlign: "center",
-    fontFamily: "WorkSans_900Black",
-    fontSize: 18,
-    color: globalStyles.textOnSecondaryColor,
-  },
-
-  addressCreateAnAddressButton: {
-    width: "100%",
-    padding: 10,
-    justifyContent: "center",
-    borderRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.primaryColor,
-  },
-
-  addressCreateAnAddressText: {
-    textAlign: "center",
-    fontFamily: "WorkSans_900Black",
-    fontSize: 18,
-    color: globalStyles.textOnPrimaryColor,
-  },
-
-  selectedAddressContainer: {
-    zIndex: -1,
-    marginTop: -20,
-    padding: 10,
-    paddingTop: 20,
-    borderBottomLeftRadius: globalStyles.BORDER_RADIUS,
-    borderBottomRightRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.secondaryColor,
-  },
-
-  selectedAddressTextWithIcon: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    alignItems: "center",
-    gap: 10,
-  },
-
-  selectedAddressText: {
-    fontFamily: "Poppins_500Medium",
-    fontSize: 14,
-    color: globalStyles.textOnSecondaryColor,
-  },
-
-  paymentContainer: {
-    marginTop: 10,
-    gap: 10,
-  },
-
-  paymentLabel: {
-    fontFamily: "WorkSans_900Black",
-    fontSize: 18,
-    color: globalStyles.textOnSecondaryColor,
-  },
-
-  paymentMethodButtons: {
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-
-  paymentMethodCardButtonSelected: {
-    width: "50%",
-    padding: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    borderTopLeftRadius: globalStyles.BORDER_RADIUS,
-    borderBottomLeftRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.primaryColor,
-  },
-
-  paymentMethodCardButtonNotSelected: {
-    width: "50%",
-    padding: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 1,
-    borderRightWidth: 0,
-    borderTopLeftRadius: globalStyles.BORDER_RADIUS,
-    borderBottomLeftRadius: globalStyles.BORDER_RADIUS,
-    borderColor: globalStyles.primaryColor,
-    backgroundColor: globalStyles.textOnPrimaryColor,
-  },
-
-  paymentMethodCardTextSelected: {
-    textAlign: "center",
-    fontFamily: "WorkSans_900Black",
-    fontSize: 18,
-    color: globalStyles.textOnPrimaryColor,
-  },
-
-  paymentMethodCardTextNotSelected: {
-    textAlign: "center",
-    fontFamily: "WorkSans_900Black",
-    fontSize: 18,
-    color: globalStyles.primaryColor,
-  },
-
-  paymentMethodBLIKButtonSelected: {
-    width: "50%",
-    padding: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    borderTopRightRadius: globalStyles.BORDER_RADIUS,
-    borderBottomRightRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.primaryColor,
-  },
-
-  paymentMethodBLIKButtonNotSelected: {
-    width: "50%",
-    padding: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 1,
-    borderTopRightRadius: globalStyles.BORDER_RADIUS,
-    borderBottomRightRadius: globalStyles.BORDER_RADIUS,
-    borderColor: globalStyles.primaryColor,
-    backgroundColor: globalStyles.textOnPrimaryColor,
-  },
-
-  paymentMethodBLIKTextSelected: {
-    textAlign: "center",
-    fontFamily: "WorkSans_900Black",
-    fontSize: 18,
-    color: globalStyles.textOnPrimaryColor,
-  },
-
-  paymentMethodBLIKTextNotSelected: {
-    textAlign: "center",
-    fontFamily: "WorkSans_900Black",
-    fontSize: 18,
-    color: globalStyles.primaryColor,
-  },
-
-  paymentCardContainer: {
-    zIndex: -1,
-    marginTop: -25,
-    padding: 10,
-    paddingTop: 30,
-    gap: 10,
-    borderBottomLeftRadius: globalStyles.BORDER_RADIUS,
-    borderBottomRightRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.secondaryColor,
-  },
-
-  paymentCardView: {
-    alignSelf: "center",
-    // marginTop: 15,
-  },
-
-  paymentCardInput: {
-    width: "100%",
-    borderWidth: 0.5,
-    borderRadius: globalStyles.BORDER_RADIUS,
-    borderColor: globalStyles.primaryColor,
-    backgroundColor: globalStyles.textOnPrimaryColor,
-    color: globalStyles.primaryColor,
-    // marginTop: 15,
-    // borderColor: "#fff",
-    // borderTopWidth: 1,
-    // borderBottomWidth: 1,
-  },
-
-  paymentCardInputText: {
-    color: globalStyles.primaryColor,
-  },
-
-  paymentCardInfoContainer: {
-    // margin: 20,
-    // padding: 20,
-    // backgroundColor: "#dfdfdf",
-    // borderRadius: 5,
-  },
-
-  paymentCardInfo: {
-    flexDirection: "row",
-    width: "100%",
-    justifyContent: "flex-start",
-    gap: 10,
-    alignItems: "center",
-  },
-
-  paymentCardInfoText: {
-    fontFamily: "Poppins_500Medium",
-    fontSize: 14,
-    color: globalStyles.primaryColor,
-  },
-
-  paymentBLIKContainer: {
-    zIndex: -1,
-    marginTop: -25,
-    padding: 10,
-    paddingTop: 30,
-    gap: 10,
-    borderBottomLeftRadius: globalStyles.BORDER_RADIUS,
-    borderBottomRightRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.secondaryColor,
-  },
-
-  paymentBLIKError: {
-    width: "100%",
-    marginBottom: -20,
-    paddingTop: 10,
-    paddingBottom: 15,
-    paddingHorizontal: 10,
-    fontFamily: "Poppins_500Medium",
-    fontSize: 14,
-    color: globalStyles.redColor,
-    backgroundColor: globalStyles.textOnRedColor,
-    borderTopRightRadius: globalStyles.BORDER_RADIUS,
-    borderTopLeftRadius: globalStyles.BORDER_RADIUS,
-  },
-
-  paymentBLIKTextInput: {
-    width: "100%",
-    padding: 10,
-    borderWidth: 0.5,
-    borderRadius: globalStyles.BORDER_RADIUS,
-    borderColor: globalStyles.primaryColor,
-    backgroundColor: globalStyles.textOnPrimaryColor,
-    fontFamily: "Poppins_500Medium",
-    fontSize: 14,
-    color: globalStyles.primaryColor,
-  },
-
-  finishContainer: {
-    marginTop: 20,
-  },
-
-  finishButton: {
-    // marginTop: 20,
-    width: "100%",
-    padding: 10,
-    justifyContent: "center",
-    // alignItems: "center",
-    borderRadius: globalStyles.BORDER_RADIUS,
-    backgroundColor: globalStyles.accentColor,
-  },
-
-  finishText: {
-    textAlign: "center",
-    fontFamily: "WorkSans_900Black",
-    fontSize: 18,
-    color: globalStyles.textOnAccentColor,
-  },
-
-  finishProgress: {},
-
-  finishProgressText: {
-    zIndex: -1,
-    marginTop: -25,
-    padding: 10,
-    paddingTop: 30,
-    gap: 10,
-    borderBottomLeftRadius: globalStyles.BORDER_RADIUS,
-    borderBottomRightRadius: globalStyles.BORDER_RADIUS,
-    borderWidth: 2,
-    borderColor: globalStyles.accentColor,
-    backgroundColor: globalStyles.textOnAccentColor,
-    textAlign: "center",
-    fontFamily: "WorkSans_900Black",
-    fontSize: 18,
-    color: globalStyles.accentColor,
-  },
-});
