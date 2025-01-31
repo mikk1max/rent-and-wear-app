@@ -11,6 +11,7 @@ import {
   ActivityIndicator,
   Modal,
   TextInput,
+  StatusBar,
 } from "react-native";
 import { useCustomFonts } from "../utils/fonts";
 import { useNavigation } from "@react-navigation/native";
@@ -517,6 +518,7 @@ const GetDetailsView = ({ route }) => {
 
   return (
     <SafeAreaView style={mainStyles.whiteBack}>
+      <StatusBar backgroundColor={globalStyles.accentColor} barStyle="light-content" />
       <View
         style={[
           mainStyles.container,

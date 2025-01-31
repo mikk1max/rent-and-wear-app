@@ -7,6 +7,7 @@ import {
   TextInput,
   Modal,
   SafeAreaView,
+  StatusBar,
 } from "react-native";
 import { useCustomFonts } from "../utils/fonts";
 import { useForm, Controller } from "react-hook-form";
@@ -293,6 +294,7 @@ const AddressesView = () => {
 
   return (
     <SafeAreaView style={mainStyles.whiteBack}>
+      <StatusBar backgroundColor={globalStyles.primaryColor} barStyle="light-content" />
       <View style={[mainStyles.container, { paddingTop: 0 }]}>
         <View style={[mainStyles.scrollBase, { marginTop: 20 }]}>
           <ScrollView showsVerticalScrollIndicator={false}>

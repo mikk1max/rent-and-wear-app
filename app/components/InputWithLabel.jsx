@@ -4,6 +4,7 @@ import { Text, TouchableOpacity, TextInput, View } from "react-native";
 import { Controller } from "react-hook-form";
 import { styles } from "../styles/SettingsViewStyles";
 import { useTranslation } from "react-i18next";
+import { globalStyles } from "../utils/style";
 
 const InputWithLabel = ({
   control,
