@@ -8,6 +8,7 @@ import {
   Image,
   Alert,
   Modal,
+  StatusBar,
 } from "react-native";
 import { useCustomFonts } from "../utils/fonts";
 import { useNavigation } from "@react-navigation/native";
@@ -295,6 +296,7 @@ const AnnouncementView = ({ route }) => {
 
   return (
     <SafeAreaView style={mainStyles.whiteBack}>
+      <StatusBar backgroundColor={globalStyles.primaryColor} barStyle="light-content" />
       <View style={[mainStyles.container, mainStyles.scrollBase]}>
         <ScrollView
           showsVerticalScrollIndicator={false}

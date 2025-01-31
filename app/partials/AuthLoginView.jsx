@@ -5,6 +5,9 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Image,
+  KeyboardAvoidingView,
+  Platform,
+  StatusBar,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useForm } from "react-hook-form";
@@ -50,6 +53,7 @@ export default function AuthLoginView() {
 
   return (
     <SafeAreaView style={[mainStyles.whiteBack]}>
+      <StatusBar backgroundColor={globalStyles.backgroundColor} barStyle="dark-content" />
       <KeyboardAwareScrollView
         extraScrollHeight={10}
         keyboardShouldPersistTaps="handled"

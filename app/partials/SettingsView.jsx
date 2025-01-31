@@ -8,6 +8,7 @@ import {
   Image,
   SafeAreaView,
   Alert,
+  StatusBar,
 } from "react-native";
 import { useCustomFonts } from "../utils/fonts";
 import { useForm, Controller } from "react-hook-form";
@@ -270,6 +271,7 @@ export default function SettingsView() {
 
   return (
     <SafeAreaView style={mainStyles.whiteBack}>
+      <StatusBar backgroundColor={globalStyles.primaryColor} barStyle="light-content" />
       <View
         style={[
           mainStyles.container,

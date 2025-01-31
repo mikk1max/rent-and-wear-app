@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "react-native-app",
+    "name": "RENT&WEAR",
     "slug": "rent-clothes-app",
     "scheme": "rentAndWear",
     "version": "1.0.0",
@@ -9,27 +9,25 @@
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "image": "./assets/icon.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#083D77"
     },
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#083D77"
       },
-      "package": "test.app"
+      "package": "test.app",
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
-      "favicon": "./assets/favicon.png"
-    },
-    "extra": {
-      "eas": {
-        "projectId": "f7c91daa-3dd0-44a5-b934-c414b19fde16"
-      }
+      "favicon": "./assets/icon.png"
     },
     "plugins": [
       [
@@ -50,6 +48,11 @@
       "expo-asset",
       "expo-localization"
     ],
-    "owner": "mikki_max"
+    "owner": "mikki_max",
+    "extra": {
+      "eas": {
+        "projectId": "a378ecaf-222a-49a3-aa96-838009ec9c53"
+      }
+    }
   }
 }
