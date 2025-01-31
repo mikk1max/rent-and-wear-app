@@ -6,19 +6,13 @@ import {
   ScrollView,
   SafeAreaView,
   Image,
-  StyleSheet,
-  ActivityIndicator,
   Alert,
   Modal,
 } from "react-native";
 import { useCustomFonts } from "../utils/fonts";
 import { useNavigation } from "@react-navigation/native";
-
-// import fetchSVG, { fetchImgURL } from "../utils/fetchSVG";
-import { G, SvgUri } from "react-native-svg";
-
 import { globalStyles, styles as mainStyles } from "../utils/style";
-import { iconParams, styles } from "../styles/AnnouncementViewStyles";
+import { styles } from "../styles/AnnouncementViewStyles";
 import { Divider } from "react-native-elements";
 import { Rating } from "react-native-ratings";
 import OpinionCard from "../components/OpinionCard";
@@ -26,23 +20,11 @@ import Swiper from "react-native-swiper";
 import ImageViewing from "react-native-image-viewing";
 import NotFound from "../components/NotFound";
 
-import {
-  ref,
-  onValue,
-  update,
-  push,
-  get,
-  set,
-  remove,
-} from "firebase/database";
+import { ref, onValue, push, get, set, remove } from "firebase/database";
 import { db, storage } from "../../firebase.config";
 import { useUser } from "../components/UserProvider";
 
-import {
-  fetchSvgURL,
-  fetchImgURL,
-  getRandomAvatarUrl,
-} from "../utils/fetchSVG";
+import { fetchImgURL, getRandomAvatarUrl } from "../utils/fetchSVG";
 
 import Icon from "../components/Icon";
 import Loader from "../components/Loader";
@@ -61,15 +43,12 @@ const AnnouncementView = ({ route }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [advertiser, setAdvertiser] = useState([]);
   const [advertiserAvatar, setAdvertiserAvatar] = useState();
-  // const [visibleOpinions, setVisibleOpinions] = useState(2);
-  // const [opinionsToDisplay, setOpinionsToDisplay] = useState([]);
   const [isModalDeleteVisible, setModalDeleteVisible] = useState(false);
   const [confirmationTitle, setConfirmationTitle] = useState("");
 
   const { t, i18n } = useTranslation();
   const { id } = route.params;
 
-  // Pobieranie ogłoszenia z bazy
   useEffect(() => {
     setLoading(true);
     const announcementsRef = ref(db, `announcements/${id}`);
@@ -82,22 +61,19 @@ const AnnouncementView = ({ route }) => {
         } else {
           setAnnouncement(null);
         }
-        setLoading(false); // Ustawienie ładowania na false po zakończeniu pobierania
+        setLoading(false);
       },
       (error) => {
         console.error("Błąd podczas pobierania danych:", error);
-        setLoading(false); // Nawet w przypadku błędu przerywamy ładowanie
+        setLoading(false);
       }
     );
 
     return () => unsubscribe();
   }, [id]);
 
-  // console.log("Announcement: " + announcement);
-
   const advertiserId = announcement ? announcement.advertiserId : null;
 
-  // Pobieranie ogłoszeniodawcy z bazy
   useEffect(() => {
     setLoading(true);
     const advertiserRef = ref(db, `users/${advertiserId}`);
@@ -110,20 +86,17 @@ const AnnouncementView = ({ route }) => {
         } else {
           setAdvertiser(null);
         }
-        setLoading(false); // Ustawienie ładowania na false po zakończeniu pobierania
+        setLoading(false);
       },
       (error) => {
         console.error("Błąd podczas pobierania danych:", error);
-        setLoading(false); // Nawet w przypadku błędu przerywamy ładowanie
+        setLoading(false);
       }
     );
 
     return () => unsubscribe();
   }, [advertiserId]);
 
-  // console.log("Advertiser: " + advertiser);
-
-  // Pobieranie zdjęcia profilowego Ogłoszeniodawcy
   useEffect(() => {
     const fetchProfileImg = async () => {
       try {
@@ -142,30 +115,7 @@ const AnnouncementView = ({ route }) => {
     }
   }, [advertiserId]);
 
-  // Renderowanie opinii
-  // useEffect(() => {
-  //   // if (visibleOpinions > announcement.opinions.length)
-  //   //   setVisibleOpinions(announcement.opinions.length);
-  //   let opinions = opinionsToDisplay;
-  //   for (let i = 0; i < visibleOpinions; i++) {
-  //     opinions.push(
-  //       <OpinionCard
-  //         key={"OpinionCard" + announcement.opinions[i].id}
-  //         id={announcement.opinions[i].id}
-  //         authorId={announcement.opinions[i].authorId}
-  //         userId={user.id}
-  //         rate={announcement.opinions[i].rate}
-  //         publicationDate={announcement.opinions[i].date}
-  //         text={announcement.opinions[i].text}
-  //         moderationStatus={announcement.opinions[i].moderationStatus}
-  //       />
-  //     );
-  //   }
-  //   setOpinionsToDisplay(opinions);
-  // }, [visibleOpinions]);
-
   if (isLoading) {
-    // Komponent ładowania
     return (
       <SafeAreaView style={mainStyles.whiteBack}>
         <Loader />
@@ -174,7 +124,6 @@ const AnnouncementView = ({ route }) => {
   }
 
   if (!announcement || !advertiser) {
-    // Obsługa braku danych
     return (
       <SafeAreaView style={mainStyles.whiteBack}>
         <NotFound />
@@ -202,12 +151,10 @@ const AnnouncementView = ({ route }) => {
     : "Date hidden";
 
   const openImage = (index) => {
-    setCurrentIndex(index); // Ustaw aktualny indeks
-    setIsVisible(true); // Pokaż pełnoekranowy obraz
+    setCurrentIndex(index);
+    setIsVisible(true);
     console.log(`Open ${index}`);
   };
-
-  // console.log(opinionsToDisplay);
 
   const onChatPress = (announcement) => {
     if (!user || !user.id) {
@@ -328,7 +275,6 @@ const AnnouncementView = ({ route }) => {
           );
 
           await Promise.all(deletePromises);
-          // console.log(`All files in folder ${folderPath} have been deleted.`);
         }
 
         const announcementRef = ref(db, `announcements/${announcement.id}`);
@@ -366,17 +312,15 @@ const AnnouncementView = ({ route }) => {
                   >
                     <Image
                       source={{ uri: image }}
-                      // defaultSource={{ uri: imagePlaceholder }}
                       style={styles.annSlideImage}
                     />
                   </TouchableOpacity>
                 ))}
             </Swiper>
 
-            {/* ImageViewing - pełnoekranowe wyświetlanie */}
             <ImageViewing
               images={announcement.images.map((image) => ({ uri: image }))}
-              imageIndex={currentIndex} // Zaczyna od wybranego obrazu
+              imageIndex={currentIndex}
               visible={isVisible}
               presentationStyle="overFullScreen"
               FooterComponent={({ imageIndex }) => (
@@ -384,7 +328,7 @@ const AnnouncementView = ({ route }) => {
                   {imageIndex + 1} / {announcement.images.length}
                 </Text>
               )}
-              onRequestClose={() => setIsVisible(false)} // Zamknij po kliknięciu
+              onRequestClose={() => setIsVisible(false)}
             />
           </View>
 
@@ -538,7 +482,6 @@ const AnnouncementView = ({ route }) => {
               {announcement &&
                 announcement?.opinions &&
                 Object.entries(announcement?.opinions).map(([key, value]) => (
-                  // announcement?.opinions?.map((opinion) => (
                   <OpinionCard
                     key={`AnnouncementView_OpinionCard_${key}`}
                     id={key}
@@ -550,11 +493,7 @@ const AnnouncementView = ({ route }) => {
                     moderationStatus={value?.moderationStatus}
                   />
                 ))}
-              {/* {opinionsToDisplay} */}
             </View>
-            {/* <OpinionCard 
-              id={announcement?.opinions?.}
-            /> */}
           </View>
         </ScrollView>
         {announcement.advertiserId != user.id && (

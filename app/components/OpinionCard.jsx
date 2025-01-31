@@ -1,25 +1,11 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  SafeAreaView,
-  Image,
-  StyleSheet,
-} from "react-native";
-import { useCustomFonts } from "../utils/fonts";
-import { useNavigation } from "@react-navigation/native";
+import { View, Text, StyleSheet } from "react-native";
 
-import { ref, onValue, update } from "firebase/database";
+import { ref, onValue } from "firebase/database";
 import { db } from "../../firebase.config";
 
-import fetchSVG, { fetchImgURL } from "../utils/fetchSVG";
-import { G, SvgUri } from "react-native-svg";
-
-import { globalStyles, styles as mainStyles } from "../utils/style";
-// import { iconParams, styles } from "../styles/UserProfileViewStyles";
-import { Divider, Rating } from "react-native-elements";
+import { globalStyles } from "../utils/style";
+import { Rating } from "react-native-elements";
 
 const OpinionCard = ({
   id,
@@ -32,7 +18,6 @@ const OpinionCard = ({
 }) => {
   const [author, setAuthor] = useState([]);
 
-  // Pobieranie autora opinii z bazy
   useEffect(() => {
     const authorRef = ref(db, `users/${authorId}`);
     const unsubscribe = onValue(
@@ -44,18 +29,15 @@ const OpinionCard = ({
         } else {
           setAuthor(null);
         }
-        // setLoading(false); // Ustawienie ładowania na false po zakończeniu pobierania
       },
       (error) => {
         console.error("Błąd podczas pobierania danych:", error);
-        // setLoading(false); // Nawet w przypadku błędu przerywamy ładowanie
       }
     );
 
     return () => unsubscribe();
   }, [authorId]);
 
-  //////////////////////
   const displayedOpinionPublicationDate = new Date(
     publicationDate
   ).toLocaleDateString(undefined, {
@@ -173,7 +155,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "100%",
     height: "auto",
-    // gap: 10,
     justifyContent: "flex-start",
     alignItems: "center",
   },
@@ -192,7 +173,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     padding: 5,
     borderRadius: globalStyles.BORDER_RADIUS,
-    // alignSelf: "center",
     color: globalStyles.textOnPrimaryColor,
     backgroundColor: globalStyles.primaryColor,
   },
@@ -202,7 +182,6 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "auto",
     justifyContent: "flex-start",
-    // alignItems: "center",
     gap: 10,
   },
 

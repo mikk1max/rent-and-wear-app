@@ -58,17 +58,15 @@ export default function ChatView() {
     const chatMessagesRef = ref(db, `chats/${chatId}/messages`);
     const typingRef = ref(db, `chats/${chatId}/typing`);
 
-    // Fetch advertiser name
     const unsubscribeChat = onValue(chatRef, (snapshot) => {
       const data = snapshot.val();
       console.log(data);
-      
+
       if (data) {
         setAdvertiserName(data.advertiserName || t("chat.noUserName"));
       }
     });
 
-    // Fetch messages
     const unsubscribeMessages = onValue(chatMessagesRef, async (snapshot) => {
       const data = snapshot.val();
       if (data) {
@@ -79,7 +77,6 @@ export default function ChatView() {
       }
     });
 
-    // Handle typing status
     const unsubscribeTyping = onValue(typingRef, (snapshot) => {
       const data = snapshot.val();
       const otherTypingUsers = data
@@ -110,12 +107,10 @@ export default function ChatView() {
           ? new Date(Number(data[key].timestamp))
           : null;
 
-        // console.log("Timestamp:", data[key].timestamp);
-
         return {
           _id: key,
           text: data[key].text,
-          createdAt: timestamp || new Date(), // Pass the raw Date object here
+          createdAt: timestamp || new Date(),
           user: {
             _id: senderId,
             name:
@@ -188,7 +183,6 @@ export default function ChatView() {
 
   return (
     <SafeAreaView style={[mainStyles.whiteBack]}>
-      {/* <View style={[mainStyles.container, {alignItems: "stretch", paddingHorizontal: 10}]}> */}
       <GiftedChat
         messages={messages}
         locale={`${i18n.language}`}
@@ -246,7 +240,6 @@ export default function ChatView() {
           />
         )}
       />
-      {/* </View> */}
     </SafeAreaView>
   );
 }

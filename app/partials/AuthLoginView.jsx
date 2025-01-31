@@ -4,20 +4,17 @@ import {
   Text,
   SafeAreaView,
   TouchableOpacity,
-  Modal,
-  StyleSheet,
   Image,
-  KeyboardAvoidingView,
-  Platform,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
 import InputWithLabel from "../components/InputWithLabel";
 import { globalStyles, styles as mainStyles } from "../utils/style";
-import { onLogin, signInWithGoogle } from "../utils/auth";
+import { onLogin } from "../utils/auth";
 import { useTranslation } from "react-i18next";
 import ErrorModal from "../components/ErrorModal";
+import { styles } from "../styles/AuthLoginViewStyles";
 
 export default function AuthLoginView() {
   const { t } = useTranslation();
@@ -61,7 +58,7 @@ export default function AuthLoginView() {
           source={require("../../assets/images/loginBackClothes.jpg")}
           style={styles.imgStyles}
         />
-  
+
         <View style={mainStyles.container}>
           <View style={styles.loginPanel}>
             <Text style={styles.loginTitle}>{`${t("login.title")}!`}</Text>
@@ -98,17 +95,19 @@ export default function AuthLoginView() {
                 inputStyle={[styles.inputStyle, { marginBottom: 0 }]}
               />
             </View>
-  
+
             <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
               <TouchableOpacity
                 style={{ paddingHorizontal: 10, paddingVertical: 5 }}
                 onPress={() => navigation.navigate("ResetPassword")}
                 activeOpacity={globalStyles.ACTIVE_OPACITY}
               >
-                <Text style={styles.forgotPass}>{`${t("login.forgotPass")}?`}</Text>
+                <Text style={styles.forgotPass}>{`${t(
+                  "login.forgotPass"
+                )}?`}</Text>
               </TouchableOpacity>
             </View>
-  
+
             <TouchableOpacity
               style={[styles.mainBtns, styles.loginBtn]}
               onPress={handleSubmit(handleLogin)}
@@ -116,9 +115,9 @@ export default function AuthLoginView() {
             >
               <Text style={styles.mainBtnText}>{t("login.loginBtn")}</Text>
             </TouchableOpacity>
-  
+
             <Text style={styles.orText}>{t("login.orText")}</Text>
-  
+
             <View style={{ gap: 15, flexDirection: "row" }}>
               <TouchableOpacity
                 style={[styles.mainBtns, styles.anotherBtn]}
@@ -136,8 +135,7 @@ export default function AuthLoginView() {
               </TouchableOpacity>
             </View>
           </View>
-  
-          {/* Error Modal */}
+
           <ErrorModal
             isVisible={isModalVisible}
             onClose={closeModal}
@@ -147,62 +145,5 @@ export default function AuthLoginView() {
         </View>
       </KeyboardAwareScrollView>
     </SafeAreaView>
-  );  
+  );
 }
-
-const styles = StyleSheet.create({
-  loginPanel: {
-    flex: 1,
-    width: "100%",
-  },
-  imgStyles: {
-    resizeMode: "cover",
-    width: "100%",
-    height: 250,
-  },
-  loginTitle: {
-    fontSize: 32,
-    fontWeight: "bold",
-    marginVertical: 20,
-    color: globalStyles.primaryColor,
-  },
-  inputStyle: {
-    color: globalStyles.primaryColor,
-    backgroundColor: globalStyles.secondaryColor,
-    padding: 15,
-    borderRadius: globalStyles.BORDER_RADIUS,
-  },
-  forgotPass: {
-    color: globalStyles.primaryColor,
-    alignSelf: "flex-end",
-    fontWeight: "bold",
-    marginVertical: 15,
-  },
-  orText: {
-    paddingVertical: 10,
-    fontSize: 16,
-    fontFamily: "Poppins_500Medium",
-    alignSelf: "center",
-    fontWeight: "bold",
-    color: globalStyles.primaryColor,
-  },
-  mainBtns: {
-    paddingVertical: 15,
-    borderRadius: globalStyles.BORDER_RADIUS,
-    alignItems: "center",
-  },
-  loginBtn: {
-    backgroundColor: globalStyles.primaryColor,
-  },
-  anotherBtn: {
-    backgroundColor: globalStyles.secondaryColor,
-    flex: 1,
-    justifyContent: "center",
-  },
-  mainBtnText: {
-    color: globalStyles.textOnPrimaryColor,
-    fontSize: 16,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-});

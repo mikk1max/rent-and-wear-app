@@ -26,7 +26,6 @@ const SearchBarComp = ({ onSearch, ...props }) => {
   };
 
   const fontsLoaded = useCustomFonts();
-
   if (!fontsLoaded) return null;
 
   const { key, ...restProps } = props;
@@ -53,33 +52,9 @@ const styles = StyleSheet.create({
   searchBar: {
     elevation: 0, // Remove shadow on Android
     shadowColor: "transparent", // Remove shadow on iOS
-
     width: width - 50,
     height: 45,
     backgroundColor: globalStyles.secondaryColor,
-  },
-  container: {
-    backgroundColor: "transparent",
-    borderTopColor: "transparent",
-    borderBottomColor: "transparent",
-    paddingHorizontal: 0,
-    padding: 0,
-    margin: 0,
-    height: 45,
-  },
-  inputContainer: {
-    width: "100%",
-    // height: 45,
-    backgroundColor: globalStyles.secondaryColor,
-    paddingHorizontal: 10,
-    justifyContent: "center",
-    textAlignVertical: "bottom",
-  },
-  input: {
-    fontFamily: "Poppins_500Medium",
-    fontSize: 16,
-    color: globalStyles.textOnSecondaryColor,
-    // textAlignVertical: "center",
   },
 });
 

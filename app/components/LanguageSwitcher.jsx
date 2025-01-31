@@ -1,4 +1,4 @@
-import { Button, StyleSheet, View, TouchableOpacity, Text } from "react-native";
+import { StyleSheet, View, TouchableOpacity, Text } from "react-native";
 import i18n from "../utils/i18n";
 import { globalStyles } from "../utils/style";
 import { useTranslation } from "react-i18next";

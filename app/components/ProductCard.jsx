@@ -12,20 +12,16 @@ const ProductCard = ({
   id,
   mainImage,
   title,
-  categoryName,
   categoryIcon,
   pricePerDay,
   currentUserId,
   advertiserId,
-  containerWidth,
   cardWidth,
 }) => {
-  // Navigation
   const navigation = useNavigation();
 
-    const { t } = useTranslation();
+  const { t } = useTranslation();
 
-  // Fonts
   const fontsLoaded = useCustomFonts();
   if (!fontsLoaded) return null;
 
@@ -57,7 +53,11 @@ const ProductCard = ({
           <View style={styles.spacer}></View>
           {isAuthor && (
             <View style={styles.authorIcon}>
-              <Icon name="user-fill" {...iconOptions} fillColor={globalStyles.textOnAccentColor} />
+              <Icon
+                name="user-fill"
+                {...iconOptions}
+                fillColor={globalStyles.textOnAccentColor}
+              />
             </View>
           )}
         </View>
@@ -77,7 +77,9 @@ const ProductCard = ({
           activeOpacity={globalStyles.ACTIVE_OPACITY}
         >
           <Text style={styles.textOnButtonName}>{cutTitle(title) || ""}</Text>
-          <Text style={styles.textOnButtonPrice}>${pricePerDay} / {t('productCard.day')}</Text>
+          <Text style={styles.textOnButtonPrice}>
+            ${pricePerDay} / {t("productCard.day")}
+          </Text>
         </TouchableOpacity>
       </Card>
     </View>
@@ -102,7 +104,6 @@ const styles = StyleSheet.create({
 
   categoryIcon: {
     padding: 7,
-    // margin: 5,
     backgroundColor: globalStyles.primaryColor,
     borderTopLeftRadius: globalStyles.BORDER_RADIUS,
     borderBottomRightRadius: globalStyles.BORDER_RADIUS,
@@ -110,7 +111,6 @@ const styles = StyleSheet.create({
 
   authorIcon: {
     padding: 7,
-    // margin: 5,
     backgroundColor: globalStyles.accentColor,
     borderTopRightRadius: globalStyles.BORDER_RADIUS,
     borderBottomLeftRadius: globalStyles.BORDER_RADIUS,

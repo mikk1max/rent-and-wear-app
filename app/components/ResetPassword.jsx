@@ -99,22 +99,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 0,
     alignItems: "stretch",
-    // justifyContent: "center",
     paddingVertical: 20,
   },
+
   image: {
     width: "100%",
     height: 200,
     resizeMode: "contain",
     marginTop: 10,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
-    textAlign: "center",
-    color: globalStyles.primaryColor,
-  },
+
   inputStyle: {
     color: globalStyles.primaryColor,
     backgroundColor: globalStyles.secondaryColor,
@@ -122,12 +116,14 @@ const styles = StyleSheet.create({
     borderRadius: globalStyles.BORDER_RADIUS,
     marginBottom: 20,
   },
+
   button: {
     backgroundColor: globalStyles.primaryColor,
     padding: 15,
     borderRadius: globalStyles.BORDER_RADIUS,
     alignItems: "center",
   },
+
   buttonText: {
     color: globalStyles.textOnPrimaryColor,
     fontSize: 16,
