@@ -12,6 +12,7 @@ import {
   TextInput,
   Platform,
   Alert,
+  StatusBar,
 } from "react-native";
 import { useCustomFonts } from "../utils/fonts";
 import { useNavigation } from "@react-navigation/native";
@@ -508,6 +509,7 @@ const RentItNowView = ({ route }) => {
 
   return (
     <SafeAreaView style={mainStyles.whiteBack}>
+      <StatusBar backgroundColor={globalStyles.primaryColor} barStyle="light-content" />
       <View
         style={[
           mainStyles.container,

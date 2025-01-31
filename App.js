@@ -16,7 +16,6 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <I18nextProvider i18n={i18n}>
-        <StatusBar />
         <View style={mainStyles.whiteBack}>
           <UserProvider>
             <AppContent />

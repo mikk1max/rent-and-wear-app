@@ -8,6 +8,7 @@ import {
   SafeAreaView,
   Image,
   StyleSheet,
+  StatusBar,
 } from "react-native";
 import { useCustomFonts } from "../utils/fonts";
 import { useNavigation } from "@react-navigation/native";
@@ -156,6 +157,7 @@ const GetsView = () => {
 
   return (
     <SafeAreaView style={mainStyles.whiteBack}>
+      <StatusBar backgroundColor={globalStyles.primaryColor} barStyle="light-content" />
       <View style={styles.statusContainer}>
         <ScrollView
           horizontal

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
-import { BackHandler, Alert, RefreshControl } from "react-native";
+import { BackHandler, Alert, RefreshControl, StatusBar } from "react-native";
 import {
   View,
   Text,
@@ -176,6 +176,7 @@ const UserProfileView = () => {
 
   return (
     <SafeAreaView style={mainStyles.whiteBack} key={i18n.language}>
+      <StatusBar backgroundColor={globalStyles.backgroundColor} barStyle="dark-content" />
       <View
         style={[
           mainStyles.container,
